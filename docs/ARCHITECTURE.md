@@ -22,13 +22,15 @@ The isolated Windows Node 24 clean install, Prisma generation, typecheck, ESLint
 
 ## Current architecture
 
+Phase 01 now adds opt-in frontend tokens/primitives and GSAP 3.15.0/ScrollTrigger utilities on branch `feat/phase01-motion-foundation`. The table below describes the audited domain application; its routes, CMS/auth, Prisma schema, uploads and Instagram behavior are preserved. The development-only `/dev/motion` laboratory returns 404 in production and is absent from public navigation. See [PHASE_01](PHASE_01.md) for the implemented API, validation, performance exception and stop point. The user's Phase 01 frontend scope supersedes the numbering of the original proposed roadmap; it does not authorize its CMS/schema phases.
+
 | Layer        | Verified implementation                                                                                                |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------- |
 | Runtime      | Local Node 24.19.0; lockfile/installed Next 16.4.0 and React/React DOM 19.3.0                                          |
 | Tooling      | Strict TypeScript 5.9.3, ESLint 9, Prettier, Playwright 1.63.0, tsx                                                    |
 | Data         | Prisma/client 6.19.3, PostgreSQL, 14 models, 2 applied migrations                                                      |
 | Rendering    | App Router and server components; root `force-dynamic`; React `cache()` deduplicates render-time reads                 |
-| UI           | Plain global CSS and separate admin CSS; Arial/Georgia system fonts; no motion or WebGL library                        |
+| UI           | Plain CSS and system fonts; opt-in neutral primitives and GSAP/ScrollTrigger foundation; no WebGL                      |
 | CMS          | Event/program/category/destination/gallery/site/settings/user editors, Instagram, messages, registrations, CSV exports |
 | Auth         | Argon2id with legacy scrypt verification; opaque 8-hour database sessions; OWNER/ADMIN/EDITOR                          |
 | Security     | Zod 4.6.5, permission checks, origin checks, bounded request readers, DB rate limiting, audit records, CSP             |
@@ -111,7 +113,7 @@ src/components/home/      section composition
 src/components/motion/    parallax, reveal, gallery depth, preferences
 src/components/ui/        shared accessible primitives
 src/lib/home/             bounded queries, DTOs, section validation
-src/styles/               future token extraction
+src/styles/               shared opt-in tokens and primitives (Phase 01)
 ```
 
 Keep existing domain services in `src/lib`; avoid an unrelated wholesale file move.
@@ -233,6 +235,6 @@ Rollback is application-first: disable the proposed V2 flag or redeploy the prev
 - Existing QA screenshot and uploaded WebP were visually inspected; primary screenshots remain unavailable.
 - No migration/import/seed/account/publication/deployment executed. Full build, E2E, integration and vulnerability scans were not rerun for this documentation-only change; historical reports do not prove current readiness.
 
-**Phase 00.5 stop point:** local source recovery, verified DB/media backups and Windows validation are established. The next readiness check is an actual Linux run of the prepared workflow, after separate authorization to push to a private repository, or access to a suitable Linux environment. Phase 01 does not start automatically. Durable external storage and actual Hostinger staging remain future separately authorized work; acceptance still requires a clean Linux build, restart/redeploy persistence and preservation of media checksums and all 45 unpublished Instagram records.
+**Phase 01 stop point:** the explicitly requested frontend foundation and isolated motion engine are implemented; the real homepage is preserved. Wait for an explicit Phase 02 specification, official screenshots/assets and content decisions before homepage integration. Review the measured motion bundle exception and profile on representative devices. Linux execution, durable external storage and actual Hostinger staging remain separate deployment-readiness gates; no push/deployment is authorized. See [PHASE_01](PHASE_01.md).
 
 Specifications: [DESIGN_SYSTEM](DESIGN_SYSTEM.md), [MOTION_SYSTEM](MOTION_SYSTEM.md), [DATABASE](DATABASE.md), [DEPLOYMENT](DEPLOYMENT.md).

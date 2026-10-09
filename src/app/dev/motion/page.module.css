@@ -1,0 +1,109 @@
+.lab {
+  min-height: 100svh;
+}
+.skip {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: var(--s-z-skip);
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 1rem;
+  background: white;
+  color: #252b2e;
+}
+.skip:focus {
+  clip-path: none;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  white-space: normal;
+}
+.depth {
+  min-height: 24rem;
+  height: 65svh;
+  max-height: 44rem;
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  background: #d9d8d0;
+  border-radius: var(--s-radius-card);
+}
+.back,
+.front {
+  position: absolute;
+  inset: -4rem 0;
+}
+.back span {
+  position: absolute;
+  width: 140%;
+  height: 65%;
+  left: -20%;
+  bottom: 0;
+  background: #999f9d;
+  clip-path: polygon(
+    0 100%,
+    0 70%,
+    25% 35%,
+    48% 67%,
+    70% 10%,
+    100% 60%,
+    100% 100%
+  );
+}
+.front {
+  z-index: 2;
+}
+.front span {
+  position: absolute;
+  inset: 70% -10% 0;
+  background: #4d5556;
+  border-radius: 55% 60% 0 0;
+}
+.depthLabel {
+  position: absolute;
+  inset: 1.5rem auto auto 1.5rem;
+  max-width: calc(100% - 3rem);
+  z-index: var(--s-z-content);
+  padding: clamp(1rem, 3vw, 3rem);
+  background: #252b2e;
+  color: #f5f4f0;
+  box-shadow: var(--s-shadow-1);
+}
+.grid {
+  display: grid;
+  gap: var(--s-space-12);
+  align-items: center;
+}
+.transitionFrame {
+  position: relative;
+  height: clamp(12rem, 30vw, 24rem);
+  overflow: clip;
+  border-radius: var(--s-radius-card);
+}
+.transitionSurface {
+  position: absolute;
+  inset: -2rem 0;
+  background: linear-gradient(125deg, #b9bdb9, #40494d);
+}
+.pinPanel {
+  padding: clamp(1.5rem, 5vw, 4rem);
+  background: var(--s-color-surface);
+  border: 1px solid var(--s-color-border);
+  border-radius: var(--s-radius-card);
+  box-shadow: var(--s-shadow-2);
+}
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+@media (max-width: 699px) {
+  .depth {
+    min-height: 22rem;
+    height: 60svh;
+  }
+}

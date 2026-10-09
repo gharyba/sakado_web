@@ -24,6 +24,13 @@ const config: NextConfig = {
         ],
       },
       {
+        source: "/dev/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+          { key: "Cache-Control", value: "private, no-store" },
+        ],
+      },
+      {
         source: "/admin/sw.js",
         headers: [
           { key: "Service-Worker-Allowed", value: "/admin" },

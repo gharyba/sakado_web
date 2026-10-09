@@ -1,12 +1,12 @@
 # SAKADO 2.0 — motion system
 
-Status: proposed, 2026-10-09. Motion enhances the server-rendered experience; it never owns business rules. Primary screenshots and exact visual choreography: **TO BE CONFIRMED**.
+Status: Phase 01 reusable engine implemented, 2026-10-09. Homepage choreography remains proposed. Motion enhances the server-rendered experience; it never owns business rules. Primary screenshots and exact visual choreography: **TO BE CONFIRMED**.
 
 ## Boundaries
 
 Server content services validate/query approved content and supply serializable display props. Components under proposed `src/components/motion/` own element refs, local progress and visual transforms only. They cannot import Prisma, auth, booking, admin mutations or storage services. No scroll event creates a booking, publishes content, sends analytics by default or fetches all records.
 
-There is no installed motion framework. Begin with CSS transforms/transitions, sticky positioning, IntersectionObserver and a small shared requestAnimationFrame coordinator. Add a library only if a measured requirement cannot be met within budgets. CSS perspective satisfies the initial 3D photo-gallery direction without requiring a canvas/WebGL engine.
+Phase 01 explicitly authorizes GSAP 3.15.0 and its bundled ScrollTrigger. No separate React animation package, smooth-scroll engine or WebGL dependency is added. A client scene dynamically imports the engine only when motion is allowed and its scope approaches the viewport. Existing public routes do not mount a scene or load the engine. CSS perspective remains the future gallery direction; no gallery was implemented.
 
 ## Enhancement levels
 
@@ -42,13 +42,27 @@ Duration tokens: instant 0ms, fast 160ms, standard 240ms, reveal 400ms. Interact
 
 ## Runtime lifecycle and performance
 
-One active frame coordinator for visible scroll scenes, with delta clamping after tab resume. Read layout in a batched measurement phase; write transforms/opacity in a separate phase. Cache bounds with ResizeObserver and resize/orientation handling; do not call getBoundingClientRect for every element on every frame. Use refs/CSS variables for frame updates, not React state on each scroll tick.
+ScrollTrigger owns scroll scheduling and cached bounds. There is no component scroll listener or custom continuous requestAnimationFrame loop. React state changes at initialization/preferences, never on scroll ticks. ResizeObserver compares sizes; a shared one-frame refresh coordinator batches invalidations from dimensions, image load/error and font readiness. Direct scrub uses native scroll progress and transform writes, without smoothing or wheel interception. GSAP retains its shared internal scheduling while scenes are mounted; do not claim zero library work offscreen.
 
 Attach passive listeners, pause on document visibility change, detach on unmount and route changes, and cancel scheduled frames. Do not leave all layers permanently promoted with will-change. Pause offscreen video if video is later approved; no autoplay video is in initial scope. Avoid animated blur, large shadows, background-position and layout properties.
 
 The existing Instagram loop reads group width each frame and duplicates groups for looping. Preserve its pause/focus/touch behavior while measuring width outside the hot loop. Duplicate groups must be hidden from assistive navigation and non-focusable; semantic original links must remain discoverable without opening a JS-only modal. This is a hardening requirement, not a claim that all no-JS behavior exists already.
 
-Budget: incremental motion JS ≤ 30 KiB compressed; aim for 60fps with motion scripting ≤ 4ms/frame on a representative mid-range phone and no motion-attributable task >50ms. If traces fail, reduce layers or flatten the effect before adding a heavier engine.
+Original budget: incremental motion JS ≤ 30 KiB compressed; aim for 60fps with motion scripting ≤ 4ms/frame on a representative mid-range phone and no motion-attributable task >50ms. Phase 01 measured the production GSAP/ScrollTrigger/runtime chunk at 45,132 gzip bytes (44.1 KiB), exceeding that target. This is an explicit exception following the requested GSAP installation, not a passing budget claim. It is lazy and absent from the existing public homepage. Re-measure and review the budget before public integration; no representative-device frame-rate claim is made.
+
+## Phase 01 API
+
+- `Motion` is server-compatible markup: `effect` is background/foreground/reveal/image/transition/pin; optional numeric `distance` is bounded by `src/lib/motion/policy.ts`. It is engineering configuration, never arbitrary CMS input.
+- `MotionScene` wraps server-rendered children with a small client controller. Scope nested scenes separately; use a React key when content revisions change. No business services enter the engine.
+- `MotionToggle` supplies a shared local preference. System reduced motion always wins. Storage failure uses session memory; visibility and save-data changes return to static. Include a visible toggle on every future motion-enabled page.
+
+Use positioned, overscanned decorative layers inside clipped media frames for background/foreground/transition. These effects require aria-hidden=true and no interactive descendants. Keep prose/actions outside translated layers. Reveals exclude interactive descendants, start once on entry and do not pre-hide waiting content. Images use a shallow desktop clip/translation/opacity; mobile uses opacity alone. Already-entered reveals do not repeat on breakpoint changes within a mounted scene.
+
+Responsive policy: <700px or coarse pointer uses opacity reveals with no depth/pin; 700–1199px uses 40% capped travel without pin; ≥1200px/fine pointer permits full bounded effects. Pin requires viewport height ≥700px, a panel ≤65% of viewport height and no focusable descendants. It uses pinSpacing=true and lasts at most 60vh/600px. Keep panel dimensions stable, reserve image space, remount after content revisions, and never nest pins or transform their ancestors. Caps: background 80px, foreground 120px, reveal/image 12px, transition 24px; reveal 240ms mobile/400ms otherwise.
+
+The runtime uses scoped gsap.context and gsap.matchMedia; cleanup reverts owned timelines, triggers, pin spacers and inline styles, disconnects observers/listeners and ignores pending imports/font callbacks. The last scene cancels pending refresh and disables the global engine only if no other triggers remain. Preference subscriptions attach once and remove listeners after the last consumer; motion-off/hidden/reduced states revert scenes to readable static content. No killAll or global scroll hijacking is used. Sources: [GSAP matchMedia](<https://gsap.com/docs/v3/GSAP/gsap.matchMedia()/>), [ScrollTrigger](https://gsap.com/docs/v3/Plugins/ScrollTrigger/), [React integration](https://gsap.com/resources/React/).
+
+The development-only `/dev/motion` route shows all six effects using abstract shapes and the existing placeholder trail SVG. It reads no database, is not linked in production navigation and returns 404 in production, with noindex/noarchive metadata/headers. The guarded route may remain in build artifacts; it is not a confidential-content boundary. See [PHASE_01](PHASE_01.md) for reproduction commands, actual checks and remaining limitations.
 
 ## Accessibility requirements
 

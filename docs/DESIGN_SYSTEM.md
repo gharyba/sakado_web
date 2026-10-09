@@ -1,6 +1,6 @@
 # SAKADO 2.0 — design system
 
-Status: proposed technical baseline, 2026-10-09. This document does not approve a brand identity. See [ARCHITECTURE](ARCHITECTURE.md) for content evidence and [MOTION_SYSTEM](MOTION_SYSTEM.md) for animation.
+Status: Phase 01 technical foundation implemented, 2026-10-09; remaining art direction is proposed. This document does not approve a brand identity. See [ARCHITECTURE](ARCHITECTURE.md) for content evidence and [MOTION_SYSTEM](MOTION_SYSTEM.md) for animation.
 
 ## Reference authority and art direction
 
@@ -77,5 +77,11 @@ Hero: stable minimum height using small viewport units with a content-driven fal
 Proposed radius scale: 4px controls, 8px cards, 12px dialogs; retain square/full-bleed cinematic sections. Shadows are subtle elevation indicators, not contrast substitutes. Stacking order: base 0, decorative layers 1–3, content 10, header 40, skip link 60; native modal top layer. Avoid transforms on ancestors that break sticky positioning.
 
 ## Design acceptance
+
+Phase 01 implementation is namespaced and opt-in: `src/styles/tokens.css`, `src/styles/primitives.css`, and server-compatible `Container`, `Section`, `Button`, `ButtonLink`, `MediaFrame` in `src/components/ui/foundation.tsx`. The new neutral engineering palette uses canvas #f5f4f0, surface #ffffff, muted surface #e9e8e2, ink/dark #252b2e, muted text #555e62, border #747c80, focus #765000 and inverse focus #f1c982. Legacy forest/paper/amber values and existing public/admin screens remain preserved.
+
+The implemented `--s-*` tokens cover the documented system fonts/fluid type, rem spacing, 1280px container/65ch reading measure, 700/900/1200px gutter changes, fluid section spacing, 4/8/12px radii, two subtle elevation shadows, duration/easing and stacking. Namespaced `s-*` classes include display/title/heading/lead/caption/eyebrow, stack and wrapping cluster. Sections have default/muted/dark tones and compact spacing; buttons/links have primary/secondary/text variants, focus/pressed/disabled/busy treatments and 44px targets. Media frames reserve landscape 3:2, portrait 4:5, wide 16:9 or square space. Callers supply semantic headings, real actions, intrinsic image dimensions, sizes and meaningful alt text. No official font/photo/logo was introduced.
+
+Root layout imports these styles without replacing existing selectors. Forced global smooth scrolling was removed. `/dev/motion` demonstrates the primitives separately from the homepage; browser reflow checks cover 320/390/768/1024/1440/1920px. See [PHASE_01](PHASE_01.md) for implementation and validation evidence.
 
 Before visual sign-off: annotate both supplied references; confirm brand assets; compare desktop/mobile static compositions; verify all ten section positions and approved content; audit contrast, crop, long text, keyboard, zoom and reduced motion. No claimed pixel match is possible until the actual references are available. Shared tokens must style both old and new sections without regressing existing admin screens. Final approval includes empty states, not just a populated mockup.

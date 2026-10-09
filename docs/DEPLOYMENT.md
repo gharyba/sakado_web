@@ -4,6 +4,8 @@ Verified 2026-10-09. **User-selected target: managed Node.js Web App hosting**, 
 
 ## Compatibility verdict
 
+Phase 01 adds only a lazy frontend GSAP/ScrollTrigger dependency and an isolated motion laboratory, preserving the Node/PostgreSQL/storage topology. Its Windows build and DB-disabled Chrome checks are recorded in [PHASE_01](PHASE_01.md). The laboratory returns 404 in production. These checks do not close the Linux, durable-media or actual Hostinger staging gates below.
+
 **Compatible architecture, conditional on an actual-plan staging proof.** Next.js needs a live Node server for this CMS, cookies, Server Actions, registration endpoints and policy-controlled media. A static export uploaded as static files cannot provide these features.
 
 | Requirement                | Evidence / conclusion                                                                                                                                                                                                                                                              |

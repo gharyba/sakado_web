@@ -1,0 +1,64 @@
+/* Provisional neutral foundation. Existing brand values remain unchanged. */
+:root {
+  --s-color-canvas: #f5f4f0;
+  --s-color-surface: #ffffff;
+  --s-color-muted-surface: #e9e8e2;
+  --s-color-ink: #252b2e;
+  --s-color-muted: #555e62;
+  --s-color-inverse: #f5f4f0;
+  --s-color-dark: #252b2e;
+  --s-color-border: #747c80;
+  --s-color-focus: #765000;
+  --s-color-focus-inverse: #f1c982;
+  --s-font-body: Arial, Helvetica, sans-serif;
+  --s-font-display: Georgia, "Times New Roman", serif;
+  --s-text-caption: 0.875rem;
+  --s-text-body: 1rem;
+  --s-text-lead: clamp(1.125rem, 1.5vw, 1.25rem);
+  --s-text-card: clamp(1.25rem, 2vw, 1.5rem);
+  --s-text-heading: clamp(1.875rem, 3.3vw, 3.5rem);
+  --s-text-title: clamp(2.25rem, 4.5vw, 4.5rem);
+  --s-text-display: clamp(2.75rem, 6vw, 6.5rem);
+  --s-space-1: 0.25rem;
+  --s-space-2: 0.5rem;
+  --s-space-3: 0.75rem;
+  --s-space-4: 1rem;
+  --s-space-6: 1.5rem;
+  --s-space-8: 2rem;
+  --s-space-12: 3rem;
+  --s-space-16: 4rem;
+  --s-space-24: 6rem;
+  --s-space-32: 8rem;
+  --s-section-space: clamp(3rem, 7vw, 7rem);
+  --s-gutter: 1.25rem;
+  --s-container: 80rem;
+  --s-measure: 65ch;
+  --s-radius-control: 0.25rem;
+  --s-radius-card: 0.5rem;
+  --s-radius-dialog: 0.75rem;
+  --s-shadow-1: 0 2px 8px rgb(0 0 0 / 8%);
+  --s-shadow-2: 0 12px 32px rgb(0 0 0 / 12%);
+  --s-duration-fast: 160ms;
+  --s-duration-standard: 240ms;
+  --s-duration-reveal: 400ms;
+  --s-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --s-z-decoration: 1;
+  --s-z-content: 10;
+  --s-z-header: 40;
+  --s-z-skip: 60;
+}
+@media (min-width: 700px) {
+  :root {
+    --s-gutter: 1.5rem;
+  }
+}
+@media (min-width: 900px) {
+  :root {
+    --s-gutter: 2rem;
+  }
+}
+@media (min-width: 1200px) {
+  :root {
+    --s-gutter: 3rem;
+  }
+}
