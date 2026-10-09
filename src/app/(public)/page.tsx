@@ -45,7 +45,7 @@ export default async function Home() {
   const why = settings.demo ? demoWhy : settings.whySakado;
   return (
     <>
-      <section className="hero">
+      <section className="hero" data-navigation-hero="dark">
         <Image
           unoptimized
           src={settings.heroImage ?? "/images/camp.svg"}

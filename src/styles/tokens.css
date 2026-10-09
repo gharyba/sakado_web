@@ -36,6 +36,8 @@
   --s-radius-control: 0.25rem;
   --s-radius-card: 0.5rem;
   --s-radius-dialog: 0.75rem;
+  --s-radius-pill: 999px;
+  --s-navigation-height: 5rem;
   --s-shadow-1: 0 2px 8px rgb(0 0 0 / 8%);
   --s-shadow-2: 0 12px 32px rgb(0 0 0 / 12%);
   --s-duration-fast: 160ms;
@@ -60,5 +62,6 @@
 @media (min-width: 1200px) {
   :root {
     --s-gutter: 3rem;
+    --s-navigation-height: 6.5rem;
   }
 }

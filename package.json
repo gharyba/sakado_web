@@ -13,6 +13,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
     "test:motion": "playwright test --config playwright.motion.config.ts",
+    "test:navigation": "playwright test --config playwright.navigation.config.ts",
     "test:e2e": "node --env-file=.env --import tsx tests/browser/prepare.ts && node --env-file=.env node_modules/@playwright/test/cli.js test",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",

@@ -20,7 +20,9 @@ export default async function PublicLayout({
   return (
     <>
       <SiteHeader name={s.name} logo={s.logoPath} demo={s.demo} />
-      <main id="main">{children}</main>
+      <main id="main" tabIndex={-1}>
+        {children}
+      </main>
       <SiteFooter
         name={s.name}
         logo={s.logoPath}
