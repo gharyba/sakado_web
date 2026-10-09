@@ -33,9 +33,11 @@ Current scripts:
 
 - build: `prisma generate && next build`
 - start: `next start --hostname 127.0.0.1`
+- start:hostinger: `next start --hostname 0.0.0.0`
+- typecheck: `next typegen && tsc --noEmit`
 - deploy migrations: `prisma migrate deploy`
 
-Proposed Phase 1 changes: declare Node 24 compatibility in package metadata, keep lockfile-based installs, and configure a hosting-appropriate start binding. Managed hosting may require `0.0.0.0`; current loopback binding must not be assumed reachable. Use the panel's assigned port/PORT mechanism, not a hardcoded public port. Candidate start command is `node node_modules/next/dist/bin/next start --hostname 0.0.0.0`, relying on the platform's verified PORT configuration. Confirm actual settings before deployment; no script was changed by this audit.
+Phase 00.5 now declares `engines.node=24.x` in package metadata/lockfile and `24` in `.nvmrc`. The local start command remains loopback; select `npm run start:hostinger` in Hostinger's start-command setting. Use the panel's assigned process-level `PORT`, not a hardcoded public port. Next reads PORT before loading .env, so placing it only in an environment file is insufficient. Verify actual panel routing/binding before deployment. `next typegen` creates the ignored `next-env.d.ts` and route types before checking a clean checkout. No dependency version was upgraded.
 
 Staging build sequence:
 
@@ -62,7 +64,7 @@ Builds must have only the environment needed for their rendering/generation stra
 | MEDIA_LOCAL_DIR                                                   | Current dev/legacy local upload path; not a durable managed deployment directory                                                 |
 | TRUST_PROXY                                                       | Current; false unless Hostinger demonstrably replaces/sanitizes forwarded headers                                                |
 | CONTACT_EMAIL / CONTACT_PHONE / CONTACT_ADDRESS / WHATSAPP_NUMBER | Current optional fallback settings; use only verified business details                                                           |
-| ADMIN_EMAIL / ADMIN_PASSWORD                                      | One-time provisioning inputs; never public and remove password after use; inspect provisioning script first                      |
+| ADMIN_NAME / ADMIN_EMAIL / ADMIN_PASSWORD                         | One-time provisioning inputs; never public and remove password after use; inspect provisioning script first                      |
 | HOME_V2_ENABLED                                                   | Proposed server-side rollback flag; not implemented                                                                              |
 | REGISTRATIONS_ENABLED                                             | Proposed explicit business-release gate; not implemented; default off for 2.0 until approved                                     |
 | Storage endpoint/bucket/access credentials                        | Proposed adapter-specific server secrets; finalize names with provider                                                           |
@@ -121,3 +123,78 @@ Proposed RPO ≤24h and RTO ≤4h, daily encrypted DB/media backups plus provide
 ## What remains unverified
 
 Actual Hostinger entitlement/limits/port/proxy setup, precise Linux compatibility, region/network latency, external DB/storage choice, backup/PITR, domain/TLS, MFA/recovery, approved content and the two reference screenshots. No claim of production readiness is made until the staging matrix passes.
+
+## Phase 00.5 — source control and verified recovery
+
+This section records actions actually performed on 2026-10-09; it supersedes the earlier proposal where implementation status differs. No homepage, CMS/auth behavior or Prisma schema change belongs to this phase. No remote deployment, paid resource, GitHub repository creation or push was performed.
+
+### Local history
+
+No repository or ancestor history existed. Portable Git for Windows 2.56.0.windows.2 was obtained from its official release; its archive SHA-256 matched the release API digest. The tool is outside the project, not a system-wide installation. Local branch: `main`. Approved local author: `SAKADO Local Baseline <baseline@localhost>`; global Git configuration was not changed.
+
+Baseline commit: `0a0c5421b0b69eb1471e0c5f3ef9c4af3557f206`; tag: `phase-00-baseline`. It contains 164 reviewed source/documentation files. Candidate files were checked against actual local secret values and private-key/token patterns without printing secrets; no matches were found. No remote is configured. `.gitignore` excludes real `.env*`, local credentials, private uploads, dumps/archives, SQLite files, generated types/builds, test artifacts and `.local`. Empty `.env.example`/`.env.*.example` templates and checked-in Prisma migration SQL remain included.
+
+Readiness changes are recorded in a subsequent local commit tagged `phase-00-5-safety`, preserving the baseline. `sakado-phase005.bundle` contains both commits and tags and is checked with `git bundle verify`. Recover source by cloning that bundle into a new directory; credentials, database and uploads must be restored separately. Never clone over the existing project.
+
+Recommend a **private GitHub repository** owned by the approved Sakado account, with MFA and reviewed collaborator access. Create/connect/push only after explicit authorization. Do not make backups, dumps, uploads or filled environment files part of the future repository. The prepared Linux workflow uses only manual dispatch, read-only repository permission, immutable action revisions and no persisted checkout credentials; it cannot deploy or push.
+
+### Recovery location and access
+
+All recovery files are outside the Git worktree:
+
+`C:/Users/Dell/SAKADO-backups/2026-10-09-phase00-5-8327b4d3/`
+
+Windows ACL inheritance is disabled on that directory; only the local Dell identity and SYSTEM have explicit full access. This is a local disk recovery copy. Off-device encrypted copies, retention and a second failure domain remain **TO BE CONFIRMED**; do not call it encrypted-at-rest or disaster recovery protection without evidence. Dumps contain personal/authentication data and must not be shared publicly. `.local/phase005-paths.json` is an ignored convenience pointer, not the backup itself.
+
+| File                         | Purpose / verification                                                                                  |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `sakado-baseline.bundle`     | Full baseline Git history; `git bundle verify` passed                                                   |
+| `sakado-phase005.bundle`     | Baseline and readiness commits/tags; `git bundle verify` passed                                         |
+| `sakado.custom.dump`         | Full logical application-database backup, 36,592 bytes                                                  |
+| `sakado.archive-list.txt`    | Archive contents successfully listed by pg_restore                                                      |
+| `database-verification.json` | Source/restored table counts, SHA-256 row/schema fingerprints and status reconciliation; no raw rows    |
+| `media-inventory.json`       | Upload path, byte count, SHA-256 and verified copy equality                                             |
+| `validation-results.json`    | Actual Windows install/generation/type/lint/unit/build/native/startup results; Linux explicitly NOT RUN |
+| `final-preservation.json`    | Final original-database row comparison and dump/media checksum verification                             |
+| `uploads/`                   | Unmodified uploaded-media copies                                                                        |
+| `backup-and-verify.cjs`      | Archived one-time verification implementation; inspect before reusing with a fresh output directory     |
+| `tools/`                     | Portable Git/PostgreSQL utilities; no application dependency changes                                    |
+| `validation-windows/`        | Disposable source copy for clean installation/build; no real .env, uploads or source database files     |
+
+Dump SHA-256: `229516153dc1bcddbb39156a00220c5c6779104cf38ca25f19be2f7770c76c21`.
+
+### PostgreSQL backup and restore proof
+
+Active local database: `sakado` at `127.0.0.1:55432`, PostgreSQL **18.4**. Credentials were used privately and are not recorded here. PostgreSQL **18.6** pg_dump/pg_restore binaries were downloaded through the EDB archive linked by the PostgreSQL Windows page; the existing server was not replaced or upgraded.
+
+The source connection held a repeatable-read, read-only transaction and exported a snapshot. `pg_dump --format=custom --snapshot=…` used that same snapshot with read-only transaction defaults. It included application schema/data and Prisma migration history. No data-only/table-filtered export was substituted. This backs up the single database, not cluster-wide roles, role passwords, tablespaces or external media. Restore mapped ownership/privileges to the existing local restore role; future recovery to another server needs a separately reviewed role/permission setup. See [PostgreSQL pg_dump](https://www.postgresql.org/docs/18/app-pgdump.html) and [pg_restore](https://www.postgresql.org/docs/18/app-pgrestore.html).
+
+The archive was restored with `--single-transaction --exit-on-error --no-owner --no-privileges` into a newly created database named `sakado_restore_20261009_8decf358`. No clean/reset/create operation targeted the original database. Verification compared all **15 tables** (14 application models plus `_prisma_migrations`), every row by sorted SHA-256 fingerprint, and columns/defaults, indexes, constraints and enums. Source and restored fingerprints matched. A subsequent read-only source comparison also matched: `originalUnchanged=true`.
+
+After application validation, a final read-only check again matched all 15 original table fingerprints and the dump/media checksums. The existing local server had stopped during the session interruption; it was temporarily started with read-only defaults for this check and then stopped. Local PostgreSQL is currently stopped; the temporary read-only startup option was not persisted.
+
+All **45** Instagram records remained `published=false`, `showOnHomepage=false`, `mediaType=INSTAGRAM_MEDIA`; every row's full fingerprint was preserved. The unrelated gallery image retained its original publication/authorization flags. The disposable restore database is retained as verification evidence; it contains copied authentication data, must never be configured as the application database, and may be removed only after explicitly verifying its name differs from the authoritative database. No original database changes were used for verification.
+
+For another backup/restore exercise:
+
+1. Identify the source without printing its URI/password. Use a new restricted directory outside Git; never overwrite the only verified dump. Supply libpq variables `PGHOST`, `PGPORT`, `PGUSER`, `PGPASSWORD`, `PGDATABASE` privately through the process environment, not a full URI in command-line arguments or logs.
+2. Use a pg_dump major version compatible with the server. Run a full custom-format dump; for exact comparison, coordinate an exported read-only snapshot as above. Record tool/server versions, SHA-256, size and pg_restore archive-list result.
+3. Create a fresh uniquely named disposable database on the verified local server. Reject any target equal to the source. Restore the trusted archive there with exit-on-error/single-transaction; do not use `--clean` or reset the source.
+4. Compare all row fingerprints and schema definitions, migrations, Instagram IDs/URLs/flags, and required media references. Store only counts/hashes in the report. Check the original again read-only. Mark the backup verified only if all checks pass.
+5. Keep the verified dump and media together. If cleaning up the disposable database, verify its exact name and connections first; never derive a delete target from an unvalidated environment variable.
+
+### Media proof and future migration
+
+The configured storage adapter remains local. The single file is `uploads/879605b7-d54d-4fc7-aca1-42303a26b326.webp`, **264,422 bytes**, SHA-256 `ac847f45641cb91bc1530bfd938f6dc44b7f1f98900851c9a2b66fa1b02eef37`. Its backup copy has the same hash. No original upload was moved, edited, deleted or reclassified. The hardware diagram remains unchanged pending explicit editorial review.
+
+Before managed deployment, choose a provider/region/budget and implement the existing MediaStorage interface against durable private object storage. Copy objects with stable keys, verify hashes, retain `/media/[key]` URLs, enforce current authorization/parent-publication policy, use remote-first/local-fallback reads during transition, test rights withdrawal and restart/redeploy persistence, then retire old copies only after a verified restore and agreed retention. Do not merely change MEDIA_STORAGE: unsupported adapters currently fail. No external storage adapter or resource was created in Phase 00.5.
+
+### Validation evidence and remaining gate
+
+An isolated Windows Node **24.19.0** / npm **11.17.0** source copy was created outside the working project. `npm ci --include=dev --no-audit --no-fund` succeeded: 412 packages installed. No real .env or source uploads/database files were copied. Validation uses an unreachable dummy DATABASE_URL; no migration, import, database fixture or administrator provisioning command runs.
+
+The following checks passed in that clean Windows copy: Prisma Client 6.19.3 generation; `next typegen && tsc --noEmit`; ESLint; **15 unit tests, 0 failures**; Next 16.4.0 production build; Sharp native WebP encoding. A temporary production server using the `start:hostinger` arguments accepted a process-level PORT, returned HTTP 200 for the demo homepage and robots.txt, and kept demo crawling blocked. It ran with database access disabled and was stopped afterward. These are Windows results, not Linux or Hostinger results. Evidence is in the restricted `validation-results.json`. No DB integration/E2E fixtures were run.
+
+Linux execution is **NOT RUN**: WSL is not installed and Docker is unavailable. `.github/workflows/linux-validation.yml` prepares the equivalent Ubuntu 24.04 / Node 24 checks, including native Sharp encoding. It has been parsed locally, but a valid workflow is not a passing run. Executing it requires an approved private GitHub push and manual dispatch, or a separately authorized Linux environment. Do not install an OS, publish the repository or claim Linux compatibility to work around this gate.
+
+Hostinger readiness remains conditional on Linux success, actual-plan port/proxy/TLS/native-module testing, external PostgreSQL, durable media storage, secret provisioning and restore rehearsal in staging. Phase 00.5 establishes recoverability for reversible local work; it does not authorize Phase 01 or deployment. Stop and request the next explicit task.

@@ -1,0 +1,65 @@
+name: Linux Node 24 validation
+
+# Local preparation only: no deployment job or automatic publish/push.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: linux-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CI: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+      # Deliberately unreachable: validation cannot mutate any real database.
+      DATABASE_URL: "postgresql://validation:validation@127.0.0.1:1/sakado_validation"
+      AUTH_SECRET: "ci-only-placeholder-never-a-production-secret-000000"
+      DEMO_MODE: "true"
+      SITE_URL: ""
+      ADMIN_URL: ""
+      TRUST_PROXY: "false"
+      MEDIA_STORAGE: "local"
+      MEDIA_LOCAL_DIR: "${{ runner.temp }}/sakado-validation-uploads"
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Confirm Linux and Node 24
+        run: |
+          test "$(uname -s)" = Linux
+          node -e "if (process.versions.node.split('.')[0] !== '24') process.exit(1)"
+          node --version
+          npm --version
+      - name: Install locked dependencies
+        run: npm ci --include=dev --no-audit --no-fund
+      - name: Generate Prisma Client (no migration)
+        run: npm run db:generate
+      - name: Generate Next types and validate TypeScript
+        run: npm run typecheck
+      - name: ESLint
+        run: npm run lint
+      - name: Unit tests only (no database fixtures)
+        run: npm test
+      - name: Sharp native module smoke check
+        run: |
+          node --input-type=module <<'NODE'
+          import sharp from "sharp";
+          const bytes = await sharp({
+            create: { width: 2, height: 2, channels: 3, background: "#163e35" },
+          }).webp().toBuffer();
+          if (!bytes.length) throw new Error("Sharp produced no output");
+          console.log("Sharp WebP encode passed");
+          NODE
+      - name: Production build
+        run: npm run build

@@ -8,7 +8,17 @@ Inspected: package/lockfile, installed framework guides, route families, Prisma 
 
 The two requested visual screenshots were not attached or identified in the workspace. `test-results/` contains earlier application QA captures, not the authoritative references. `home-fold-1440.png` was inspected as historical implementation evidence only. The two references, once supplied, govern composition, hierarchy and visual treatment; never copy their unrelated text, business claims or assets. Reference-specific design decisions are **TO BE CONFIRMED**.
 
-No `.git` entry exists in this workspace; `git` is unavailable on the current command path. Establish or locate a recoverable source-control baseline before code migration.
+At the Phase 00 audit there was no `.git` entry or Git command on PATH. Phase 00.5 established local history: baseline commit `0a0c542`, tag `phase-00-baseline`, approved local identity `SAKADO Local Baseline <baseline@localhost>`, and a verified external Git bundle. No remote is configured and nothing has been pushed. See the Phase 00.5 recovery record in [DEPLOYMENT](DEPLOYMENT.md).
+
+## Phase 00.5 safety status
+
+The existing application and Prisma schema are preserved. A full PostgreSQL custom-format dump was created and restored into a separate disposable local database. All 15 tables (14 application models plus Prisma migration history), row fingerprints, columns, indexes, constraints and enums matched; the source database was unchanged. All 45 Instagram records retain `published=false`, `showOnHomepage=false` and generic media type. The hardware-image record remains authorized/published and untouched.
+
+The single uploaded WebP was copied outside the repository and matched by SHA-256. Backup access is restricted to the local user and SYSTEM. Backups are local recovery copies, not off-device backups or proof of encryption at rest. Current local uploads still require a durable external adapter before managed deployment; this phase documents that migration without implementing it.
+
+Safety changes declare Node 24.x, add a separate `start:hostinger` script, generate Next route types before TypeScript, harden ignore rules, and provide an empty production environment template. No dependencies were upgraded. A manual Ubuntu/Node 24 CI workflow is prepared with pinned actions, dummy DB settings and no deployment or DB-fixture steps. Local Linux execution is unavailable (WSL not installed; no Docker), so Linux compatibility remains unverified until an authorized workflow run.
+
+The isolated Windows Node 24 clean install, Prisma generation, typecheck, ESLint, 15 unit tests, production build, Sharp encoding and demo startup/PORT smoke checks passed. Linux is explicitly NOT RUN. Current validation results and the exact recovery procedure are recorded in [DEPLOYMENT](DEPLOYMENT.md). This phase does not authorize Phase 01 or public deployment.
 
 ## Current architecture
 
@@ -223,6 +233,6 @@ Rollback is application-first: disable the proposed V2 flag or redeploy the prev
 - Existing QA screenshot and uploaded WebP were visually inspected; primary screenshots remain unavailable.
 - No migration/import/seed/account/publication/deployment executed. Full build, E2E, integration and vulnerability scans were not rerun for this documentation-only change; historical reports do not prove current readiness.
 
-**Next implementation task: Phase 1 — prepare a recoverable Hostinger staging deployment of the current app before visual changes.** Establish source control and verified DB/media backups, then implement durable storage and Node 24 startup/readiness against an isolated external PostgreSQL staging database. Acceptance: clean Linux build, successful restart/redeploy, identical media checksums and 45 preserved unpublished Instagram records. Reference/content confirmation can proceed alongside this technical work.
+**Phase 00.5 stop point:** local source recovery, verified DB/media backups and Windows validation are established. The next readiness check is an actual Linux run of the prepared workflow, after separate authorization to push to a private repository, or access to a suitable Linux environment. Phase 01 does not start automatically. Durable external storage and actual Hostinger staging remain future separately authorized work; acceptance still requires a clean Linux build, restart/redeploy persistence and preservation of media checksums and all 45 unpublished Instagram records.
 
 Specifications: [DESIGN_SYSTEM](DESIGN_SYSTEM.md), [MOTION_SYSTEM](MOTION_SYSTEM.md), [DATABASE](DATABASE.md), [DEPLOYMENT](DEPLOYMENT.md).

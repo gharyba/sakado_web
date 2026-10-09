@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
     "test:e2e": "node --env-file=.env --import tsx tests/browser/prepare.ts && node --env-file=.env node_modules/@playwright/test/cli.js test",
     "db:generate": "prisma generate",
@@ -19,7 +19,8 @@
     "admin:create": "node --env-file=.env --import tsx scripts/create-admin.ts",
     "db:local": "node scripts/local-postgres.mjs",
     "test:integration": "node --env-file=.env --import tsx tests/database.integration.ts",
-    "instagram:import": "node --env-file=.env --import tsx scripts/import-instagram-media.ts"
+    "instagram:import": "node --env-file=.env --import tsx scripts/import-instagram-media.ts",
+    "start:hostinger": "next start --hostname 0.0.0.0"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
@@ -47,5 +48,8 @@
     "prisma": "^6.19.0",
     "tsx": "^4.20.0",
     "typescript": "^5.9.0"
+  },
+  "engines": {
+    "node": "24.x"
   }
 }
