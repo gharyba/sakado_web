@@ -1,0 +1,11 @@
+node_modules
+.next
+package-lock.json
+next-env.d.ts
+test-results
+docs/lighthouse-mobile.json
+prisma/migrations
+prisma/schema.prisma
+*.db
+.local
+uploads

@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum EventStatus {
+  OPEN
+  FEW_PLACES
+  FULL
+  FINISHED
+  COMING_SOON
+}
+
+enum ContentSource {
+  CONFIRMED
+  DEMO
+}
+
+enum EnvironmentType {
+  FOREST
+  MOUNTAIN
+  BEACH
+  DESERT
+  COUNTRYSIDE
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model EventCategory {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  name        String
+  description String?
+  enabled     Boolean       @default(false)
+  order       Int           @default(0)
+  source      ContentSource @default(CONFIRMED)
+  events      Event[]
+}
+
+model Event {
+  id                  String              @id @default(cuid())
+  slug                String              @unique
+  title               String
+  shortDescription    String
+  description         String
+  coverImage          String?
+  location            String?
+  startsAt            DateTime?
+  endsAt              DateTime?
+  duration            String?
+  difficulty          String?
+  price               Decimal?
+  currency            String              @default("TND")
+  availablePlaces     Int?
+  maximumParticipants Int?
+  status              EventStatus         @default(COMING_SOON)
+  published           Boolean             @default(false)
+  source              ContentSource       @default(CONFIRMED)
+  included            Json?
+  excluded            Json?
+  equipment           Json?
+  meetingPoint        String?
+  importantInfo       String?
+  cancellationInfo    String?
+  categoryId          String?
+  category            EventCategory?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  destinationId       String?
+  destination         Destination?        @relation(fields: [destinationId], references: [id], onDelete: SetNull)
+  schedule            EventScheduleItem[]
+  gallery             GalleryImage[]
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  @@index([published, source, startsAt])
+}
+
+model Destination {
+  id          String           @id @default(cuid())
+  slug        String           @unique
+  name        String
+  region      String?
+  description String
+  coverImage  String?
+  latitude    Float?
+  longitude   Float?
+  difficulty  String?
+  environment EnvironmentType?
+  published   Boolean          @default(false)
+  source      ContentSource    @default(CONFIRMED)
+  events      Event[]
+  gallery     GalleryImage[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model EventScheduleItem {
+  id          String @id @default(cuid())
+  eventId     String
+  event       Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  day         Int
+  time        String?
+  title       String
+  description String?
+  order       Int    @default(0)
+  @@index([eventId, day, order])
+}
+
+model GalleryImage {
+  id            String        @id @default(cuid())
+  src           String
+  alt           String
+  caption       String?
+  category      String?
+  order         Int           @default(0)
+  authorized    Boolean       @default(false)
+  published     Boolean       @default(false)
+  source        ContentSource @default(CONFIRMED)
+  eventId       String?
+  event         Event?        @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  destinationId String?
+  destination   Destination?  @relation(fields: [destinationId], references: [id], onDelete: SetNull)
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model SiteSettings {
+  id                      String  @id @default("main")
+  content                 Json
+  instagramFollowersLabel String?
+  instagramPostsLabel     String?
+  communityMembersLabel   String?
+  updatedAt               DateTime @updatedAt
+}
+
+model SocialLink {
+  id      String  @id @default(cuid())
+  label   String
+  url     String
+  enabled Boolean @default(true)
+  order   Int     @default(0)
+}

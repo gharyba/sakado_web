@@ -1,0 +1,26 @@
+{
+  "name": "Sakado Admin",
+  "short_name": "Sakado",
+  "description": "L’espace de gestion de l’équipe Sakado.",
+  "id": "/admin",
+  "start_url": "/admin",
+  "scope": "/admin",
+  "display": "standalone",
+  "background_color": "#f6f7f2",
+  "theme_color": "#183c32",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/admin/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/admin/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
