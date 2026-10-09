@@ -5,11 +5,15 @@ import type { MotionEffect } from "@/lib/motion/policy";
 export function Motion({
   effect,
   distance,
+  scale,
+  initialOpacity,
   className = "",
   ...props
 }: HTMLAttributes<HTMLDivElement> & {
   effect: MotionEffect;
   distance?: number;
+  scale?: number;
+  initialOpacity?: number;
 }) {
   return (
     <div
@@ -17,6 +21,8 @@ export function Motion({
       className={className}
       data-motion={effect}
       data-motion-distance={distance}
+      data-motion-scale={scale}
+      data-motion-initial-opacity={initialOpacity}
     />
   );
 }

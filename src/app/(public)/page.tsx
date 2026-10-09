@@ -18,6 +18,8 @@ import { InstagramMediaMarquee } from "@/components/instagram-media-marquee";
 import { getInstagramMedia } from "@/lib/instagram-content";
 import { ContactCTA } from "@/components/contact-cta";
 import { Icon } from "@/components/icon";
+import { ParallaxHero } from "@/components/home/parallax-hero";
+import { resolveHeroMedia } from "@/lib/hero";
 export const metadata = pageMetadata(
   "Camping & randonnée en Tunisie",
   "Explorez la Tunisie avec Sakado Sfax. Découvrez les aventures, les expériences en pleine nature et les prochains événements.",
@@ -45,62 +47,11 @@ export default async function Home() {
   const why = settings.demo ? demoWhy : settings.whySakado;
   return (
     <>
-      <section className="hero" data-navigation-hero="dark">
-        <Image
-          unoptimized
-          src={settings.heroImage ?? "/images/camp.svg"}
-          alt={
-            settings.heroImage
-              ? "Une aventure en pleine nature avec Sakado Sfax"
-              : "Illustration temporaire d’un campement dans les montagnes, sans destination réelle"
-          }
-          fill
-          priority
-          sizes="100vw"
-          className="hero-image"
-        />
-        <div className="hero-shade" />
-        <div className="container hero-inner">
-          <div className="hero-copy">
-            <p className="eyebrow">
-              <span /> LE GRAND AIR VOUS ATTEND
-            </p>
-            <h1>
-              {settings.heroTitle.split(". ").map((part, index, arr) => (
-                <span key={part}>
-                  {part}
-                  {index < arr.length - 1 ? "." : ""}
-                </span>
-              ))}
-            </h1>
-            <p className="hero-description">{settings.tagline}</p>
-            <div className="hero-actions">
-              <Link className="button button-amber" href="/events">
-                Découvrir les prochaines aventures <Icon />
-              </Link>
-              <Link className="hero-secondary" href="/experiences">
-                Voir nos expériences <Icon size={17} />
-              </Link>
-            </div>
-            <div className="hero-footnote">
-              <Icon name="compass" size={22} />
-              <span>
-                La nature comme destination.
-                <br />
-                L’aventure comme état d’esprit.
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="hero-caption">
-          {settings.heroImage
-            ? "SAKADO SFAX · TUNISIE"
-            : "ILLUSTRATION TEMPORAIRE · PHOTO SAKADO À FOURNIR"}
-        </div>
-        <span className="hero-index" aria-hidden="true">
-          01 / L’APPEL DE LA NATURE
-        </span>
-      </section>
+      <ParallaxHero
+        title={settings.heroTitle}
+        description={settings.tagline}
+        media={resolveHeroMedia(settings.heroImage, process.env.NODE_ENV)}
+      />
       <div className="manifesto">
         <div className="container manifesto-inner">
           <span>

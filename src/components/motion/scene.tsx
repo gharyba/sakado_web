@@ -7,14 +7,15 @@ import { useMotionPreference } from "./preference";
 export function MotionScene({
   children,
   className = "",
+  enabled = true,
   ...props
-}: HTMLAttributes<HTMLDivElement>) {
+}: HTMLAttributes<HTMLDivElement> & { enabled?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const preference = useMotionPreference();
   const [ready, setReady] = useState(false);
   useEffect(() => {
     const root = ref.current;
-    if (!root || preference !== "on" || !window.matchMedia) return;
+    if (!root || !enabled || preference !== "on" || !window.matchMedia) return;
     let disposed = false;
     let cleanup: (() => void) | undefined;
     const start = async () => {
@@ -52,7 +53,7 @@ export function MotionScene({
       cleanup?.();
       setReady(false);
     };
-  }, [preference]);
+  }, [preference, enabled]);
   return (
     <div
       {...props}

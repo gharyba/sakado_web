@@ -6,6 +6,7 @@ export const motionEffects = [
   "image",
   "transition",
   "pin",
+  "text",
 ] as const;
 export type MotionEffect = (typeof motionEffects)[number];
 export type MotionTier = "static" | "mobile" | "tablet" | "desktop";
@@ -44,6 +45,7 @@ const caps: Record<MotionEffect, number> = {
   image: 12,
   transition: 24,
   pin: 0,
+  text: 12,
 };
 export function motionDistance(
   effect: MotionEffect,
@@ -81,4 +83,17 @@ export function canPin(input: {
 
 export function motionDemoEnabled(nodeEnv: string | undefined): boolean {
   return nodeEnv === "development";
+}
+
+export function motionScale(tier: MotionTier, requested = 1): number {
+  if (tier === "static" || tier === "mobile" || !Number.isFinite(requested))
+    return 1;
+  return (
+    1 +
+    (Math.max(1, Math.min(1.05, requested)) - 1) * (tier === "tablet" ? 0.4 : 1)
+  );
+}
+
+export function revealOpacity(requested = 0): number {
+  return Number.isFinite(requested) ? Math.max(0, Math.min(1, requested)) : 0;
 }

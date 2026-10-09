@@ -6,6 +6,8 @@ import {
   motionEffects,
   motionQueries,
   motionTier,
+  motionScale,
+  revealOpacity,
   type MotionEffect,
 } from "./policy";
 
@@ -39,6 +41,21 @@ export function mountScene(root: HTMLElement): () => void {
   const media = gsap.matchMedia();
   let live = true;
   const revealed = new WeakSet<HTMLElement>();
+  const originalStyles = new Map<HTMLElement, string | null>();
+  const rememberStyles = (element: HTMLElement) => {
+    if (!originalStyles.has(element))
+      originalStyles.set(element, element.getAttribute("style"));
+  };
+  const restoreStyles = (
+    elements: Iterable<HTMLElement> = originalStyles.keys(),
+  ) => {
+    for (const element of elements) {
+      const style = originalStyles.get(element);
+      if (style === undefined) continue;
+      if (style === null) element.removeAttribute("style");
+      else element.setAttribute("style", style);
+    }
+  };
   const context = gsap.context(() => {}, root);
   try {
     context.add(() => {
@@ -79,6 +96,7 @@ export function mountScene(root: HTMLElement): () => void {
                   short: conditions.short,
                 })
               ) {
+                rememberStyles(element);
                 ScrollTrigger.create({
                   trigger: element,
                   start: "top 20%",
@@ -88,6 +106,28 @@ export function mountScene(root: HTMLElement): () => void {
                   invalidateOnRefresh: true,
                 });
               }
+              continue;
+            }
+            if (effect === "text") {
+              // Semantic text only; essential controls never move or fade on scroll.
+              if (interactive || !distance) continue;
+              rememberStyles(element);
+              gsap.fromTo(
+                element,
+                { y: 0, opacity: 1 },
+                {
+                  y: -distance,
+                  opacity: 0.94,
+                  ease: "none",
+                  scrollTrigger: {
+                    trigger: root,
+                    start: "top top",
+                    end: "bottom top",
+                    scrub: true,
+                    invalidateOnRefresh: true,
+                  },
+                },
+              );
               continue;
             }
             if (
@@ -102,11 +142,23 @@ export function mountScene(root: HTMLElement): () => void {
                 element.getAttribute("aria-hidden") !== "true"
               )
                 continue;
+              rememberStyles(element);
               gsap.fromTo(
                 element,
-                { y: -distance / 2 },
+                {
+                  y: -distance / 2,
+                  ...(element.dataset.motionScale ? { scale: 1 } : {}),
+                },
                 {
                   y: distance / 2,
+                  ...(element.dataset.motionScale
+                    ? {
+                        scale: motionScale(
+                          tier,
+                          Number(element.dataset.motionScale),
+                        ),
+                      }
+                    : {}),
                   ease: "none",
                   scrollTrigger: {
                     trigger: root,
@@ -121,10 +173,15 @@ export function mountScene(root: HTMLElement): () => void {
             }
             // Reveals play once on entry, never hide future content while waiting for scroll.
             if (interactive || revealed.has(element)) continue;
+            rememberStyles(element);
             const tween = gsap.fromTo(
               element,
               {
-                opacity: 0,
+                opacity: revealOpacity(
+                  element.dataset.motionInitialOpacity === undefined
+                    ? undefined
+                    : Number(element.dataset.motionInitialOpacity),
+                ),
                 y: distance,
                 ...(effect === "image" && tier === "desktop"
                   ? { clipPath: "inset(6% 0 0 0)" }
@@ -152,6 +209,9 @@ export function mountScene(root: HTMLElement): () => void {
               },
             });
           }
+          // Delayed fromTo start states must never survive a media-context revert.
+          // Targets have one animation owner; preserve their exact pre-scene inline styles.
+          return () => restoreStyles(elements);
         },
         root,
       );
@@ -159,6 +219,8 @@ export function mountScene(root: HTMLElement): () => void {
   } catch (error) {
     media.revert();
     context.revert();
+    restoreStyles();
+    originalStyles.clear();
     activeScenes--;
     releaseUnusedEngine();
     throw error;
@@ -197,6 +259,8 @@ export function mountScene(root: HTMLElement): () => void {
     root.removeEventListener("error", loaded, true);
     media.revert();
     context.revert();
+    restoreStyles();
+    originalStyles.clear();
     activeScenes--;
     if (!activeScenes && refreshFrame) {
       cancelAnimationFrame(refreshFrame);
