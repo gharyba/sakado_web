@@ -3,6 +3,7 @@ import { publicOrigin } from "@/lib/content-policy";
 import "@/styles/tokens.css";
 import "@/styles/primitives.css";
 import "./globals.css";
+import "@/styles/cinematic.css";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: {

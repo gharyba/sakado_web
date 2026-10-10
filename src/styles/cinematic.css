@@ -1,0 +1,176 @@
+/* Phase 04: opt-in depth, stable interactive hit areas, readable static defaults. */
+.s-gallery-visual {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+.s-cinematic-gallery {
+  padding-block: var(--s-space-6, 1.5rem);
+}
+.s-gallery-controls {
+  display: flow-root;
+  margin-block: var(--s-space-6) var(--s-space-8);
+}
+.s-gallery-controls + .gallery-filters {
+  margin-top: 0;
+}
+.s-readiness-view h2 {
+  letter-spacing: -0.015em;
+}
+.s-readiness-view p.s-readiness-badge {
+  color: #78300b;
+}
+.s-cinematic-gallery .gallery-photo {
+  display: block;
+  isolation: isolate;
+}
+.s-cinematic-gallery .gallery-photo img {
+  transform: none;
+  transition: none;
+}
+.s-cinematic-gallery .gallery-photo:focus-visible {
+  outline: 3px solid var(--forest);
+  outline-offset: 4px;
+}
+.s-cinematic-gallery .s-gallery-visual {
+  transition: none;
+}
+.s-story-art {
+  min-width: 0;
+}
+.s-story-image {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.s-story-image img {
+  object-fit: cover;
+}
+.s-story-art .about-art {
+  width: auto;
+  margin-inline-end: var(--s-space-8);
+}
+.s-story-passage {
+  border-inline-start: 2px solid var(--sand);
+  padding-inline-start: var(--s-space-4, 1rem);
+}
+.s-story-passage + .s-story-passage {
+  margin-top: var(--s-space-6, 1.5rem);
+}
+.s-activity-surface .experience-category {
+  transition:
+    background-color 180ms,
+    border-color 180ms;
+}
+.s-activity-surface .experience-category:focus-visible {
+  outline: 3px solid var(--forest);
+  outline-offset: 4px;
+}
+.s-readiness-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 1rem;
+}
+.s-readiness-view {
+  min-width: 0;
+}
+.s-readiness-view .admin-panel {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.s-readiness-filename {
+  font-size: 0.85rem;
+}
+.s-readiness-badge {
+  font-weight: 700;
+  color: #78300b;
+  background: #fff0dc;
+  border-radius: 0.5rem;
+  padding: 0.6rem;
+}
+.s-readiness-fields {
+  margin: 1rem 0;
+}
+.s-readiness-fields dt {
+  font-weight: 700;
+  margin-top: 0.7rem;
+}
+.s-readiness-fields dd {
+  margin: 0.2rem 0 0;
+}
+.s-readiness-view ul {
+  padding-inline-start: 1.3rem;
+}
+@media (min-width: 1200px) and (min-height: 750px) {
+  .s-about-story[data-motion-state="ready"] .s-story-art {
+    position: sticky;
+    top: calc(var(--s-navigation-height) + 2rem);
+    align-self: start;
+  }
+}
+@media (min-width: 700px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .s-cinematic-gallery[data-cinematic-motion="on"] .gallery-photo {
+    perspective: 1000px;
+  }
+  .s-cinematic-gallery[data-cinematic-motion="on"] .s-gallery-visual {
+    transform: rotateY(-3deg) scale(0.98);
+    transition: transform 220ms ease-out;
+  }
+  .s-cinematic-gallery[data-cinematic-motion="on"]
+    .gallery-photo:nth-child(3n + 2)
+    .s-gallery-visual {
+    transform: scale(0.98);
+  }
+  .s-cinematic-gallery[data-cinematic-motion="on"]
+    .gallery-photo:nth-child(3n)
+    .s-gallery-visual {
+    transform: rotateY(3deg) scale(0.98);
+  }
+  .s-cinematic-gallery[data-cinematic-motion="on"]
+    .gallery-photo:hover
+    .s-gallery-visual {
+    transform: translateZ(16px);
+  }
+  .s-cinematic-gallery .gallery-photo:focus-visible .s-gallery-visual {
+    transform: none;
+    transition: none;
+  }
+  .s-activity-surface[data-cinematic-motion="on"] .experience-category > svg {
+    transition: transform 180ms ease-out;
+  }
+  .s-activity-surface[data-cinematic-motion="on"]
+    .experience-category:is(:hover, :focus-visible)
+    > svg {
+    transform: translateX(4px);
+  }
+}
+@media (min-width: 1200px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .s-cinematic-gallery[data-cinematic-motion="on"] .s-gallery-visual {
+    transform: rotateY(-5deg) scale(0.97);
+  }
+  .s-cinematic-gallery[data-cinematic-motion="on"]
+    .gallery-photo:nth-child(3n)
+    .s-gallery-visual {
+    transform: rotateY(5deg) scale(0.97);
+  }
+  .s-cinematic-gallery[data-cinematic-motion="on"]
+    .gallery-photo:hover
+    .s-gallery-visual {
+    transform: translateZ(16px);
+  }
+}
+@media (min-width: 700px) and (hover: hover) and (pointer: fine) {
+  .s-cinematic-gallery[data-cinematic-motion]
+    .gallery-photo:focus-visible
+    .s-gallery-visual {
+    transform: none;
+    transition: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .s-activity-surface .experience-category {
+    transition: none;
+  }
+}

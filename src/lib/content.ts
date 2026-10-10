@@ -2,11 +2,8 @@ import "server-only";
 import { cache } from "react";
 import type { Prisma } from "@prisma/client";
 import { db, databaseConfigured } from "./db";
-import {
-  demoEnabled,
-  approvedImagePath,
-  safeSocialUrl,
-} from "./content-policy";
+import { publicImagePath } from "./media-readiness";
+import { demoEnabled, safeSocialUrl } from "./content-policy";
 import {
   demoEvents,
   demoDestinations,
@@ -67,9 +64,9 @@ function photo(row: {
     demo: false,
   };
 }
-function event(
+async function event(
   row: Prisma.EventGetPayload<{ include: typeof eventInclude }>,
-): Adventure {
+): Promise<Adventure> {
   const state = lifecycle(row);
   const remaining =
     row.capacity === null
@@ -91,7 +88,7 @@ function event(
     title: row.title,
     shortDescription: row.shortDescription,
     description: row.description,
-    coverImage: approvedImagePath(row.coverImage),
+    coverImage: await publicImagePath(row.coverImage),
     location: row.location,
     startsAt: row.startsAt?.toISOString() ?? null,
     endsAt: row.endsAt?.toISOString() ?? null,
@@ -121,7 +118,7 @@ function event(
     importantInfo: row.importantInfo,
     cancellationInfo: row.cancellationInfo,
     schedule: row.schedule,
-    gallery: row.gallery.filter((i) => approvedImagePath(i.src)).map(photo),
+    gallery: await publicPhotos(row.gallery),
     lifecycle: state,
     registrationStatus: row.registrationStatus,
     canRegister:
@@ -135,18 +132,28 @@ function event(
     recap: row.recap,
   };
 }
+async function publicPhotos<T extends Parameters<typeof photo>[0]>(rows: T[]) {
+  const allowed = await Promise.all(
+    rows.map(async (row) =>
+      (await publicImagePath(row.src)) ? photo(row) : null,
+    ),
+  );
+  return allowed.filter((row): row is GalleryPhoto => row !== null);
+}
 export const getEvents = cache(async (): Promise<Adventure[]> =>
   demoEnabled()
     ? demoEvents
     : !databaseConfigured()
       ? []
-      : (
-          await db.event.findMany({
-            where: eventWhere,
-            include: eventInclude,
-            orderBy: { startsAt: "asc" },
-          })
-        ).map(event),
+      : Promise.all(
+          (
+            await db.event.findMany({
+              where: eventWhere,
+              include: eventInclude,
+              orderBy: { startsAt: "asc" },
+            })
+          ).map(event),
+        ),
 );
 export const getDestinations = cache(async (): Promise<Place[]> => {
   if (demoEnabled()) return demoDestinations;
@@ -156,12 +163,14 @@ export const getDestinations = cache(async (): Promise<Place[]> => {
     include: { gallery: { where: galleryWhere, orderBy: { order: "asc" } } },
     orderBy: [{ featured: "desc" }, { name: "asc" }],
   });
-  return rows.map((row) => ({
-    ...row,
-    coverImage: approvedImagePath(row.coverImage),
-    demo: false,
-    gallery: row.gallery.filter((i) => approvedImagePath(i.src)).map(photo),
-  }));
+  return Promise.all(
+    rows.map(async (row) => ({
+      ...row,
+      coverImage: await publicImagePath(row.coverImage),
+      demo: false,
+      gallery: await publicPhotos(row.gallery),
+    })),
+  );
 });
 export const getExperiences = cache(async (): Promise<Experience[]> =>
   demoEnabled()
@@ -180,17 +189,15 @@ export const getGallery = cache(async (): Promise<GalleryPhoto[]> =>
     ? demoGallery
     : !databaseConfigured()
       ? []
-      : (
+      : publicPhotos(
           await db.galleryImage.findMany({
             where: galleryWhere,
             orderBy: [{ featured: "desc" }, { order: "asc" }],
-          })
-        )
-          .filter((i) => approvedImagePath(i.src))
-          .map(photo),
+          }),
+        ),
 );
 export const getSocialLinks = cache(async () =>
-  databaseConfigured()
+  !demoEnabled() && databaseConfigured()
     ? (
         await db.socialLink.findMany({
           where: { enabled: true },

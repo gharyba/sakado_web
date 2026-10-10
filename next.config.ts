@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 const config: NextConfig = {
   poweredByHeader: false,
+  outputFileTracingIncludes: {
+    "/*": [
+      "./docs/media/asset-manifest.json",
+      "./docs/media/media-04-publication-readiness.json",
+    ],
+  },
   experimental: { authInterrupts: true },
   async headers() {
     return [

@@ -3,10 +3,19 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import type { GalleryPhoto } from "@/lib/types";
 import { Icon } from "./icon";
-export function Gallery({ photos }: { photos: GalleryPhoto[] }) {
+import { useMotionPreference } from "./motion/preference";
+export function Gallery({
+  photos,
+  cinematic = false,
+}: {
+  photos: GalleryPhoto[];
+  cinematic?: boolean;
+}) {
   const [selected, setSelected] = useState<GalleryPhoto | null>(null);
   const [category, setCategory] = useState("Tout");
   const dialog = useRef<HTMLDialogElement>(null);
+  const opener = useRef<HTMLAnchorElement>(null);
+  const preference = useMotionPreference();
   const categories = [
     "Tout",
     ...new Set(
@@ -40,26 +49,42 @@ export function Gallery({ photos }: { photos: GalleryPhoto[] }) {
           </button>
         ))}
       </div>
-      <div className="gallery-grid">
+      <div
+        className={`gallery-grid${cinematic ? " s-cinematic-gallery" : ""}`}
+        data-cinematic-motion={preference === "on" ? "on" : "static"}
+      >
         {photos
           .filter((photo) => category === "Tout" || photo.category === category)
           .map((photo) => (
-            <button
+            <a
               key={photo.id}
               className="gallery-photo"
-              onClick={() => {
+              href={photo.src}
+              onClick={(event) => {
+                if (
+                  !dialog.current?.showModal ||
+                  event.metaKey ||
+                  event.ctrlKey ||
+                  event.shiftKey ||
+                  event.altKey
+                )
+                  return;
+                event.preventDefault();
+                opener.current = event.currentTarget;
                 setSelected(photo);
                 dialog.current?.showModal();
               }}
               aria-label={`${photo.caption ?? photo.alt}${photo.demo ? " Illustration · Démo" : ""} — Agrandir : ${photo.alt}`}
             >
-              <Image
-                unoptimized
-                src={photo.src}
-                alt={photo.alt}
-                fill
-                sizes="(max-width: 700px) 100vw, 33vw"
-              />
+              <div className="s-gallery-visual" aria-hidden="true">
+                <Image
+                  unoptimized
+                  src={photo.src}
+                  alt=""
+                  fill
+                  sizes="(max-width: 700px) 100vw, 33vw"
+                />
+              </div>
               <span>
                 {photo.caption ?? photo.alt}
                 {photo.demo && <small>Illustration · Démo</small>}
@@ -67,7 +92,7 @@ export function Gallery({ photos }: { photos: GalleryPhoto[] }) {
               <span className="gallery-plus" aria-hidden="true">
                 +
               </span>
-            </button>
+            </a>
           ))}
       </div>
       <dialog
@@ -76,7 +101,10 @@ export function Gallery({ photos }: { photos: GalleryPhoto[] }) {
         onClick={(e) => {
           if (e.target === e.currentTarget) dialog.current?.close();
         }}
-        onClose={() => setSelected(null)}
+        onClose={() => {
+          setSelected(null);
+          opener.current?.focus();
+        }}
         aria-label="Visionneuse d’images"
       >
         <button

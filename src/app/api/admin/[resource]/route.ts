@@ -1,12 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { ZodError } from "zod";
-import { authorizeApi, sameOrigin, jsonError, readJson, RequestError } from "@/lib/http-security";
+import {
+  authorizeApi,
+  sameOrigin,
+  jsonError,
+  readJson,
+  RequestError,
+} from "@/lib/http-security";
 import { db } from "@/lib/db";
 import { mutate } from "@/lib/admin-mutations";
 import { BusinessError } from "@/lib/bookings";
 import type { Permission } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
+import { guardMediaSelection } from "@/lib/media-mutation-guard";
 const resources: Permission[] = [
   "events",
   "bookings",
@@ -31,19 +38,18 @@ export async function POST(
   if (Number(request.headers.get("content-length") ?? 0) > 250000)
     return jsonError("Demande trop volumineuse.", 413);
   try {
-    const result = await mutate(
-      db,
-      resource as Permission,
-      await readJson(request, 250000),
-      auth.user,
-    );
+    const input = await readJson(request, 250000);
+    await guardMediaSelection(resource, input);
+    const result = await mutate(db, resource as Permission, input, auth.user);
     revalidatePath("/", "layout");
     return NextResponse.json(result, {
       headers: { "Cache-Control": "private, no-store" },
     });
   } catch (error) {
-    if (error instanceof RequestError) return jsonError(error.message, error.status);
-    if (error instanceof SyntaxError) return jsonError("Format du programme ou des liens invalide.", 400);
+    if (error instanceof RequestError)
+      return jsonError(error.message, error.status);
+    if (error instanceof SyntaxError)
+      return jsonError("Format du programme ou des liens invalide.", 400);
     if (error instanceof ZodError)
       return jsonError(
         "Vérifiez le champ " +

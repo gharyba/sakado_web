@@ -8,6 +8,7 @@ export default defineConfig([
     ".next/**",
     ".local/**",
     "uploads/**",
+    "SAKADO-MEDIA/**",
     "test-results/**",
     "next-env.d.ts",
   ]),

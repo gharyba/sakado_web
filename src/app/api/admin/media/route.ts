@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authorizeApi, sameOrigin, jsonError, readBounded, RequestError } from "@/lib/http-security";
+import {
+  authorizeApi,
+  sameOrigin,
+  jsonError,
+  readBounded,
+  RequestError,
+} from "@/lib/http-security";
 import { normalizeImage, storage } from "@/lib/storage";
 import { db } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limit";
+import { canUseMediaBytes } from "@/lib/media-readiness";
 export async function POST(request: NextRequest) {
   const auth = await authorizeApi("gallery");
   if (auth.response) return auth.response;
@@ -13,13 +20,30 @@ export async function POST(request: NextRequest) {
     return jsonError("Trop de fichiers. Réessayez plus tard.", 429);
   try {
     const bytes = await readBounded(request, 11 * 1024 * 1024);
-    const form = await new Response(new Uint8Array(bytes), { headers: { "Content-Type": request.headers.get("content-type") ?? "" } }).formData();
+    const form = await new Response(new Uint8Array(bytes), {
+      headers: { "Content-Type": request.headers.get("content-type") ?? "" },
+    }).formData();
     const file = form.get("file");
     if (!(file instanceof File)) return jsonError("Choisissez une photo.", 400);
     const alt = String(form.get("alt") ?? "").trim();
     if (alt.length < 2 || alt.length > 300)
       return jsonError("Décrivez la photo (2 à 300 caractères).", 400);
+    if (
+      !(await canUseMediaBytes(
+        new Uint8Array(await file.arrayBuffer()),
+        file.name,
+      ))
+    )
+      return jsonError(
+        "Photo bloquée : validation humaine des droits requise avant import.",
+        409,
+      );
     const optimized = await normalizeImage(file);
+    if (!(await canUseMediaBytes(optimized, file.name)))
+      return jsonError(
+        "Cette version optimisée doit être validée avant import.",
+        409,
+      );
     const src = await storage().put(optimized);
     try {
       await db.$transaction(async (tx) => {
@@ -52,7 +76,8 @@ export async function POST(request: NextRequest) {
       { headers: { "Cache-Control": "private, no-store" } },
     );
   } catch (error) {
-    if (error instanceof RequestError) return jsonError(error.message, error.status);
+    if (error instanceof RequestError)
+      return jsonError(error.message, error.status);
     return jsonError(
       "Image refusée. Utilisez un JPEG, PNG ou WebP valide de 10 Mo maximum.",
       400,

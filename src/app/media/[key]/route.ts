@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db, databaseConfigured } from "@/lib/db";
+import { demoEnabled } from "@/lib/content-policy";
+import { canUseMediaBytes } from "@/lib/media-readiness";
 import { currentAdmin } from "@/lib/auth";
 import { storage } from "@/lib/storage";
 export async function GET(
@@ -7,7 +9,11 @@ export async function GET(
   { params }: { params: Promise<{ key: string }> },
 ) {
   const { key } = await params;
-  if (!/^[0-9a-f-]{36}\.webp$/.test(key))
+  if (
+    demoEnabled() ||
+    !databaseConfigured() ||
+    !/^[0-9a-f-]{36}\.webp$/.test(key)
+  )
     return new NextResponse(null, { status: 404 });
   const src = "/media/" + key;
   const image = await db.galleryImage.findFirst({
@@ -30,7 +36,7 @@ export async function GET(
     image.source === "CONFIRMED" &&
     publicParents;
   let publicCover = false;
-  if (image.authorized && image.source === "CONFIRMED") {
+  if (image.authorized && image.source === "CONFIRMED" && publicParents) {
     const [events, places, settings] = await Promise.all([
       db.event.count({
         where: {
@@ -61,6 +67,8 @@ export async function GET(
     return new NextResponse(null, { status: 404 });
   try {
     const bytes = await storage().read(key);
+    if (!(await canUseMediaBytes(bytes, key)))
+      return new NextResponse(null, { status: 404 });
     return new NextResponse(new Uint8Array(bytes), {
       headers: {
         "Content-Type": "image/webp",

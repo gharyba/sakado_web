@@ -14,12 +14,21 @@ import { serializable } from "@/lib/transactions";
 import { instagramMediaSchema } from "@/lib/instagram-policy";
 import { importInstagramMedia } from "@/lib/instagram-import";
 import { id } from "@/lib/admin-validation";
+import { mediaSelectionAllowed } from "@/lib/media-readiness";
 export async function POST(request: NextRequest) {
   const auth = await authorizeApi("gallery");
   if (auth.response) return auth.response;
   if (!sameOrigin(request)) return jsonError("Origine non autorisée.", 403);
   try {
     const input = await readJson(request, 60000);
+    if (
+      (input.intent ?? "save") === "save" &&
+      !(await mediaSelectionAllowed(input.previewImage))
+    )
+      throw new RequestError(
+        "Aperçu bloqué : autorisation de publication requise.",
+        409,
+      );
     const result = await serializable(db, async (tx) => {
       const intent = String(input.intent ?? "save");
       let entityId = "bulk";

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "@/components/link";
 import {
   getEvents,
@@ -20,6 +19,8 @@ import { ContactCTA } from "@/components/contact-cta";
 import { Icon } from "@/components/icon";
 import { ParallaxHero } from "@/components/home/parallax-hero";
 import { resolveHeroMedia } from "@/lib/hero";
+import { AboutStory } from "@/components/home/about-story";
+import { MotionSurface } from "@/components/motion/surface";
 export const metadata = pageMetadata(
   "Camping & randonnée en Tunisie",
   "Explorez la Tunisie avec Sakado Sfax. Découvrez les aventures, les expériences en pleine nature et les prochains événements.",
@@ -99,7 +100,7 @@ export default async function Home() {
             title="Quelle aventure vous ressemble ?"
           />
           {categories.length ? (
-            <div className="experience-grid">
+            <MotionSurface className="experience-grid s-activity-surface">
               {categories.map((category, index) => (
                 <ExperienceCategory
                   key={category.id}
@@ -107,7 +108,7 @@ export default async function Home() {
                   index={index}
                 />
               ))}
-            </div>
+            </MotionSurface>
           ) : (
             <p>
               Les expériences seront publiées après confirmation par Sakado.
@@ -115,40 +116,12 @@ export default async function Home() {
           )}
         </div>
       </section>
-      <section className="section container about-section">
-        <div className="about-art">
-          <Image
-            unoptimized
-            src="/images/trail.svg"
-            alt="Illustration temporaire d’un sentier en pleine nature"
-            fill
-            sizes="(max-width: 700px) 100vw, 50vw"
-          />
-          <span className="about-stamp">
-            <Icon name="compass" size={32} />
-            <strong>
-              PRENDRE
-              <br />
-              LE LARGE.
-            </strong>
-          </span>
-          <small>Illustration temporaire</small>
-        </div>
-        <div className="about-copy">
-          <p className="eyebrow">SAKADO SFAX · TUNISIE</p>
-          <h2>
-            L’aventure commence
-            <br />
-            avec Sakado.
-          </h2>
-          <p>{settings.about}</p>
-          {settings.sinceYear && <p>Depuis {settings.sinceYear}</p>}
-          <Link className="text-link" href="/about">
-            Rencontrer l’esprit Sakado <Icon />
-          </Link>
-          <div className="about-signature">Dehors, tout commence.</div>
-        </div>
-      </section>
+      <AboutStory
+        about={settings.about}
+        story={settings.story}
+        mission={settings.mission}
+        sinceYear={settings.sinceYear}
+      />
       <section className="section section-sand">
         <div className="container">
           <SectionHeading
@@ -190,7 +163,9 @@ export default async function Home() {
           href="/gallery"
           linkText="Ouvrir la galerie"
         />
-        {settings.galleryPreview && <Gallery photos={photos.slice(0, 6)} />}
+        {settings.galleryPreview && (
+          <Gallery photos={photos.slice(0, 6)} cinematic />
+        )}
       </section>
       {why.length > 0 && (
         <section className="why-section">

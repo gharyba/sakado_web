@@ -3,11 +3,8 @@ import { cache } from "react";
 import { z } from "zod";
 import { confirmedSite } from "@/data/confirmed/site";
 import { db, databaseConfigured } from "./db";
-import {
-  approvedImagePath,
-  demoEnabled,
-  safeSocialUrl,
-} from "./content-policy";
+import { publicImagePath } from "./media-readiness";
+import { demoEnabled, safeSocialUrl } from "./content-policy";
 const editableSettings = z
   .object({
     footerText: z.string(),
@@ -41,9 +38,10 @@ const editableSettings = z
   })
   .partial();
 export const getSettings = cache(async () => {
-  const record = databaseConfigured()
-    ? await db.siteSettings.findUnique({ where: { id: "main" } })
-    : null;
+  const record =
+    !demoEnabled() && databaseConfigured()
+      ? await db.siteSettings.findUnique({ where: { id: "main" } })
+      : null;
   const settings = {
     ...confirmedSite,
     whatsappNumber: process.env.WHATSAPP_NUMBER || null,
@@ -54,8 +52,8 @@ export const getSettings = cache(async () => {
   };
   return {
     ...settings,
-    logoPath: approvedImagePath(settings.logoPath),
-    heroImage: approvedImagePath(settings.heroImage),
+    logoPath: await publicImagePath(settings.logoPath),
+    heroImage: await publicImagePath(settings.heroImage),
     instagramFollowersLabel: record?.instagramFollowersLabel ?? null,
     instagramPostsLabel: record?.instagramPostsLabel ?? null,
     communityMembersLabel: record?.communityMembersLabel ?? null,

@@ -1,7 +1,8 @@
 import "server-only";
 import type { Prisma } from "@prisma/client";
 import { db, databaseConfigured } from "./db";
-import { approvedImagePath } from "./content-policy";
+import { publicImagePath } from "./media-readiness";
+import { demoEnabled } from "./content-policy";
 import {
   normalizeInstagramUrl,
   HOMEPAGE_MEDIA_LIMIT,
@@ -36,7 +37,7 @@ export async function getInstagramMedia({
   eventId?: string;
   destinationId?: string;
 } = {}) {
-  if (!databaseConfigured())
+  if (demoEnabled() || !databaseConfigured())
     return { items: [] as InstagramMediaItem[], hasMore: false };
   const take = homepage ? HOMEPAGE_MEDIA_LIMIT : MEDIA_PAGE_SIZE;
   const rows = await db.instagramMedia.findMany({
@@ -82,19 +83,21 @@ export async function getInstagramMedia({
       })
     ).map((p) => p.src),
   );
-  const items = rows.slice(0, take).flatMap((row) => {
-    const instagramUrl = normalizeInstagramUrl(row.instagramUrl);
-    return instagramUrl
-      ? [
-          {
-            ...row,
-            instagramUrl,
-            previewImage: allowed.has(row.previewImage ?? "")
-              ? approvedImagePath(row.previewImage)
-              : null,
-          },
-        ]
-      : [];
-  });
+  const items = (
+    await Promise.all(
+      rows.slice(0, take).map(async (row) => {
+        const instagramUrl = normalizeInstagramUrl(row.instagramUrl);
+        return instagramUrl
+          ? {
+              ...row,
+              instagramUrl,
+              previewImage: allowed.has(row.previewImage ?? "")
+                ? await publicImagePath(row.previewImage)
+                : null,
+            }
+          : null;
+      }),
+    )
+  ).filter((item): item is NonNullable<typeof item> => item !== null);
   return { items, hasMore: rows.length > take };
 }
