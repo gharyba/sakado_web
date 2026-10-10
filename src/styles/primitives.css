@@ -1,0 +1,160 @@
+/* Namespaced opt-in styles: legacy public pages and admin keep their CSS. */
+.s-foundation {
+  background: var(--s-color-canvas);
+  color: var(--s-color-ink);
+  font: var(--s-text-body)/1.6 var(--s-font-body);
+  overflow-wrap: anywhere;
+}
+.s-container {
+  width: min(var(--s-container), calc(100% - 2 * var(--s-gutter)));
+  margin-inline: auto;
+  min-width: 0;
+}
+.s-container--reading {
+  max-width: var(--s-measure);
+}
+.s-section {
+  padding-block: var(--s-section-space);
+  scroll-margin-top: 6rem;
+}
+.s-section--compact {
+  padding-block: var(--s-space-12);
+}
+.s-section--muted {
+  background: var(--s-color-muted-surface);
+}
+.s-section--dark {
+  background: var(--s-color-dark);
+  color: var(--s-color-inverse);
+  --s-color-focus: var(--s-color-focus-inverse);
+}
+.s-stack > * + * {
+  margin-block-start: var(--s-space-6);
+}
+.s-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-space-3);
+  align-items: center;
+}
+.s-display,
+.s-title,
+.s-heading {
+  font-family: var(--s-font-display);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+.s-display {
+  font-size: var(--s-text-display);
+}
+.s-title {
+  font-size: var(--s-text-title);
+}
+.s-heading {
+  font-size: var(--s-text-heading);
+}
+.s-lead {
+  font-size: var(--s-text-lead);
+  max-width: var(--s-measure);
+}
+.s-caption {
+  font-size: var(--s-text-caption);
+}
+.s-eyebrow {
+  font-size: var(--s-text-caption);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.s-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-space-2);
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  padding: var(--s-space-3) var(--s-space-6);
+  border: 1px solid var(--s-color-dark);
+  border-radius: var(--s-radius-control);
+  background: var(--s-color-dark);
+  color: var(--s-color-inverse);
+  font-size: var(--s-text-caption);
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background-color var(--s-duration-fast),
+    color var(--s-duration-fast);
+}
+.s-button--secondary {
+  background: var(--s-color-surface);
+  color: var(--s-color-ink);
+}
+.s-button--text {
+  background: transparent;
+  color: inherit;
+  border-color: transparent;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.s-button:hover:not(:disabled) {
+  background: var(--s-color-muted-surface);
+  color: var(--s-color-ink);
+}
+.s-button:active:not(:disabled) {
+  background: var(--s-color-border);
+  color: white;
+}
+.s-button:disabled,
+.s-button[aria-busy="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.s-foundation :focus-visible,
+.s-button:focus-visible {
+  outline: 3px solid var(--s-color-focus);
+  outline-offset: 4px;
+}
+.s-media {
+  position: relative;
+  overflow: clip;
+  isolation: isolate;
+  aspect-ratio: 3 / 2;
+  background: var(--s-color-muted-surface);
+  border-radius: var(--s-radius-card);
+}
+.s-media--portrait {
+  aspect-ratio: 4 / 5;
+}
+.s-media--wide {
+  aspect-ratio: 16 / 9;
+}
+.s-media--square {
+  aspect-ratio: 1;
+}
+.s-media > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.s-motion-scene {
+  position: relative;
+  min-width: 0;
+}
+.s-motion-layer {
+  pointer-events: none;
+}
+/* No pre-hydration opacity/visibility rules. Static content is the baseline. */
+@media (prefers-reduced-motion: reduce) {
+  .s-button {
+    transition: none;
+  }
+  [data-motion] {
+    transform: none !important;
+    opacity: 1 !important;
+    clip-path: none !important;
+  }
+}

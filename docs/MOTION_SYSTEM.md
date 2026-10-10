@@ -1,12 +1,12 @@
 # SAKADO 2.0 — motion system
 
-Status: proposed, 2026-10-09. Motion enhances the server-rendered experience; it never owns business rules. Primary screenshots and exact visual choreography: **TO BE CONFIRMED**.
+Status: Phase 01 engine and Phase 03 single-image hero choreography implemented, 2026-10-09. Motion enhances server-rendered content; it never owns business rules. Multi-plane choreography and approved image assets remain **TO BE CONFIRMED**.
 
 ## Boundaries
 
 Server content services validate/query approved content and supply serializable display props. Components under proposed `src/components/motion/` own element refs, local progress and visual transforms only. They cannot import Prisma, auth, booking, admin mutations or storage services. No scroll event creates a booking, publishes content, sends analytics by default or fetches all records.
 
-There is no installed motion framework. Begin with CSS transforms/transitions, sticky positioning, IntersectionObserver and a small shared requestAnimationFrame coordinator. Add a library only if a measured requirement cannot be met within budgets. CSS perspective satisfies the initial 3D photo-gallery direction without requiring a canvas/WebGL engine.
+Phase 01 explicitly authorizes GSAP 3.15.0 and its bundled ScrollTrigger. No separate React animation package, smooth-scroll engine or WebGL dependency is added. A client scene dynamically imports the engine only when enabled, motion is allowed and its scope approaches the viewport. Phase 03 mounts a homepage scene but disables it when no hero media is selected; production's current asset-free hero loads no engine. CSS perspective remains the future gallery direction; no gallery was implemented.
 
 ## Enhancement levels
 
@@ -42,13 +42,27 @@ Duration tokens: instant 0ms, fast 160ms, standard 240ms, reveal 400ms. Interact
 
 ## Runtime lifecycle and performance
 
-One active frame coordinator for visible scroll scenes, with delta clamping after tab resume. Read layout in a batched measurement phase; write transforms/opacity in a separate phase. Cache bounds with ResizeObserver and resize/orientation handling; do not call getBoundingClientRect for every element on every frame. Use refs/CSS variables for frame updates, not React state on each scroll tick.
+ScrollTrigger owns scroll scheduling and cached bounds. There is no component scroll listener or custom continuous requestAnimationFrame loop. React state changes at initialization/preferences, never on scroll ticks. ResizeObserver compares sizes; a shared one-frame refresh coordinator batches invalidations from dimensions, image load/error and font readiness. Direct scrub uses native scroll progress and transform writes, without smoothing or wheel interception. GSAP retains its shared internal scheduling while scenes are mounted; do not claim zero library work offscreen.
 
 Attach passive listeners, pause on document visibility change, detach on unmount and route changes, and cancel scheduled frames. Do not leave all layers permanently promoted with will-change. Pause offscreen video if video is later approved; no autoplay video is in initial scope. Avoid animated blur, large shadows, background-position and layout properties.
 
 The existing Instagram loop reads group width each frame and duplicates groups for looping. Preserve its pause/focus/touch behavior while measuring width outside the hot loop. Duplicate groups must be hidden from assistive navigation and non-focusable; semantic original links must remain discoverable without opening a JS-only modal. This is a hardening requirement, not a claim that all no-JS behavior exists already.
 
-Budget: incremental motion JS ≤ 30 KiB compressed; aim for 60fps with motion scripting ≤ 4ms/frame on a representative mid-range phone and no motion-attributable task >50ms. If traces fail, reduce layers or flatten the effect before adding a heavier engine.
+Original budget: incremental motion JS ≤ 30 KiB compressed; aim for 60fps with motion scripting ≤ 4ms/frame on a representative mid-range phone and no motion-attributable task >50ms. Phase 01 measured the production GSAP/ScrollTrigger/runtime chunk at 45,132 gzip bytes (44.1 KiB), exceeding that target. This is an explicit exception following the requested GSAP installation, not a passing budget claim. It is lazy and absent from the existing public homepage. Re-measure and review the budget before public integration; no representative-device frame-rate claim is made.
+
+## Phase 01 API
+
+- `Motion` is server-compatible markup: `effect` is background/foreground/reveal/image/transition/pin; optional numeric `distance` is bounded by `src/lib/motion/policy.ts`. It is engineering configuration, never arbitrary CMS input.
+- `MotionScene` wraps server-rendered children with a small client controller. Scope nested scenes separately; use a React key when content revisions change. No business services enter the engine.
+- `MotionToggle` supplies a shared local preference. System reduced motion always wins. Storage failure uses session memory; visibility and save-data changes return to static. Include a visible toggle on every future motion-enabled page.
+
+Use positioned, overscanned decorative layers inside clipped media frames for background/foreground/transition. These effects require aria-hidden=true and no interactive descendants. Keep prose/actions outside translated layers. Reveals exclude interactive descendants, start once on entry and do not pre-hide waiting content. Images use a shallow desktop clip/translation/opacity; mobile uses opacity alone. Already-entered reveals do not repeat on breakpoint changes within a mounted scene.
+
+Responsive policy: <700px or coarse pointer uses opacity reveals with no depth/pin; 700–1199px uses 40% capped travel without pin; ≥1200px/fine pointer permits full bounded effects. Pin requires viewport height ≥700px, a panel ≤65% of viewport height and no focusable descendants. It uses pinSpacing=true and lasts at most 60vh/600px. Keep panel dimensions stable, reserve image space, remount after content revisions, and never nest pins or transform their ancestors. Caps: background 80px, foreground 120px, reveal/image 12px, transition 24px; reveal 240ms mobile/400ms otherwise.
+
+The runtime uses scoped gsap.context and gsap.matchMedia; cleanup reverts owned timelines, triggers, pin spacers and inline styles, disconnects observers/listeners and ignores pending imports/font callbacks. The last scene cancels pending refresh and disables the global engine only if no other triggers remain. Preference subscriptions attach once and remove listeners after the last consumer; motion-off/hidden/reduced states revert scenes to readable static content. No killAll or global scroll hijacking is used. Sources: [GSAP matchMedia](<https://gsap.com/docs/v3/GSAP/gsap.matchMedia()/>), [ScrollTrigger](https://gsap.com/docs/v3/Plugins/ScrollTrigger/), [React integration](https://gsap.com/resources/React/).
+
+The development-only `/dev/motion` route shows all six effects using abstract shapes and the existing placeholder trail SVG. It reads no database, is not linked in production navigation and returns 404 in production, with noindex/noarchive metadata/headers. The guarded route may remain in build artifacts; it is not a confidential-content boundary. See [PHASE_01](PHASE_01.md) for reproduction commands, actual checks and remaining limitations.
 
 ## Accessibility requirements
 
@@ -61,3 +75,25 @@ Pause marquee on focus/hover/pointer interaction; explicit Pause persists until 
 Test no JS, hydration failure, reduced motion at load and toggled live, site motion-off, save-data fallback, mouse/keyboard/touch, screen reader reading order, 320px width, 200–400% zoom, short landscape viewport, resize/orientation, background/foreground tab, modal open/close, route back/forward and missing images.
 
 Acceptance: the same information and primary actions exist with motion off; no content/CTA is hidden pending scroll; no CLS from scene initialization; no body overflow or trapped scroll; no duplicate focus stops; no hydration warning; no ongoing offscreen work. Capture performance traces and desktop/mobile screenshots with actual approved assets. Reference-driven choreography remains blocked on the two missing visual references, while baseline architecture can proceed.
+
+## Phase 02 navigation lifecycle
+
+The navbar deliberately does not import the GSAP runtime. CSS handles 240ms surface/color/veil transitions and a 160ms mobile panel opacity/8px entrance/exit. No blur, global smooth scrolling, scroll handlers or animation frame loop is added. IntersectionObserver watches the marked homepage hero with a header-height root margin; ResizeObserver reconnects only on a height change. Both disconnect on route changes/unmount. Native dialog events handle keyboard containment, Escape, backdrop close and restoration; a single breakpoint listener closes an open modal on desktop. Close timers and scroll-lock styles are cleaned up on close/unmount, and route navigation closes immediately.
+
+`useMotionPreference` is reused without modifying its shared subscriptions. Reduced motion, user disable, save-data, pending initialization and hidden documents disable navigation transitions, including button transitions. The native disclosure is the server/no-JS/unsupported-dialog fallback and has matching geometry to the enhanced control. There is no ongoing or decorative automatic animation requiring a new pause control. Chrome checks cover saved preferences, reduced motion, focus, responsive reflow, API fallbacks and server/hydrated geometry. The travel reference is now available for navigation; hero choreography and the second reference remain pending. See [PHASE_02](PHASE_02.md).
+
+## Phase 03 hero and API additions
+
+`MotionScene enabled={false}` keeps static HTML and avoids importing the engine. Defaults preserve existing scenes. `Motion` now accepts optional bounded `scale` and `initialOpacity`; omitted values preserve earlier behavior. A new `text` effect permits semantic, noninteractive copy to drift at most 12px with opacity no lower than 0.94. It rejects controls/interactive descendants. Background/foreground/transition remain decoration-only and require aria-hidden. One owner per transform; nested reveal/text effects use different wrappers, never the same target.
+
+The hero uses one image plane: background distance 64px (−32 to +32) and scale 1→1.035 on desktop; tablet uses 40% travel and scale 1→1.014. Semantic text drifts 0→−10px (−4px tablet), opacity 1→0.94, with a separate one-time 0.65→1 / 10px entrance. Mobile/coarse pointers remove scroll-linked transforms and scale; entrance is opacity-only for 240ms. Reduced motion/user disable/save-data/hidden states restore static presentation. CTAs, frame geometry, lower panel and MotionToggle are never revealed, translated or animation-gated. Overscan prevents exposed edges; there is no pin, extra scroll spacer, duplicate scenic layer or global scroll interception. Independent midground/foreground parallax is deferred until suitable approved layers exist.
+
+Hero browser tests exposed delayed fromTo start styles surviving media/preference cleanup. The runtime now remembers exact initial inline styles only for targets it actually animates and restores them after context reversion, including error/unmount paths. Ignored interactive targets remain untouched; once-revealed text stays readable after breakpoint changes. Scoped snapshots are released on teardown, avoiding global saved-style registries. This supplements the existing [GSAP context](https://gsap.com/docs/v3/GSAP/gsap.context%28%29/) lifecycle; there is no global killAll or business-side effect.
+
+The production optional GSAP/ScrollTrigger/runtime chunk now measures 45,539 gzip bytes (44.47 KiB), still an explicit exception to the 30 KiB motion target. It is absent from the current production initial load without a selected hero image. Development-only placeholder tests and a warm desktop Chrome/4x CPU sample are not real-device or approved-photo certification. See [PHASE_03](PHASE_03.md) for measured payloads, reproduction, screenshots and limits.
+
+## Website Phase 04 additions
+
+About uses the existing scene/reveal/image lifecycle with readable CMS paragraphs. Only the image wrapper receives the image reveal; the overlapping stamp, copy and link remain separate. Optional desktop sticky art requires a ready scene, width ≥1200px and height ≥750px; reduced motion/disabled preference returns it to ordinary flow. No extra pin spacer or scroll loop is added.
+
+`MotionSurface` exposes the shared preference as a CSS attribute for activity arrows. Cinematic Gallery is opt-in on homepage and gallery only: perspective 1000px, image rotation ±5° desktop / ±3° tablet, hover Z 16px. Focused links flatten, touch/mobile stay flat, and disabled/system-reduced preferences remove depth/transitions. The interactive anchor and caption never move. No-JS links retain image access; native dialog close restores focus. `/gallery` includes MotionToggle, while homepage reuses its existing toggle. See [PHASE_04](PHASE_04.md) for actual validation and photographic-content limitations.

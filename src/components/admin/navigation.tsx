@@ -9,6 +9,7 @@ const items: [string, string, Permission][] = [
   ["Inscriptions", "/admin/registrations", "bookings"],
   ["Destinations", "/admin/destinations", "destinations"],
   ["Galerie", "/admin/gallery", "gallery"],
+  ["Droits des photos", "/admin/media-readiness", "gallery"],
   ["Instagram", "/admin/instagram", "gallery"],
   ["Messages", "/admin/messages", "messages"],
   ["Le site", "/admin/site", "site"],

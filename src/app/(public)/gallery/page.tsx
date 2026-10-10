@@ -7,6 +7,7 @@ import { getSettings } from "@/lib/settings";
 import { PageIntro } from "@/components/page-intro";
 import { Gallery } from "@/components/gallery";
 import { pageMetadata } from "@/lib/metadata";
+import { MotionToggle } from "@/components/motion/preference";
 export const metadata = pageMetadata(
   "Galerie",
   "Les aventures, la nature et les moments partagés de Sakado Sfax en images.",
@@ -80,7 +81,12 @@ export default async function GalleryPage({
           </nav>
         </>
       ) : (
-        <Gallery photos={photos} />
+        <>
+          <div className="s-gallery-controls">
+            <MotionToggle />
+          </div>
+          <Gallery photos={photos} cinematic />
+        </>
       )}
     </div>
   );

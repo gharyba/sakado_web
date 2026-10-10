@@ -22,13 +22,15 @@ The isolated Windows Node 24 clean install, Prisma generation, typecheck, ESLint
 
 ## Current architecture
 
+Phase 01 now adds opt-in frontend tokens/primitives and GSAP 3.15.0/ScrollTrigger utilities on branch `feat/phase01-motion-foundation`. The table below describes the audited domain application; its routes, CMS/auth, Prisma schema, uploads and Instagram behavior are preserved. The development-only `/dev/motion` laboratory returns 404 in production and is absent from public navigation. See [PHASE_01](PHASE_01.md) for the implemented API, validation, performance exception and stop point. The user's Phase 01 frontend scope supersedes the numbering of the original proposed roadmap; it does not authorize its CMS/schema phases.
+
 | Layer        | Verified implementation                                                                                                |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------- |
 | Runtime      | Local Node 24.19.0; lockfile/installed Next 16.4.0 and React/React DOM 19.3.0                                          |
 | Tooling      | Strict TypeScript 5.9.3, ESLint 9, Prettier, Playwright 1.63.0, tsx                                                    |
 | Data         | Prisma/client 6.19.3, PostgreSQL, 14 models, 2 applied migrations                                                      |
 | Rendering    | App Router and server components; root `force-dynamic`; React `cache()` deduplicates render-time reads                 |
-| UI           | Plain global CSS and separate admin CSS; Arial/Georgia system fonts; no motion or WebGL library                        |
+| UI           | Plain CSS and system fonts; opt-in neutral primitives and GSAP/ScrollTrigger foundation; no WebGL                      |
 | CMS          | Event/program/category/destination/gallery/site/settings/user editors, Instagram, messages, registrations, CSV exports |
 | Auth         | Argon2id with legacy scrypt verification; opaque 8-hour database sessions; OWNER/ADMIN/EDITOR                          |
 | Security     | Zod 4.6.5, permission checks, origin checks, bounded request readers, DB rate limiting, audit records, CSP             |
@@ -111,7 +113,7 @@ src/components/home/      section composition
 src/components/motion/    parallax, reveal, gallery depth, preferences
 src/components/ui/        shared accessible primitives
 src/lib/home/             bounded queries, DTOs, section validation
-src/styles/               future token extraction
+src/styles/               shared opt-in tokens and primitives (Phase 01)
 ```
 
 Keep existing domain services in `src/lib`; avoid an unrelated wholesale file move.
@@ -233,6 +235,26 @@ Rollback is application-first: disable the proposed V2 flag or redeploy the prev
 - Existing QA screenshot and uploaded WebP were visually inspected; primary screenshots remain unavailable.
 - No migration/import/seed/account/publication/deployment executed. Full build, E2E, integration and vulnerability scans were not rerun for this documentation-only change; historical reports do not prove current readiness.
 
-**Phase 00.5 stop point:** local source recovery, verified DB/media backups and Windows validation are established. The next readiness check is an actual Linux run of the prepared workflow, after separate authorization to push to a private repository, or access to a suitable Linux environment. Phase 01 does not start automatically. Durable external storage and actual Hostinger staging remain future separately authorized work; acceptance still requires a clean Linux build, restart/redeploy persistence and preservation of media checksums and all 45 unpublished Instagram records.
+**Phase 01 stop point:** the explicitly requested frontend foundation and isolated motion engine are implemented; the real homepage is preserved. Wait for an explicit Phase 02 specification, official screenshots/assets and content decisions before homepage integration. Review the measured motion bundle exception and profile on representative devices. Linux execution, durable external storage and actual Hostinger staging remain separate deployment-readiness gates; no push/deployment is authorized. See [PHASE_01](PHASE_01.md).
 
 Specifications: [DESIGN_SYSTEM](DESIGN_SYSTEM.md), [MOTION_SYSTEM](MOTION_SYSTEM.md), [DATABASE](DATABASE.md), [DEPLOYMENT](DEPLOYMENT.md).
+
+## Phase 02 implementation addendum — cinematic navigation
+
+The user's explicitly scoped Phase 02 is navigation, superseding the older roadmap's numbering for the current task. See [PHASE_02](PHASE_02.md). `SiteHeader` remains server-rendered and passes the existing `Brand` as a React slot to the small client `NavigationShell`. Public settings/logo fetching, main content, footer and business services stay on their existing boundaries. Verified public routes live in a pure navigation module; the only prominent action is the existing `/events` discovery route.
+
+The sticky header observes the direct homepage element `#main > [data-navigation-hero="dark"]`. IntersectionObserver switches appearance at the hero's boundary; ResizeObserver reconnects only when header height changes. Native scrolling, server content and Phase 01 motion timelines remain independent. A fixed-height header and matching homepage overlay margin preserve layout; the old hero receives only a marker and header clearance. Non-home routes, unavailable APIs and no-JS rendering use a readable solid surface. Mobile navigation uses native dialog/inert semantics, focus cycling, Escape, restoration, route/breakpoint cleanup and a disclosure fallback.
+
+No database/schema/auth/CMS/media behavior changed. Local recovery starts from validated Phase 01 commit `8d7995b` on `feat/phase02-cinematic-navigation`. Phase 02 is ready for the separately authorized hero phase; no Phase 03 implementation, push or deployment is included. Official brand/media and final hero content remain TO BE CONFIRMED. Linux execution, durable storage, mobile profiling and Hostinger staging remain separate gates.
+
+## Phase 03 implementation addendum — cinematic hero
+
+The explicitly requested hero phase is implemented on `feat/phase03-cinematic-hero`, based on validated navigation commit `22ca885`. Only the old hero markup is replaced with server-renderable `ParallaxHero`; all following sections and existing queries remain intact. `HeroBackground`, `HeroContent` and `HeroActions` share a scoped CSS module. Existing settings supply the title, tagline and explicit media path. The reference `design-references/sakado-hero.png` was confirmed by the user after the requested alternate filename was found missing.
+
+`resolveHeroMedia` never queries gallery records or promotes a media authorization flag into brand approval. With no selected scenic asset, development uses a visibly labeled existing illustration; production renders a static dark composition with no hero image or GSAP import. Known placeholder SVGs cannot be enabled in the production hero by DEMO_MODE. A selected allowed image enables a single decorative parallax plane, not fake independent depth layers. Real imagery, crops, rights and official brand assets remain TO BE CONFIRMED.
+
+The rounded white frame, semantic copy, immediately usable CTAs and overlapping three-link discovery panel stay in normal flow. The outer section is the stable Phase 02 observer boundary; no navbar code or timeline is rebuilt. Optional motion extends the existing engine with bounded scale/text effects and exact style restoration across breakpoint/preference cleanup. Controls stay outside transformed/revealed wrappers. See [PHASE_03](PHASE_03.md) for actual checks, screenshots, bundle/performance evidence and limitations. This was the Phase 03 stop point; Website Phase 04 was subsequently authorized separately.
+
+## Website Phase 04 — motion and publication readiness
+
+The new request authorizes incremental About/activity/CSS-gallery motion and MEDIA-04 enforcement, not photo approval. See [PHASE_04](PHASE_04.md) for exact scope, data boundary and verification. Existing hero/navigation/Instagram architecture is reused. Server loaders and mutation/upload/media routes consult an identity-bound, read-only readiness registry before exposing known library images. Static public files receive a build preflight. Authenticated `/admin/media-readiness` shows safe review metadata without private evidence or original previews. The existing role matrix and schema remain intact. All 17 library assets and 85 approval fields retain their original blocked/pending state. Approved-photo choreography and hosting/privacy clearance remain unresolved; stop after this separately authorized Website Phase 04.

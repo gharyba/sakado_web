@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 const config: NextConfig = {
   poweredByHeader: false,
+  outputFileTracingIncludes: {
+    "/*": [
+      "./docs/media/asset-manifest.json",
+      "./docs/media/media-04-publication-readiness.json",
+    ],
+  },
   experimental: { authInterrupts: true },
   async headers() {
     return [
@@ -21,6 +27,13 @@ const config: NextConfig = {
               (process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "") +
               "; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
           },
+        ],
+      },
+      {
+        source: "/dev/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+          { key: "Cache-Control", value: "private, no-store" },
         ],
       },
       {

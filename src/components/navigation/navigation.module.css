@@ -1,0 +1,305 @@
+.header {
+  --navigation-ink: var(--s-color-ink);
+  --navigation-focus: var(--s-color-focus);
+  position: sticky;
+  top: 0;
+  z-index: var(--s-z-header);
+  isolation: isolate;
+  height: var(--s-navigation-height);
+  color: var(--navigation-ink);
+  background: var(--s-color-canvas);
+  transition:
+    background-color var(--s-duration-standard) var(--s-ease),
+    color var(--s-duration-standard) var(--s-ease);
+}
+.header[data-overlay="true"] {
+  margin-bottom: calc(-1 * var(--s-navigation-height));
+}
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -2rem;
+  z-index: -1;
+  pointer-events: none;
+  /* Local contrast veil: readable even when a future image has a bright sky. */
+  background: linear-gradient(
+    rgb(16 27 25 / 78%),
+    rgb(16 27 25 / 72%) calc(100% - 2rem),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity var(--s-duration-standard) var(--s-ease);
+}
+.header[data-state="hero"]:not(:focus-within) {
+  --navigation-ink: #ffffff;
+  --navigation-focus: var(--s-color-focus-inverse);
+  background: transparent;
+}
+.header[data-state="hero"]:not(:focus-within)::before {
+  opacity: 1;
+}
+.inner {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-space-6);
+}
+.brand {
+  min-width: 0;
+}
+.brand :global(.brand) {
+  display: inline-flex;
+  flex-direction: column;
+  max-width: 100%;
+  min-height: 44px;
+  justify-content: center;
+  color: inherit;
+  font-size: clamp(1.3rem, 2.2vw, 1.75rem);
+  letter-spacing: 0.17em;
+}
+.brand :global(.brand small) {
+  font-size: 0.5625rem;
+  letter-spacing: 0.2em;
+}
+.brand :global(img) {
+  max-width: 100%;
+  object-fit: contain;
+}
+.desktop {
+  display: none;
+}
+.desktop a,
+.toggle,
+.fallback summary {
+  min-height: 44px;
+  font-family: var(--s-font-body);
+  font-size: var(--s-text-caption);
+  font-weight: 500;
+}
+.desktop a {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  text-underline-offset: 0.5em;
+  text-decoration-thickness: 1px;
+}
+.desktop a:hover,
+.desktop a[aria-current] {
+  text-decoration-line: underline;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-space-3);
+}
+.header .action,
+.dialog .panelAction {
+  border: 0;
+  border-radius: var(--s-radius-pill);
+  min-height: 44px;
+  padding: 0.75rem 1.25rem;
+  background: #e3b675;
+  color: #102f29;
+  font: 600 var(--s-text-caption) / 1.25 var(--s-font-body);
+  white-space: nowrap;
+}
+.header .action {
+  display: none;
+}
+.header .action:hover,
+.dialog .panelAction:hover {
+  background: #f0c992;
+}
+.header a:focus-visible,
+.header button:focus-visible,
+.header summary:focus-visible {
+  outline: 3px solid var(--navigation-focus);
+  outline-offset: 4px;
+}
+.mobile {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.mobile .toggle,
+.fallback summary {
+  gap: var(--s-space-2);
+  font-weight: 500;
+  line-height: 1.4;
+  padding: 0.625rem 1rem;
+  border: 1px solid currentColor;
+  border-radius: var(--s-radius-pill);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.mobile .toggle {
+  display: none;
+}
+.mobile[data-enhanced="true"] .toggle {
+  display: inline-flex;
+}
+.mobile[data-enhanced="true"] .fallback {
+  display: none;
+}
+.menuIcon {
+  width: 14px;
+  height: 7px;
+  border-block: 1px solid currentColor;
+}
+.fallback summary {
+  display: flex;
+  align-items: center;
+  list-style: none;
+}
+.fallback summary::-webkit-details-marker {
+  display: none;
+}
+.fallback nav {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  width: min(18rem, calc(100vw - 2.5rem));
+  max-height: calc(100dvh - var(--s-navigation-height) - 3rem);
+  overflow: auto;
+  padding: var(--s-space-4);
+  background: var(--s-color-canvas);
+  color: var(--s-color-ink);
+  border-radius: var(--s-radius-dialog);
+  box-shadow: var(--s-shadow-1);
+}
+.fallback nav a {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+}
+.dialog {
+  position: fixed;
+  inset: max(1rem, env(safe-area-inset-top))
+    max(1rem, env(safe-area-inset-right)) auto auto;
+  margin: 0;
+  width: min(32rem, calc(100% - 2rem));
+  max-height: calc(
+    100dvh - 2rem - env(safe-area-inset-top) - env(safe-area-inset-bottom)
+  );
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  border: 0;
+  border-radius: 1.5rem;
+  background: var(--s-color-canvas);
+  color: var(--s-color-ink);
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity var(--s-duration-fast) var(--s-ease),
+    transform var(--s-duration-fast) var(--s-ease);
+}
+.dialog::backdrop {
+  background: rgb(16 27 25 / 50%);
+  transition: opacity var(--s-duration-fast) var(--s-ease);
+}
+.dialog[data-closing="true"] {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+.dialog[data-closing="true"]::backdrop {
+  opacity: 0;
+}
+@starting-style {
+  .dialog[open] {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  .dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+.panelHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.panelHeading h2 {
+  font: 600 1.25rem / 1.4 var(--s-font-body);
+  margin: 0;
+}
+.dialog .close {
+  border-color: var(--s-color-border);
+  border-radius: var(--s-radius-pill);
+  color: var(--s-color-ink);
+  font-size: var(--s-text-caption);
+  padding: 0.5rem 0.875rem;
+  min-height: 44px;
+}
+.close span {
+  font-size: 1.25rem;
+}
+.panelLinks {
+  display: grid;
+  gap: var(--s-space-2);
+  margin-bottom: var(--s-space-6);
+}
+.panelLinks a {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  font-size: 1.125rem;
+  text-underline-offset: 0.3em;
+}
+.panelLinks a:hover,
+.panelLinks a[aria-current] {
+  text-decoration: underline;
+}
+.dialog a:focus-visible,
+.dialog button:focus-visible {
+  outline: 3px solid var(--s-color-focus);
+  outline-offset: 3px;
+}
+/* Existing hero gets header clearance only; its composition/content stay intact. */
+.header[data-overlay="true"]
+  + :global(main)
+  > :global([data-navigation-hero])
+  :global(.hero-inner) {
+  padding-top: calc(var(--s-navigation-height) + var(--s-space-8));
+}
+[data-navigation-motion="off"].header,
+[data-navigation-motion="off"].header::before,
+[data-navigation-motion="off"].header :is(a, button, summary),
+[data-navigation-motion="off"].dialog,
+[data-navigation-motion="off"].dialog::backdrop {
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .header,
+  .header::before,
+  .dialog,
+  .dialog::backdrop {
+    transition: none;
+  }
+}
+@media (min-width: 700px) {
+  .header .action {
+    display: inline-flex;
+  }
+}
+@media (min-width: 1200px) {
+  .inner {
+    grid-template-columns: minmax(9rem, 1fr) auto minmax(9rem, 1fr);
+  }
+  .desktop {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 1.65vw, 1.5rem);
+  }
+  .actions {
+    justify-content: flex-end;
+  }
+  .mobile {
+    display: none;
+  }
+}

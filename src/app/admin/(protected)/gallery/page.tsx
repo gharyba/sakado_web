@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { AdminHeading } from "@/components/admin/heading";
 import { AdminForm, ActionButton } from "@/components/admin/form";
 import { Field, Area, Select, Check, Hidden } from "@/components/admin/fields";
+import { storedMediaAllowed } from "@/lib/media-mutation-guard";
 export default async function Page() {
   await requireAdmin("gallery");
   const [photos, events, places] = await Promise.all([
@@ -12,6 +13,14 @@ export default async function Page() {
     db.event.findMany({ select: { id: true, title: true } }),
     db.destination.findMany({ select: { id: true, name: true } }),
   ]);
+  const availability = new Map(
+    await Promise.all(
+      photos.map(
+        async (photo) =>
+          [photo.id, await storedMediaAllowed(photo.src)] as const,
+      ),
+    ),
+  );
   return (
     <>
       <AdminHeading
@@ -19,6 +28,10 @@ export default async function Page() {
         description="Les instants à partager, avec les droits d’utilisation confirmés."
       />
       <p>
+        <Link className="text-link" href="/admin/media-readiness">
+          Vérifier les droits MEDIA-04 →
+        </Link>
+        {" · "}
         <Link className="text-link" href="/admin/instagram">
           Gérer les publications Instagram →
         </Link>
@@ -62,14 +75,21 @@ export default async function Page() {
       <div className="admin-media-grid">
         {photos.map((photo) => (
           <article className="admin-panel" key={photo.id}>
-            <Image
-              className="admin-photo"
-              src={photo.src}
-              alt={photo.alt}
-              width={480}
-              height={320}
-              unoptimized
-            />
+            {availability.get(photo.id) ? (
+              <Image
+                className="admin-photo"
+                src={photo.src}
+                alt={photo.alt}
+                width={480}
+                height={320}
+                unoptimized
+              />
+            ) : (
+              <p className="s-readiness-badge">
+                Aperçu indisponible · publication bloquée. Consultez le registre
+                des droits avant toute sélection.
+              </p>
+            )}
             <AdminForm endpoint="/api/admin/gallery">
               <Hidden name="id" value={photo.id} />
               <Field

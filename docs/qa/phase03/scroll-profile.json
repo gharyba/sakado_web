@@ -1,0 +1,10 @@
+{
+  "samples": 90,
+  "medianFrameMs": 8.300000000000182,
+  "p95FrameMs": 8.5,
+  "framesOver50ms": 0,
+  "longTasksMs": [],
+  "scriptMs": 121.372,
+  "cpuThrottle": 4,
+  "device": "Desktop Chrome, development build, existing SVG; not real-device certification"
+}

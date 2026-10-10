@@ -30,6 +30,7 @@ secrets/
 
 # Runtime uploads, private workspace artifacts and recovery data
 .local/
+/SAKADO-MEDIA/
 uploads/
 public/uploads/
 backups/

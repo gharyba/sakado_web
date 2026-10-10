@@ -1,10 +1,10 @@
 # SAKADO 2.0 — design system
 
-Status: proposed technical baseline, 2026-10-09. This document does not approve a brand identity. See [ARCHITECTURE](ARCHITECTURE.md) for content evidence and [MOTION_SYSTEM](MOTION_SYSTEM.md) for animation.
+Status: Phase 01 foundation, Phase 02 navigation and Phase 03 hero composition implemented, 2026-10-09; official assets/final art direction remain pending. This document does not approve a brand identity. See [ARCHITECTURE](ARCHITECTURE.md) for content evidence and [MOTION_SYSTEM](MOTION_SYSTEM.md) for animation.
 
 ## Reference authority and art direction
 
-The two user-referenced screenshots are primary design references, but neither was attached or identified during this audit. Their composition, typography, image treatment, navigation and transitions must be annotated before visual implementation is approved. Exact matches, approved fonts and brand colors are **TO BE CONFIRMED**. Existing test screenshots are regression evidence only.
+Neither user reference was available during the Phase 00 audit. The ROAMLY screenshot is now available as `design-references/sakado-hero.png`, confirmed for Phases 02–03. It governs composition, not Sakado content or production imagery. The second reference, approved fonts, photography and brand colors remain **TO BE CONFIRMED**. Existing test screenshots are implementation evidence only.
 
 Desired experience: cinematic outdoor storytelling with generous image areas, restrained typography, layered depth and a clear reading sequence. Photography must depict authorized Sakado content. Never import unrelated reference copy, logos, partner marks, place names, claims or prices. Existing landscape SVGs and wordmark are temporary. The uploaded hardware diagram is not an approved outdoor visual despite database flags.
 
@@ -78,4 +78,26 @@ Proposed radius scale: 4px controls, 8px cards, 12px dialogs; retain square/full
 
 ## Design acceptance
 
+Phase 01 implementation is namespaced and opt-in: `src/styles/tokens.css`, `src/styles/primitives.css`, and server-compatible `Container`, `Section`, `Button`, `ButtonLink`, `MediaFrame` in `src/components/ui/foundation.tsx`. The new neutral engineering palette uses canvas #f5f4f0, surface #ffffff, muted surface #e9e8e2, ink/dark #252b2e, muted text #555e62, border #747c80, focus #765000 and inverse focus #f1c982. Legacy forest/paper/amber values and existing public/admin screens remain preserved.
+
+The implemented `--s-*` tokens cover the documented system fonts/fluid type, rem spacing, 1280px container/65ch reading measure, 700/900/1200px gutter changes, fluid section spacing, 4/8/12px radii, two subtle elevation shadows, duration/easing and stacking. Namespaced `s-*` classes include display/title/heading/lead/caption/eyebrow, stack and wrapping cluster. Sections have default/muted/dark tones and compact spacing; buttons/links have primary/secondary/text variants, focus/pressed/disabled/busy treatments and 44px targets. Media frames reserve landscape 3:2, portrait 4:5, wide 16:9 or square space. Callers supply semantic headings, real actions, intrinsic image dimensions, sizes and meaningful alt text. No official font/photo/logo was introduced.
+
+Root layout imports these styles without replacing existing selectors. Forced global smooth scrolling was removed. `/dev/motion` demonstrates the primitives separately from the homepage; browser reflow checks cover 320/390/768/1024/1440/1920px. See [PHASE_01](PHASE_01.md) for implementation and validation evidence.
+
 Before visual sign-off: annotate both supplied references; confirm brand assets; compare desktop/mobile static compositions; verify all ten section positions and approved content; audit contrast, crop, long text, keyboard, zoom and reduced motion. No claimed pixel match is possible until the actual references are available. Shared tokens must style both old and new sections without regressing existing admin screens. Final approval includes empty states, not just a populated mockup.
+
+## Phase 02 navigation
+
+The now-available primary navbar reference is `design-references/sakado-hero.png`, containing the ROAMLY travel composition. Its widely tracked left wordmark, generous top spacing, centered white links and right pill actions guide navigation only. Use the existing Sakado wordmark/configured logo and French public routes. Reference login/booking/search copy and imagery are not Sakado content. An approved identity/logo/font remains TO BE CONFIRMED; the reference is retained outside `public/`.
+
+Navigation adds `--s-radius-pill: 999px` and `--s-navigation-height: 5rem`, increasing to `6.5rem` at 1200px. It reuses Container/Button/ButtonLink and Phase 01 gutter/type/focus/spacing tokens. Desktop links start at 1200px to fit all six existing discovery links without crowding the wordmark and action; the wordmark supplies home. Below that, a menu contains all seven routes. At 700px the existing events action also appears beside the menu; smaller screens keep it inside the panel. All controls have at least 44px targets. Header and footer wordmark styling remain independently scoped.
+
+Hero state uses a transparent header background with white text and a soft local gradient veil for contrast over bright images. Scrolled, keyboard-focus and open-menu states use neutral canvas/ink; there is no heavy blur or decorative border/shadow. The action retains existing Sakado amber/forest colors. Native modal top-layer content uses a rounded neutral surface and visible focus rings. Scoped CSS prevents admin or footer restyling. See [PHASE_02](PHASE_02.md) for screenshot review and accessibility evidence; this is composition alignment, not a pixel match or final brand approval.
+
+## Phase 03 hero composition
+
+The reference's full-bleed landscape, white rounded frame, bold left headline and overlapping pale pill panel guide the new hero. Existing settings/confirmed copy and events/experiences/contact routes supply the real content. No reference logo, destination/date/guest search, partner marks or travel claims are copied. The outer media plane extends behind the unchanged navbar; the frame is a transparent window with a contrast gradient, not a second independently moving copy of the image.
+
+The scene has a content-driven minimum of 100svh and reserves navigation height before the frame. Desktop frame radius is 40px with a 4px white border; tablet uses 32px; mobile uses 28px/3px. The bold system sans headline scales from 36px mobile to 88px desktop. Existing type/spacing/gutter/amber/forest tokens and ButtonLink are reused; no fonts are downloaded. The lower panel contains three actual navigation links instead of simulated search inputs. Primary CTA and focus targets remain static. Mobile stacks copy/actions and keeps the development caption in flow, including with long text. There is no expensive blur or fixed-height text clipping.
+
+Only development shows the existing camp illustration, with an explicit TO BE CONFIRMED photo label. Production without a selected photo retains the same composition on a dark surface. The provisional 70%/50% image focal point must be reviewed against real approved photographs at every crop. Independent middle/foreground artwork and photo-based fidelity remain pending. See [PHASE_03](PHASE_03.md) and its desktop/tablet/mobile screenshots.
