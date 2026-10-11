@@ -21,6 +21,8 @@
     "test:ci": "tsx scripts/test-ci.ts",
     "check:secrets": "node scripts/check-secrets.mjs",
     "test:production-env": "node scripts/check-production-startup.mjs",
+    "rehearse:deployment": "node scripts/rehearse-deployment.mjs",
+    "test:staging": "node scripts/rehearse-staging.mjs",
     "test:e2e": "node --env-file=.env --import tsx tests/browser/prepare.ts && node --env-file=.env node_modules/@playwright/test/cli.js test",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",

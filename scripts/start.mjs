@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { access } from "node:fs/promises";
 import nextEnv from "@next/env";
 import { productionEnvironmentIssues } from "../src/lib/production-env.ts";
 
@@ -19,10 +20,16 @@ if (issues.length) {
 }
 const args = process.argv.slice(2);
 const hostinger = args.includes("--hostinger");
-if (args.some((arg) => arg.startsWith("--hostname"))) {
+if (args.some((arg) => arg.startsWith("--hostname") || arg.startsWith("-H"))) {
   console.error(
     "Use start:hostinger for managed hosting; local start stays loopback.",
   );
+  process.exit(1);
+}
+try {
+  await access(".next/BUILD_ID");
+} catch {
+  console.error("A completed production build is required.");
   process.exit(1);
 }
 const child = spawn(

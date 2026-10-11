@@ -3,6 +3,8 @@ type Environment = Record<string, string | undefined>;
 export function productionEnvironmentIssues(env: Environment): string[] {
   if (env.NODE_ENV !== "production" || env.DEMO_MODE === "true") return [];
   const issues: string[] = [];
+  if (env.STAGING_MODE && !["true", "false"].includes(env.STAGING_MODE))
+    issues.push("STAGING_MODE must be true or false.");
   try {
     const url = new URL(env.DATABASE_URL ?? "");
     if (
