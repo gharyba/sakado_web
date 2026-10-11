@@ -1,4 +1,4 @@
-# Production readiness — Phase 06
+# Production readiness — Phase 06 baseline and Phase 07 evidence
 
 Status: **PUBLIC LAUNCH BLOCKED**. Local validation is not production clearance. This checklist records technical evidence separately from business, privacy and media decisions; no legal compliance is asserted.
 
@@ -27,6 +27,16 @@ Status: **PUBLIC LAUNCH BLOCKED**. Local validation is not production clearance.
 | Dependency risk              | **BLOCKING security decision**  | npm audit reports five high entries through braces in the development lint chain; no safe patch reported. Evaluate isolation/upstream remediation or explicitly document an authorized risk decision. No force downgrade to Next 14.                                |
 
 Non-blocking refinements: optional extra filters, cosmetic admin polish, additional animations. These cannot compensate for the blocking gates above.
+
+## Phase 07 evidence addendum — 2026-10-11
+
+The table above preserves Phase 06 blockers. [PHASE_07](PHASE_07.md) records new scoped evidence: a local Windows/Node 24 production-build rehearsal, first-owner provisioning with duplicate denial, local storage hash persistence across restart and switching built releases, storage-failure denial, complete synthetic PostgreSQL backup/restore into a separate owned database and application rollback without database rollback. These do not resolve actual Hostinger persistence, external database/TLS, off-device recovery, HTTPS/proxy, real admin provisioning or production rollback ownership.
+
+Staging indexing suppression is implemented with `STAGING_MODE=true`; external staging still requires access restriction. Media remains 17 BLOCKED / 85 PENDING REVIEW. No real database, media approval, schema, migration or CI workflow was changed.
+
+The user reports successful repaired Linux CI and supplied [run 38156234009](https://github.com/gharyba/sakado_web/actions/runs/38156234009). Connected GitHub tools returned 404: this is user-reported evidence, not independently verified job/commit evidence. The uncommitted Phase 07 changes have not run in GitHub or on Linux here. No remote staging has been validated.
+
+Dependency audit in this phase reports five high development-tool findings and zero runtime findings with `--omit=dev`. The security decision remains blocked; no forced upgrades/downgrades were applied. Manual screen-reader and physical-device checks, hosting/privacy/business decisions and operational owners remain unresolved. See [STAGING_READINESS](STAGING_READINESS.md) for the provider questions and [DEPLOYMENT](DEPLOYMENT.md) for BEFORE/DURING/AFTER gates.
 
 ## Review and release workflow
 

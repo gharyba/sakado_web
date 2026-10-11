@@ -250,4 +250,34 @@ Retain the previous tested release, manifests/readiness registry, dependencies a
 
 `ci.yml` runs on PRs, pushes to main and manual dispatch, with two required jobs: **Quality, Tests, Build and Media Safety**; **PostgreSQL Integration and Admin Workflows**. Locked npm install, Prisma generation, typecheck, lint, units, build/media audits and Phase 04 browser regressions are automated; the integration job builds with safe inputs then runs existing integration plus Phase 05/06 browser suites against a disposable PostgreSQL 16 service. No embedded local PostgreSQL is used in CI. Before destructive fixtures the runner checks explicit GitHub/Linux markers, exact test URL/user/DB/port and the server's actual data directory/version. Local `npm run test:phase06` instead creates a fresh owned cluster. Original .env-driven test commands now refuse an unmarked database.
 
-Only npm package downloads are cached. No secrets, live databases, private media or review evidence are cached/uploaded. Both jobs fail on command failures; no continue-on-error/deployment step. Workflow YAML and command names can be validated locally; actual GitHub execution remains **PENDING** until an explicitly authorized push/PR. See the branch protection steps and blocking security/operational decisions in PRODUCTION_READINESS. No repository settings, merge, commit, push or remote deployment is authorized by these prepared files.
+Only npm package downloads are cached. No secrets, live databases, private media or review evidence are cached/uploaded. Both jobs fail on command failures; no continue-on-error/deployment step. This Phase 06 description originally recorded execution as pending. The user subsequently reported repaired Linux success and supplied run 38156234009; the GitHub connector returned 404, so independent verification remains unresolved. Phase 07 changes have not been pushed or run in GitHub CI. See PRODUCTION_READINESS. No repository settings, merge, commit, push or remote deployment is authorized by these prepared files.
+
+## Phase 07 staging rehearsal and release gates
+
+Read [PHASE_07](PHASE_07.md), [STAGING_READINESS](STAGING_READINESS.md), [DEPLOYMENT_REHEARSAL](DEPLOYMENT_REHEARSAL.md), [BACKUP_RESTORE](BACKUP_RESTORE.md) and [ROLLBACK](ROLLBACK.md). They distinguish local rehearsal evidence from actual infrastructure validation. No remote staging or production deployment has occurred.
+
+The optional supported variable `STAGING_MODE` accepts `true` or `false`. Set it to `true` in dedicated staging with `DEMO_MODE=false`; application responses receive noindex/no-store, robots disallows crawling and sitemap is empty. This does not protect access, disable authenticated writes or authorize media. Use a separate provider/proxy access restriction. `.env.staging.example` contains empty/example values only; it is not automatically loaded by Next. Supply values through the process/provider. Never copy production credentials or participant data into staging.
+
+### BEFORE DEPLOY
+
+- Obtain explicit environment-specific deployment authorization and an available release/incident owner. Record the reviewed immutable source/artifact, lockfile, migration and media registry hashes.
+- Independently verify both required GitHub jobs for that exact release; resolve or explicitly accept the development dependency findings through the authorized security owner.
+- Confirm dedicated PostgreSQL identity/region/TLS/access, valid unique secrets, HTTPS origins, proxy trust, access restriction, Node 24 and process PORT. Verify country/privacy obligations with qualified reviewers.
+- Verify durable storage across restart and provider redeploy; confirm off-device encrypted backups, retention, restricted access and a separately verified restore. Keep rollback artifact and shared media available.
+- Review migration status and additive SQL; approve only authorized media/credits. Preserve all current blocked photos. Complete admin provisioning plan, monitoring/alert ownership, accessibility/device checks and business policies.
+
+### DURING DEPLOY
+
+- Stop on any unmet gate. Keep staging access restricted and noindex active independently of application rollback.
+- Verify target identity without logging its connection string. Take the approved fresh backup, verify restore evidence and record current migration state.
+- Use locked installation and Prisma generation, reviewed `npm run db:deploy`, production build and `npm run start:hostinger` with provider PORT only after staging authorization. Never use migrate dev, reset or db push. Preserve uploads across release replacement.
+- Provision the first owner privately with the existing guarded script only when needed; remove provisioning inputs immediately. Do not print credentials.
+- Check health, safe logs and security headers. If migration state becomes unclear, stop writes and investigate; do not blindly retry or resolve migration history.
+
+### AFTER DEPLOY
+
+- Run authorized synthetic public/admin/registration smoke tests, role/origin denial, media hash and actual image optimizer checks. Remove only owned test data through approved procedures.
+- Verify HTTPS secure cookies, trusted forwarded-header replacement, caching, noindex, rollback and persisted media on the actual platform. Health alone is insufficient.
+- Record monitoring/backup ownership, artifact and result evidence; revoke temporary access. Public launch still requires independent legal, content and business approval.
+
+**Stop deployment** for failed CI, unavailable backup, unverified restore, unclear migrations, invalid configuration, inaccessible DB, unknown storage persistence, failed health, blocked media exposure, missing privacy requirements or unavailable operational owner. Local Phase 07 success does not waive these conditions.

@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { stagingEnabled } from "./lib/staging-policy";
 export function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const adminHost = process.env.ADMIN_URL
@@ -18,6 +19,7 @@ export function proxy(request: NextRequest) {
     ? NextResponse.rewrite(rewrite)
     : NextResponse.next();
   if (
+    stagingEnabled() ||
     dedicated ||
     path === "/admin" ||
     path.startsWith("/admin/") ||
