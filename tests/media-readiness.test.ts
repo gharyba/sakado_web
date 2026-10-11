@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
-import { join } from "node:path";
+import { join, resolve, sep, basename } from "node:path";
 import { tmpdir } from "node:os";
 import {
   approvalAxes,
@@ -14,6 +14,34 @@ import {
   type ReviewAsset,
 } from "../src/lib/media-readiness-policy";
 import { auditPublicMedia } from "../src/lib/public-media-audit";
+import {
+  illustrationHashes,
+  illustrationIdentityAllowed,
+} from "../src/lib/illustration-policy";
+
+test("demo artwork filenames cannot authorize replacement bytes", async () => {
+  for (const [filename, hash] of Object.entries(illustrationHashes)) {
+    assert.equal(illustrationIdentityAllowed(filename, hash), true);
+    assert.equal(
+      illustrationIdentityAllowed("/images/" + filename, "0".repeat(64)),
+      false,
+    );
+  }
+  const root = await mkdtemp(join(tmpdir(), "sakado-artwork-gate-"));
+  try {
+    await writeFile(join(root, "camp.svg"), "unreviewed replacement");
+    assert.deepEqual(await auditPublicMedia(root, registry()), [
+      join(root, "camp.svg"),
+    ]);
+  } finally {
+    const target = resolve(root);
+    assert.ok(
+      target.startsWith(resolve(tmpdir()) + sep) &&
+        basename(target).startsWith("sakado-artwork-gate-"),
+    );
+    await rm(target, { recursive: true, force: true });
+  }
+});
 
 const manifestBytes = readFileSync("docs/media/asset-manifest.json");
 const manifest = JSON.parse(manifestBytes.toString());

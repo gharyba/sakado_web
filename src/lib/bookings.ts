@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 import { serializable } from "./transactions";
 import { bookingInput, bookingEdit } from "./admin-validation";
 import { occupied, registrationAvailability, lifecycle } from "./event-policy";
+import { can } from "./permissions";
 export class BusinessError extends Error {
   constructor(
     message: string,
@@ -118,8 +119,14 @@ export async function updateBooking(
   input: unknown,
   adminId: string,
 ) {
-  const data = bookingEdit.parse(input);
+  const { expectedUpdatedAt, ...data } = bookingEdit.parse(input);
   return serializable(db, async (tx) => {
+    const actor = await tx.adminUser.findUnique({
+      where: { id: adminId },
+      select: { active: true, role: true },
+    });
+    if (!actor?.active || !can(actor.role, "bookings"))
+      throw new BusinessError("Accès non autorisé.", 403);
     const current = await tx.booking.findUnique({
       where: { id: data.id },
       include: {
@@ -133,6 +140,20 @@ export async function updateBooking(
       },
     });
     if (!current) throw new BusinessError("Inscription introuvable.", 404);
+    if (
+      expectedUpdatedAt &&
+      current.updatedAt.toISOString() !== expectedUpdatedAt
+    )
+      throw new BusinessError(
+        "Cette inscription a été modifiée. Rechargez la page.",
+        409,
+      );
+    if (
+      Object.entries(data).every(
+        ([key, value]) => current[key as keyof typeof current] === value,
+      )
+    )
+      return { message: "Inscription inchangée." };
     const consumes = ["PENDING", "CONFIRMED", "COMPLETED"].includes(
       data.status,
     );

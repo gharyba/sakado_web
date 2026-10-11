@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1",
     "build": "tsx scripts/check-public-media.ts && prisma generate && next build && tsx scripts/check-public-media.ts --built",
-    "start": "next start --hostname 127.0.0.1",
+    "start": "node scripts/start.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -17,6 +17,10 @@
     "test:hero": "playwright test --config playwright.hero.config.ts",
     "test:phase04": "playwright test --config playwright.phase04.config.ts",
     "test:phase05": "node scripts/test-phase05.mjs",
+    "test:phase06": "node scripts/test-phase05.mjs --phase06",
+    "test:ci": "tsx scripts/test-ci.ts",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "test:production-env": "node scripts/check-production-startup.mjs",
     "test:e2e": "node --env-file=.env --import tsx tests/browser/prepare.ts && node --env-file=.env node_modules/@playwright/test/cli.js test",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
@@ -25,7 +29,7 @@
     "db:local": "node scripts/local-postgres.mjs",
     "test:integration": "node --env-file=.env --import tsx tests/database.integration.ts",
     "instagram:import": "node --env-file=.env --import tsx scripts/import-instagram-media.ts",
-    "start:hostinger": "next start --hostname 0.0.0.0"
+    "start:hostinger": "node scripts/start.mjs --hostinger"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",

@@ -1,3 +1,4 @@
+import { selectableMedia } from "@/lib/media-mutation-guard";
 import { requireAdmin } from "@/lib/auth";
 import { getSettings } from "@/lib/settings";
 import { db } from "@/lib/db";
@@ -6,10 +7,12 @@ import { AdminForm } from "@/components/admin/form";
 import { Field, Area, Select, Check, Block } from "@/components/admin/fields";
 export default async function Page() {
   await requireAdmin("site");
-  const [s, photos] = await Promise.all([
+  const [s, photosRaw] = await Promise.all([
     getSettings(),
     db.galleryImage.findMany({ where: { authorized: true } }),
   ]);
+
+  const photos = await selectableMedia(photosRaw);
   return (
     <>
       <AdminHeading

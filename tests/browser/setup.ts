@@ -4,7 +4,9 @@ import { randomBytes } from "node:crypto";
 import { resolve } from "node:path";
 import { hashPassword } from "../../src/lib/security";
 import { testDb, testDatabaseUrl } from "../test-database";
+import { verifyPhase05Cluster } from "../phase05-browser/database";
 export default async function setup() {
+  await verifyPhase05Cluster(); // Verify actual server BEFORE migrations or destructive fixture setup.
   execFileSync(
     process.execPath,
     [resolve("node_modules/prisma/build/index.js"), "migrate", "deploy"],

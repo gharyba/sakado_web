@@ -1,25 +1,18 @@
+import { adminEndpoint } from "@/lib/admin-endpoint";
 import { NextRequest, NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
-import { ZodError } from "zod";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
-import {
-  authorizeApi,
-  sameOrigin,
-  readJson,
-  jsonError,
-  RequestError,
-} from "@/lib/http-security";
+import { readJson, RequestError } from "@/lib/http-security";
 import { serializable } from "@/lib/transactions";
-import { instagramMediaSchema } from "@/lib/instagram-policy";
+import {
+  instagramMediaSchema,
+  normalizeInstagramImport,
+} from "@/lib/instagram-policy";
 import { importInstagramMedia } from "@/lib/instagram-import";
 import { id } from "@/lib/admin-validation";
 import { mediaSelectionAllowed } from "@/lib/media-readiness";
 export async function POST(request: NextRequest) {
-  const auth = await authorizeApi("gallery");
-  if (auth.response) return auth.response;
-  if (!sameOrigin(request)) return jsonError("Origine non autorisée.", 403);
-  try {
+  return adminEndpoint(request, "gallery", async (user) => {
     const input = await readJson(request, 60000);
     if (
       (input.intent ?? "save") === "save" &&
@@ -40,14 +33,13 @@ export async function POST(request: NextRequest) {
           .split(/\r?\n/)
           .map((v) => v.trim())
           .filter(Boolean);
-        let result;
         try {
-          result = await importInstagramMedia(tx, values);
-        } catch (error) {
-          throw new RequestError(
-            error instanceof Error ? error.message : "Import invalide.",
-          );
+          normalizeInstagramImport(values);
+        } catch {
+          throw new RequestError("Liste de liens Instagram invalide.");
         }
+        // Database failures reach the shared safe boundary, never a public parser error.
+        const result = await importInstagramMedia(tx, values);
         message =
           result.imported +
           " publication(s) importée(s), " +
@@ -79,7 +71,7 @@ export async function POST(request: NextRequest) {
       } else throw new RequestError("Action inconnue.");
       await tx.auditLog.create({
         data: {
-          adminId: auth.user.id,
+          adminId: user.id,
           action: "INSTAGRAM_" + intent.toUpperCase(),
           entityType: "instagram",
           entityId,
@@ -91,22 +83,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result, {
       headers: { "Cache-Control": "private, no-store" },
     });
-  } catch (error) {
-    if (error instanceof RequestError)
-      return jsonError(error.message, error.status);
-    if (error instanceof ZodError)
-      return jsonError(
-        "Vérifiez les champs : " + error.issues[0]?.message,
-        400,
-      );
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === "P2002")
-        return jsonError("Cette publication existe déjà.", 409);
-      if (error.code === "P2025")
-        return jsonError("Publication introuvable.", 404);
-      if (error.code === "P2003")
-        return jsonError("Sortie ou destination introuvable.", 400);
-    }
-    return jsonError("Impossible d’enregistrer la publication.", 500);
-  }
+  });
 }

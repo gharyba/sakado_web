@@ -13,6 +13,7 @@ import {
 } from "@/lib/event-policy";
 import { dateLabel, priceLabel } from "@/lib/format";
 import { can } from "@/lib/permissions";
+import { storedMediaAllowed } from "@/lib/media-mutation-guard";
 export default async function Page({
   params,
 }: {
@@ -25,6 +26,9 @@ export default async function Page({
     include: { bookings: { select: { status: true, participantCount: true } } },
   });
   if (!e) notFound();
+  const mediaReady = e.coverImage
+    ? await storedMediaAllowed(e.coverImage)
+    : null;
   return (
     <>
       <AdminHeading
@@ -71,6 +75,19 @@ export default async function Page({
           {priceLabel(e.price === null ? null : Number(e.price), e.currency)}
         </p>
         <p>{registrationLabels[e.registrationStatus]}</p>
+        <p>
+          Clôture des inscriptions :{" "}
+          {dateLabel(e.registrationDeadline?.toISOString() ?? null)}
+        </p>
+        <p>
+          Couverture :{" "}
+          {mediaReady === null
+            ? "Aucune sélection"
+            : mediaReady
+              ? "Éligible selon le registre — publication séparée"
+              : "BLOCKED — revue humaine requise"}
+          . <Link href="/admin/media-readiness">Consulter les droits</Link>
+        </p>
         <p className="preserve-lines">{e.description}</p>
         {e.published && (
           <Link
@@ -95,7 +112,7 @@ export default async function Page({
             <ActionButton
               key={intent}
               endpoint="/api/admin/events"
-              payload={{ id, intent }}
+              payload={{ id, intent, version: e.version }}
               label={label}
               confirmMessage={
                 ["archive", "cancel"].includes(intent)

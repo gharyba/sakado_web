@@ -1,8 +1,10 @@
 import { realpathSync } from "node:fs";
 import { resolve, sep } from "node:path";
 import { PrismaClient } from "@prisma/client";
+import { ciDatabaseUrl } from "../ci-database-policy";
 
 export function phase05DatabaseUrl() {
+  if (process.env.SAKADO_CI_DATABASE) return ciDatabaseUrl();
   const value = process.env.DATABASE_URL;
   const dir = process.env.PHASE05_TEST_CLUSTER_DIR;
   if (!value || !dir)
@@ -29,6 +31,22 @@ export async function verifyPhase05Cluster() {
     const [result] = await db.$queryRawUnsafe<{ data_directory: string }[]>(
       "SHOW data_directory",
     );
+    if (process.env.SAKADO_CI_DATABASE) {
+      const [server] = await db.$queryRaw<
+        { version: number; database: string; username: string }[]
+      >`SELECT current_setting('server_version_num')::int AS version, current_database() AS database, current_user AS username`;
+      if (
+        result.data_directory !== "/var/lib/postgresql/data" ||
+        server.version < 160000 ||
+        server.version >= 170000 ||
+        server.database !== "sakado_test" ||
+        server.username !== "sakado_ci"
+      )
+        throw Error(
+          "Connected database does not match the disposable PostgreSQL 16 CI service.",
+        );
+      return;
+    }
     if (
       realpathSync(result.data_directory) !==
       realpathSync(process.env.PHASE05_TEST_CLUSTER_DIR!)

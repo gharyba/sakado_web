@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { bytesEligible, type MediaRegistry } from "./media-readiness-policy";
+import { illustrationIdentityAllowed } from "./illustration-policy";
 
 /** Static files bypass route handlers. Reject known blocked copies before building. */
 export async function auditPublicMedia(
@@ -21,7 +22,11 @@ export async function auditPublicMedia(
         const hash = createHash("sha256")
           .update(await readFile(path))
           .digest("hex");
-        if (!bytesEligible(registry, hash, entry.name)) blocked.push(path);
+        if (
+          !illustrationIdentityAllowed(entry.name, hash) ||
+          !bytesEligible(registry, hash, entry.name)
+        )
+          blocked.push(path);
       }
     }
   }

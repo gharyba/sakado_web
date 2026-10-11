@@ -1,15 +1,18 @@
+import { selectableMedia } from "@/lib/media-mutation-guard";
 import { db } from "@/lib/db";
 import { AdminForm } from "./form";
 import { Field, Area, Select, Check, Hidden, Block, options } from "./fields";
 import { environmentLabels } from "@/lib/format";
 export async function DestinationForm({ id }: { id?: string }) {
-  const [d, photos] = await Promise.all([
+  const [d, photosRaw] = await Promise.all([
     id ? db.destination.findUniqueOrThrow({ where: { id } }) : null,
     db.galleryImage.findMany({
       where: { authorized: true },
       orderBy: { order: "asc" },
     }),
   ]);
+
+  const photos = await selectableMedia(photosRaw);
   return (
     <AdminForm endpoint="/api/admin/destinations">
       {id && <Hidden name="id" value={id} />}

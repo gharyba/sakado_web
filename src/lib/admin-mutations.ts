@@ -14,8 +14,9 @@ import {
   id,
 } from "./admin-validation";
 import { hashPassword } from "./security";
-import { occupied } from "./event-policy";
-import type { Role, Permission } from "./permissions";
+import { lifecycle, occupied } from "./event-policy";
+import { can, type Role, type Permission } from "./permissions";
+import { eventWriteIssue } from "./admin-event-policy";
 type Admin = { id: string; role: Role };
 export async function mutate(
   db: PrismaClient,
@@ -23,10 +24,18 @@ export async function mutate(
   input: Record<string, unknown>,
   admin: Admin,
 ) {
+  if (!can(admin.role, resource))
+    throw new BusinessError("Accès non autorisé.", 403);
   if (resource === "bookings") return updateBooking(db, input, admin.id);
   const target = input.id ? id.parse(input.id) : null;
   const intent = String(input.intent ?? "save");
   return serializable(db, async (tx) => {
+    const actor = await tx.adminUser.findUnique({
+      where: { id: admin.id },
+      select: { active: true, role: true },
+    });
+    if (!actor?.active || !can(actor.role, resource))
+      throw new BusinessError("Accès non autorisé.", 403);
     let entityId = target ?? "main";
     let redirect: string | undefined;
     let action = resource.toUpperCase() + "_UPDATED";
@@ -86,7 +95,11 @@ export async function mutate(
                   registrationStatus: "CLOSED",
                 }
               : intent === "cancel"
-                ? { status: "CANCELLED", registrationStatus: "CLOSED" }
+                ? {
+                    status: "CANCELLED",
+                    published: false,
+                    registrationStatus: "CLOSED",
+                  }
                 : intent === "close"
                   ? { registrationStatus: "CLOSED" }
                   : intent === "unpublish"
@@ -94,6 +107,28 @@ export async function mutate(
                     : {};
           if (!Object.keys(changes).length)
             throw new BusinessError("Action inconnue.");
+          if (
+            input.version !== undefined &&
+            Number(input.version) !== event.version
+          )
+            throw new BusinessError(
+              "Cette sortie a été modifiée. Rechargez la page.",
+              409,
+            );
+          if (
+            intent === "cancel" &&
+            ["ARCHIVED", "COMPLETED"].includes(lifecycle(event))
+          )
+            throw new BusinessError(
+              "Une sortie terminée ou archivée ne peut pas être annulée.",
+              409,
+            );
+          if (
+            Object.entries(changes).every(
+              ([key, value]) => event[key as keyof typeof event] === value,
+            )
+          )
+            return { message: "Sortie inchangée." };
           await tx.event.update({
             where: { id: target },
             data: { ...changes, version: { increment: 1 } },
@@ -103,6 +138,8 @@ export async function mutate(
       } else {
         const data = eventSchema.parse(input);
         const { schedule, included, excluded, equipment, ...fields } = data;
+        const issue = eventWriteIssue(fields);
+        if (issue) throw new BusinessError(issue, 409);
         if (
           fields.coverImage?.startsWith("/media/") &&
           !(await tx.galleryImage.findFirst({
@@ -124,6 +161,8 @@ export async function mutate(
               "Cette sortie a été modifiée. Rechargez la page avant d’enregistrer.",
               409,
             );
+          const transitionIssue = eventWriteIssue(fields, current);
+          if (transitionIssue) throw new BusinessError(transitionIssue, 409);
           if (occupied(current.bookings) > (fields.capacity ?? 0))
             throw new BusinessError(
               "La capacité ne peut pas être inférieure aux places déjà réservées.",

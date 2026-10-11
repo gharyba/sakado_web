@@ -139,6 +139,7 @@ export const eventSchema = z
 export { bookingInput } from "./registration-validation";
 export const bookingEdit = z.object({
   id,
+  expectedUpdatedAt: z.iso.datetime().optional(),
   status: z.enum([
     "PENDING",
     "CONFIRMED",

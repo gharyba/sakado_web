@@ -22,7 +22,7 @@ export default defineConfig({
   timeout: 60000,
   reporter: "list",
   use: {
-    channel: "chrome",
+    channel: process.env.CI ? undefined : "chrome",
     headless: true,
     baseURL: "http://127.0.0.1:3111",
     viewport: { width: 1440, height: 900 },
@@ -59,7 +59,7 @@ export default defineConfig({
         ...env,
         DATABASE_URL: "postgresql://phase05:dummy@127.0.0.1:9/unavailable",
         DEMO_MODE: "false",
-        SITE_URL: "",
+        SITE_URL: "https://example.invalid",
         ADMIN_URL: "",
       },
       reuseExistingServer: false,

@@ -66,9 +66,9 @@ async function main() {
     await db.$disconnect();
   }
 }
-main().catch((error) => {
+main().catch(() => {
   console.error(
-    error instanceof Error ? error.message : "Owner creation failed.",
+    "Owner creation failed. Verify owner availability, required configuration and database access.",
   );
   process.exitCode = 1;
 });

@@ -1,3 +1,4 @@
+import { selectableMedia } from "@/lib/media-mutation-guard";
 import { db } from "@/lib/db";
 import { AdminForm } from "./form";
 import {
@@ -13,7 +14,7 @@ import {
 import { ScheduleEditor } from "./schedule-editor";
 import { lifecycleLabels, registrationLabels } from "@/lib/event-policy";
 export async function EventForm({ eventId }: { eventId?: string }) {
-  const [event, categories, destinations, images] = await Promise.all([
+  const [event, categories, destinations, imagesRaw] = await Promise.all([
     eventId
       ? db.event.findUniqueOrThrow({
           where: { id: eventId },
@@ -32,6 +33,8 @@ export async function EventForm({ eventId }: { eventId?: string }) {
       orderBy: { order: "asc" },
     }),
   ]);
+
+  const images = await selectableMedia(imagesRaw);
   const arrayText = (v: unknown) => (Array.isArray(v) ? v.join("\n") : "");
   return (
     <AdminForm
