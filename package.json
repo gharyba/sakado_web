@@ -16,6 +16,7 @@
     "test:navigation": "playwright test --config playwright.navigation.config.ts",
     "test:hero": "playwright test --config playwright.hero.config.ts",
     "test:phase04": "playwright test --config playwright.phase04.config.ts",
+    "test:phase05": "node scripts/test-phase05.mjs",
     "test:e2e": "node --env-file=.env --import tsx tests/browser/prepare.ts && node --env-file=.env node_modules/@playwright/test/cli.js test",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",

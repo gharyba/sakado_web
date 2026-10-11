@@ -136,24 +136,7 @@ export const eventSchema = z
         message: "La clôture doit suivre l’ouverture.",
       });
   });
-export const bookingInput = z.object({
-  eventId: id,
-  firstName: text(100).min(2),
-  lastName: text(100).min(2),
-  email: z
-    .email()
-    .max(254)
-    .transform((v) => v.toLowerCase()),
-  phone: z
-    .string()
-    .trim()
-    .min(8)
-    .max(30)
-    .regex(/^[+\d\s().-]+$/),
-  participantCount: z.coerce.number().int().min(1).max(100),
-  notes: optionalText(2000),
-  idempotencyKey: z.string().uuid(),
-});
+export { bookingInput } from "./registration-validation";
 export const bookingEdit = z.object({
   id,
   status: z.enum([

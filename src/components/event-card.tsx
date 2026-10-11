@@ -1,7 +1,11 @@
 import Image from "next/image";
 import Link from "@/components/link";
 import type { Adventure } from "@/lib/types";
-import { dateLabel, priceLabel, statusLabels } from "@/lib/format";
+import { dateRangeLabel, priceLabel } from "@/lib/format";
+import {
+  adventureStateLabel,
+  registrationMessage,
+} from "@/lib/adventure-discovery";
 import { Icon } from "./icon";
 export function EventCard({ event }: { event: Adventure }) {
   return (
@@ -21,9 +25,7 @@ export function EventCard({ event }: { event: Adventure }) {
             fill
             sizes="(max-width: 700px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
-          <span className="image-badge">
-            {event.demo ? "DÉMO · À CONFIRMER" : statusLabels[event.status]}
-          </span>
+          <span className="image-badge">{adventureStateLabel(event)}</span>
           {event.category && (
             <span className="image-category">{event.category}</span>
           )}
@@ -31,17 +33,33 @@ export function EventCard({ event }: { event: Adventure }) {
         <div className="event-info">
           <div className="event-date">
             <Icon name="calendar" size={15} />
-            {dateLabel(event.startsAt)}
+            {dateRangeLabel(event.startsAt, event.endsAt)}
           </div>
           <h3>{event.title}</h3>
           <p>{event.shortDescription}</p>
           <div className="event-meta">
             <span>
               <Icon name="pin" size={15} />
-              {event.location ?? "Lieu à confirmer"}
+              {event.destinationName ?? event.location ?? "Lieu à confirmer"}
             </span>
             {event.duration && <span>{event.duration}</span>}
+            {event.difficulty && <span>Difficulté : {event.difficulty}</span>}
           </div>
+          <p className="s-event-availability">{registrationMessage(event)}</p>
+          {!event.demo &&
+            event.lifecycle === "UPCOMING" &&
+            event.registrationStatus !== "WAITLIST_ONLY" &&
+            event.showAvailability !== false &&
+            event.availablePlaces !== null && (
+              <p className="s-event-capacity">
+                {event.availablePlaces} place
+                {event.availablePlaces !== 1 ? "s" : ""} disponible
+                {event.availablePlaces !== 1 ? "s" : ""}
+                {event.maximumParticipants !== null && (
+                  <> · Capacité : {event.maximumParticipants}</>
+                )}
+              </p>
+            )}
           <div className="event-card-bottom">
             <span>{priceLabel(event.price, event.currency)}</span>
             <span className="text-link">

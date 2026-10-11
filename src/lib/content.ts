@@ -11,12 +11,7 @@ import {
   demoGallery,
 } from "@/data/demo/content";
 import type { Adventure, Place, Experience, GalleryPhoto } from "./types";
-import {
-  lifecycle,
-  occupied,
-  confirmed,
-  registrationAllowed,
-} from "./event-policy";
+import { mapEventDetails } from "./event-detail";
 const eventWhere: Prisma.EventWhereInput = {
   published: true,
   source: "CONFIRMED",
@@ -43,11 +38,6 @@ const eventInclude = {
   gallery: { where: galleryWhere, orderBy: { order: "asc" as const } },
   bookings: { select: { status: true, participantCount: true } },
 } satisfies Prisma.EventInclude;
-function strings(v: Prisma.JsonValue | null) {
-  return Array.isArray(v)
-    ? v.filter((x): x is string => typeof x === "string")
-    : [];
-}
 function photo(row: {
   id: string;
   src: string;
@@ -67,70 +57,11 @@ function photo(row: {
 async function event(
   row: Prisma.EventGetPayload<{ include: typeof eventInclude }>,
 ): Promise<Adventure> {
-  const state = lifecycle(row);
-  const remaining =
-    row.capacity === null
-      ? null
-      : Math.max(0, row.capacity - occupied(row.bookings));
-  const status =
-    state === "COMPLETED"
-      ? "FINISHED"
-      : state !== "UPCOMING"
-        ? "COMING_SOON"
-        : row.registrationStatus === "WAITLIST_ONLY"
-          ? "FULL"
-          : row.registrationStatus === "CLOSED"
-            ? "COMING_SOON"
-            : row.registrationStatus;
-  return {
-    id: row.id,
-    slug: row.slug,
-    title: row.title,
-    shortDescription: row.shortDescription,
-    description: row.description,
-    coverImage: await publicImagePath(row.coverImage),
-    location: row.location,
-    startsAt: row.startsAt?.toISOString() ?? null,
-    endsAt: row.endsAt?.toISOString() ?? null,
-    duration: row.duration,
-    difficulty: row.difficulty,
-    price: row.price === null ? null : Number(row.price),
-    currency: row.currency,
-    availablePlaces: row.showAvailability ? remaining : null,
-    maximumParticipants: row.showAvailability ? row.capacity : null,
-    status,
-    category:
-      row.category?.enabled && row.category.source === "CONFIRMED"
-        ? row.category.name
-        : null,
-    destinationSlug:
-      row.destination?.published &&
-      !row.destination.archived &&
-      row.destination.source === "CONFIRMED"
-        ? row.destination.slug
-        : null,
-    demo: false,
-    included: strings(row.included),
-    excluded: strings(row.excluded),
-    equipment: strings(row.equipment),
-    meetingPoint: row.meetingPoint,
-    meetingTime: row.meetingTime,
-    importantInfo: row.importantInfo,
-    cancellationInfo: row.cancellationInfo,
-    schedule: row.schedule,
-    gallery: await publicPhotos(row.gallery),
-    lifecycle: state,
-    registrationStatus: row.registrationStatus,
-    canRegister:
-      registrationAllowed(row) &&
-      (row.registrationStatus === "WAITLIST_ONLY" || (remaining ?? 0) > 0),
-    showAvailability: row.showAvailability,
-    confirmedCount: row.showAvailability ? confirmed(row.bookings) : null,
-    featured: row.featured,
-    recommendations: row.recommendations,
-    conditions: row.conditions,
-    recap: row.recap,
-  };
+  const [coverImage, gallery] = await Promise.all([
+    publicImagePath(row.coverImage),
+    publicPhotos(row.gallery),
+  ]);
+  return mapEventDetails(row, { coverImage, gallery });
 }
 async function publicPhotos<T extends Parameters<typeof photo>[0]>(rows: T[]) {
   const allowed = await Promise.all(
