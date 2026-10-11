@@ -1,0 +1,314 @@
+{
+  "schemaVersion": 1,
+  "proposedVersion": "v1.0.0-rc.1",
+  "baseCommit": "f623b7ff45d1984d5ca308f4b7dd77afa215fe98",
+  "candidateCommit": null,
+  "candidateBuildId": null,
+  "targetNode": "24.x",
+  "externalNodeVersion": null,
+  "externalPlatform": null,
+  "approvedStagingOrigin": null,
+  "databaseProviderRef": null,
+  "mediaSnapshot": {
+    "assets": 17,
+    "blockedAssets": 17,
+    "pendingApprovals": 85
+  },
+  "artifacts": {
+    "packageLockSha256": "4f882e282bcd2cc27d7973f49e24e70bd4d00760b7ddd9d61d85c051da3cdee4",
+    "prismaSchemaSha256": "b47e033318be2e48bc4ceae2ba0833b923f69e2109474f1c5afe62d024822d77",
+    "mediaRegistrySha256": "d1e0f46a0d89019e798b731e57f4e42e97b38cc8f9b2b7402301697e44058cc9",
+    "migrations": [
+      {
+        "name": "20261007091345_sakado_admin_postgresql",
+        "sha256": "79336fd5b5eb029e6cbbe270a9f5bd93ea911dd72e2266ba280c5869f5236022"
+      },
+      {
+        "name": "20261007150000_instagram_media",
+        "sha256": "f6ebd3c790aa5ceac5020b15e4a24b0160f0440564ee21fa0e8f68a87f40caac"
+      }
+    ]
+  },
+  "gates": {
+    "ciQuality": {
+      "status": "NOT TESTED",
+      "scope": "GITHUB_CI",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "ciIntegration": {
+      "status": "NOT TESTED",
+      "scope": "GITHUB_CI",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "linuxValidation": {
+      "status": "NOT TESTED",
+      "scope": "GITHUB_CI",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "targetIsolation": {
+      "status": "BLOCKED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "externalRuntime": {
+      "status": "BLOCKED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "environment": {
+      "status": "BLOCKED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "accessRestriction": {
+      "status": "BLOCKED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "https": {
+      "status": "NOT TESTED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "proxyOriginCookies": {
+      "status": "NOT TESTED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "database": {
+      "status": "BLOCKED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "migrations": {
+      "status": "NOT TESTED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "adminProvisioning": {
+      "status": "BLOCKED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "publicSmoke": {
+      "status": "NOT TESTED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "adminSmoke": {
+      "status": "NOT TESTED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "registrationE2e": {
+      "status": "NOT TESTED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "mediaSafety": {
+      "status": "NOT TESTED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "storageRestart": {
+      "status": "NOT TESTED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "storageBuildRestart": {
+      "status": "NOT TESTED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "storageRedeploy": {
+      "status": "BLOCKED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "backup": {
+      "status": "BLOCKED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "restore": {
+      "status": "BLOCKED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "rollback": {
+      "status": "BLOCKED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "health": {
+      "status": "NOT TESTED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "securityHeadersCache": {
+      "status": "NOT TESTED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "logsPrivacy": {
+      "status": "NOT TESTED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "imageOptimization": {
+      "status": "NOT TESTED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "performance": {
+      "status": "NOT TESTED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "manualAccessibility": {
+      "status": "NOT TESTED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "physicalDevices": {
+      "status": "NOT TESTED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "monitoringOwnership": {
+      "status": "BLOCKED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    },
+    "dependencyRiskReview": {
+      "status": "BLOCKED",
+      "scope": "EXTERNAL_STAGING",
+      "candidateCommit": null,
+      "buildId": null,
+      "evidenceRef": null,
+      "reviewerRef": null,
+      "reviewedUtc": null
+    }
+  },
+  "productionLaunchApproved": false
+}

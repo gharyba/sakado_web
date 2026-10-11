@@ -23,6 +23,7 @@
     "test:production-env": "node scripts/check-production-startup.mjs",
     "rehearse:deployment": "node scripts/rehearse-deployment.mjs",
     "test:staging": "node scripts/rehearse-staging.mjs",
+    "check:release": "node --import tsx scripts/check-release-evidence.ts",
     "test:e2e": "node --env-file=.env --import tsx tests/browser/prepare.ts && node --env-file=.env node_modules/@playwright/test/cli.js test",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",

@@ -1,5 +1,7 @@
 # SAKADO 2.0 — Hostinger deployment plan
 
+Phase 08 update (2026-10-11): the user confirms **no external staging environment is provisioned** and authorizes repository preparation only. Historical compatibility references below are not current-plan proof. Read [EXTERNAL_STAGING](EXTERNAL_STAGING.md) and [RELEASE_CANDIDATE](RELEASE_CANDIDATE.md) before any separately authorized external operation. Hostinger capabilities, approved hostname, PostgreSQL, persistent storage, access restriction and HTTPS remain unverified. No external resources, credentials, DNS or deployment are authorized by the preparation files.
+
 Verified 2026-10-09. **User-selected target: managed Node.js Web App hosting**, not VPS. No hosting account was accessed and no deployment was performed. Exact plan entitlement, region, resource ceilings, domain and external service budget are **TO BE CONFIRMED**.
 
 ## Compatibility verdict
