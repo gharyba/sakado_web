@@ -1,3 +1,4 @@
+import { selectableMedia } from "@/lib/media-mutation-guard";
 import Image from "next/image";
 import Link from "@/components/link";
 import { requireAdmin } from "@/lib/auth";
@@ -17,7 +18,7 @@ export default async function Page({
 }) {
   await requireAdmin("gallery");
   const page = mediaPage((await searchParams).page);
-  const [items, count, events, places, photos] = await Promise.all([
+  const [items, count, events, places, photosRaw] = await Promise.all([
     db.instagramMedia.findMany({
       orderBy: [{ displayOrder: "asc" }, { id: "asc" }],
       take: MEDIA_PAGE_SIZE,
@@ -31,6 +32,8 @@ export default async function Page({
       select: { src: true, alt: true, published: true },
     }),
   ]);
+
+  const photos = await selectableMedia(photosRaw);
   const fields = (item?: (typeof items)[number]) => (
     <>
       <Field

@@ -1,0 +1,95 @@
+name: Sakado CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sakado-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Quality, Tests, Build and Media Safety
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      CI: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+      DATABASE_URL: "postgresql://validation:dummy@127.0.0.1:9/unavailable"
+      AUTH_SECRET: "ci-only-placeholder-never-a-production-secret-000000"
+      DEMO_MODE: "true"
+      SITE_URL: ""
+      ADMIN_URL: ""
+      TRUST_PROXY: "false"
+      MEDIA_STORAGE: "local"
+      MEDIA_LOCAL_DIR: "${{ runner.temp }}/sakado-ci-uploads"
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --include=dev --no-audit --no-fund
+      - name: Tracked secret safety
+        run: npm run check:secrets
+      - run: npm run db:generate
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - name: Production build with pre/post media audits
+        run: npm run build
+      - run: npm run test:production-env
+      - run: npx playwright install --with-deps chromium
+      - name: Phase 04 media browser regression
+        run: npm run test:phase04
+
+  integration:
+    name: PostgreSQL Integration and Admin Workflows
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: sakado_ci
+          POSTGRES_PASSWORD: ci-disposable-only
+          POSTGRES_DB: sakado_test
+          PGDATA: /var/lib/postgresql/data
+        ports:
+          - 55435:5432
+        options: >-
+          --health-cmd "pg_isready -U sakado_ci -d sakado_test"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      CI: "true"
+      SAKADO_CI_DATABASE: disposable-service
+      DATABASE_URL: "postgresql://sakado_ci:ci-disposable-only@127.0.0.1:55435/sakado_test?schema=public"
+      AUTH_SECRET: "ci-only-placeholder-never-a-production-secret-000000"
+      DEMO_MODE: "true"
+      SITE_URL: ""
+      ADMIN_URL: ""
+      TRUST_PROXY: "false"
+      MEDIA_STORAGE: local
+      MEDIA_LOCAL_DIR: "${{ runner.temp }}/sakado-ci-uploads"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --include=dev --no-audit --no-fund
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Guard service identity, then run isolated integration and Phase 05/06 browser tests
+        run: npm run test:ci

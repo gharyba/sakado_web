@@ -95,6 +95,10 @@ export default async function Page({
                 {registrationLabels[e.registrationStatus]} ·{" "}
                 {e.published ? "Publiée" : "Non publiée"}
               </small>
+              <p>
+                Clôture :{" "}
+                {dateLabel(e.registrationDeadline?.toISOString() ?? null)}
+              </p>
             </div>
             <div className="admin-actions">
               <Link href={"/admin/events/" + e.id}>Voir</Link>

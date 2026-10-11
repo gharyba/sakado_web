@@ -20,7 +20,7 @@ export default defineConfig({
   timeout: 45000,
   reporter: "list",
   use: {
-    channel: "chrome",
+    channel: process.env.CI ? undefined : "chrome",
     headless: true,
     baseURL: "http://127.0.0.1:3110",
     viewport: { width: 1440, height: 900 },

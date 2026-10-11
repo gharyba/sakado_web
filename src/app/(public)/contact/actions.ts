@@ -2,6 +2,8 @@
 import { db, databaseConfigured } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limit";
 import { contactSchema, contactSubjects } from "@/lib/contact-validation";
+import { demoEnabled } from "@/lib/content-policy";
+import { operationalFailure } from "@/lib/operational-log";
 export type ContactState = {
   success: boolean;
   message: string;
@@ -11,6 +13,11 @@ export async function sendContact(
   _state: ContactState,
   form: FormData,
 ): Promise<ContactState> {
+  if (demoEnabled())
+    return {
+      success: false,
+      message: "L’envoi de messages est désactivé en démonstration.",
+    };
   if (!databaseConfigured())
     return {
       success: false,
@@ -33,15 +40,15 @@ export async function sendContact(
       message: "Vérifiez les champs du formulaire.",
       errors: result.error.flatten().fieldErrors,
     };
-  if (
-    !(await rateLimit("contact-global", "all", 100, 60 * 60_000)) ||
-    !(await rateLimit("contact-email", result.data.email, 3, 10 * 60_000))
-  )
-    return {
-      success: false,
-      message: "Trop de messages envoyés. Réessayez dans quelques minutes.",
-    };
   try {
+    if (
+      !(await rateLimit("contact-global", "all", 100, 60 * 60_000)) ||
+      !(await rateLimit("contact-email", result.data.email, 3, 10 * 60_000))
+    )
+      return {
+        success: false,
+        message: "Trop de messages envoyés. Réessayez dans quelques minutes.",
+      };
     const { subject, phone, ...data } = result.data;
     await db.contactMessage.create({
       data: {
@@ -56,6 +63,7 @@ export async function sendContact(
         "Votre message a été transmis à l’équipe Sakado. Ceci ne constitue pas une réservation.",
     };
   } catch {
+    operationalFailure("contact");
     return {
       success: false,
       message:

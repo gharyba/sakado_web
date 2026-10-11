@@ -1,24 +1,16 @@
+import { adminEndpoint } from "@/lib/admin-endpoint";
 import { NextRequest, NextResponse } from "next/server";
-import {
-  authorizeApi,
-  sameOrigin,
-  jsonError,
-  readBounded,
-  RequestError,
-} from "@/lib/http-security";
+import { jsonError, readBounded, RequestError } from "@/lib/http-security";
 import { normalizeImage, storage } from "@/lib/storage";
 import { db } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limit";
 import { canUseMediaBytes } from "@/lib/media-readiness";
 export async function POST(request: NextRequest) {
-  const auth = await authorizeApi("gallery");
-  if (auth.response) return auth.response;
-  if (!sameOrigin(request)) return jsonError("Origine non autorisée.", 403);
-  if (Number(request.headers.get("content-length") ?? 0) > 11 * 1024 * 1024)
-    return jsonError("Image trop volumineuse.", 413);
-  if (!(await rateLimit("upload", auth.user.id, 60, 3600000)))
-    return jsonError("Trop de fichiers. Réessayez plus tard.", 429);
-  try {
+  return adminEndpoint(request, "gallery", async (user) => {
+    if (Number(request.headers.get("content-length") ?? 0) > 11 * 1024 * 1024)
+      return jsonError("Image trop volumineuse.", 413);
+    if (!(await rateLimit("upload", user.id, 60, 3600000)))
+      return jsonError("Trop de fichiers. Réessayez plus tard.", 429);
     const bytes = await readBounded(request, 11 * 1024 * 1024);
     const form = await new Response(new Uint8Array(bytes), {
       headers: { "Content-Type": request.headers.get("content-type") ?? "" },
@@ -38,7 +30,11 @@ export async function POST(request: NextRequest) {
         "Photo bloquée : validation humaine des droits requise avant import.",
         409,
       );
-    const optimized = await normalizeImage(file);
+    const optimized = await normalizeImage(file).catch(() => {
+      throw new RequestError(
+        "Image JPEG, PNG ou WebP invalide (10 Mo maximum).",
+      );
+    });
     if (!(await canUseMediaBytes(optimized, file.name)))
       return jsonError(
         "Cette version optimisée doit être validée avant import.",
@@ -57,7 +53,7 @@ export async function POST(request: NextRequest) {
         });
         await tx.auditLog.create({
           data: {
-            adminId: auth.user.id,
+            adminId: user.id,
             action: "GALLERY_UPLOADED",
             entityType: "gallery",
             entityId: row.id,
@@ -75,12 +71,5 @@ export async function POST(request: NextRequest) {
       },
       { headers: { "Cache-Control": "private, no-store" } },
     );
-  } catch (error) {
-    if (error instanceof RequestError)
-      return jsonError(error.message, error.status);
-    return jsonError(
-      "Image refusée. Utilisez un JPEG, PNG ou WebP valide de 10 Mo maximum.",
-      400,
-    );
-  }
+  });
 }

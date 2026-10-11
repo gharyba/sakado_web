@@ -5,6 +5,8 @@ import { lifecycle, occupied, confirmed } from "@/lib/event-policy";
 import { AdminHeading } from "@/components/admin/heading";
 import { dateLabel } from "@/lib/format";
 import { can } from "@/lib/permissions";
+import { getMediaRegistry } from "@/lib/media-readiness";
+import { eligibleForPublication } from "@/lib/media-readiness-policy";
 export default async function Dashboard() {
   const user = await requireAdmin();
   const events = await db.event.findMany({
@@ -18,6 +20,12 @@ export default async function Dashboard() {
       : 0,
     db.auditLog.findMany({ take: 8, orderBy: { createdAt: "desc" } }),
   ]);
+  const registry = await getMediaRegistry();
+  const blocked = registry.valid
+    ? registry.assets.filter(
+        (a) => !eligibleForPublication(a, registry.globalCleared),
+      ).length
+    : "Registre indisponible";
   const labels: Record<string, string> = {
     EVENT_CREATED: "Une sortie a été créée",
     EVENT_UPDATED: "Une sortie a été modifiée",
@@ -48,11 +56,13 @@ export default async function Dashboard() {
           ],
           [
             "Inscriptions en attente",
-            events.reduce(
-              (n, e) =>
-                n + e.bookings.filter((b) => b.status === "PENDING").length,
-              0,
-            ),
+            can(user.role, "bookings")
+              ? events.reduce(
+                  (n, e) =>
+                    n + e.bookings.filter((b) => b.status === "PENDING").length,
+                  0,
+                )
+              : "Accès restreint",
           ],
           [
             "Places disponibles",
@@ -67,6 +77,20 @@ export default async function Dashboard() {
             "Sorties terminées",
             events.filter((e) => lifecycle(e) === "COMPLETED").length,
           ],
+          [
+            "Sorties non publiées",
+            events.filter((e) => !e.published && e.status !== "ARCHIVED")
+              .length,
+          ],
+          [
+            "Complètes / dernières places",
+            upcoming.filter(
+              (e) =>
+                ["FULL", "FEW_PLACES"].includes(e.registrationStatus) ||
+                (e.capacity !== null && occupied(e.bookings) >= e.capacity),
+            ).length,
+          ],
+          ["Photos BLOCKED", blocked],
         ].map(([label, value]) => (
           <div key={label}>
             <span>{label}</span>
@@ -83,6 +107,7 @@ export default async function Dashboard() {
           <Link href="/admin/registrations">Voir les inscrits</Link>
         )}
         <Link href="/admin/site">Modifier le site</Link>
+        <Link href="/admin/media-readiness">Revoir les photos BLOCKED</Link>
       </div>
       <section className="admin-panel">
         <div className="admin-section-title">

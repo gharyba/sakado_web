@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { currentAdmin } from "./auth";
 import { can, type Permission } from "./permissions";
+import { requestOriginAllowed } from "./origin-policy";
 export class RequestError extends Error {
   constructor(
     message: string,
@@ -10,17 +11,12 @@ export class RequestError extends Error {
   }
 }
 export function sameOrigin(request: NextRequest) {
-  const origin = request.headers.get("origin");
-  if (!origin) return false;
-  try {
-    const parsed = new URL(origin);
-    return (
-      parsed.host === request.headers.get("host") &&
-      ["http:", "https:"].includes(parsed.protocol)
-    );
-  } catch {
-    return false;
-  }
+  return requestOriginAllowed(
+    request.headers.get("origin"),
+    request.headers.get("host"),
+    request.nextUrl.protocol,
+    [process.env.SITE_URL, process.env.ADMIN_URL],
+  );
 }
 export function jsonError(message: string, status: number) {
   return NextResponse.json(

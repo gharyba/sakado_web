@@ -1,3 +1,4 @@
+import { selectableMedia } from "@/lib/media-mutation-guard";
 import { requireAdmin } from "@/lib/auth";
 import { getSettings } from "@/lib/settings";
 import { db } from "@/lib/db";
@@ -7,11 +8,13 @@ import { Field, Area, Select, Block, Hidden } from "@/components/admin/fields";
 import { SocialEditor } from "@/components/admin/social-editor";
 export default async function Page() {
   await requireAdmin("settings");
-  const [s, photos, links] = await Promise.all([
+  const [s, photosRaw, links] = await Promise.all([
     getSettings(),
     db.galleryImage.findMany({ where: { authorized: true } }),
     db.socialLink.findMany({ orderBy: { order: "asc" } }),
   ]);
+
+  const photos = await selectableMedia(photosRaw);
   return (
     <>
       <AdminHeading

@@ -57,3 +57,16 @@ export async function storedMediaAllowed(value: string) {
     return false;
   }
 }
+
+/** Selector eligibility is checked again by the mutation boundary; flags alone are not rights. */
+export async function selectableMedia<T extends { src: string }>(
+  rows: T[],
+): Promise<T[]> {
+  const decisions = await Promise.all(
+    rows.map(async (row) => ({
+      row,
+      allowed: await storedMediaAllowed(row.src),
+    })),
+  );
+  return decisions.filter((item) => item.allowed).map((item) => item.row);
+}

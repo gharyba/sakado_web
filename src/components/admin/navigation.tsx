@@ -1,7 +1,7 @@
 "use client";
 import Link from "@/components/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { can, type Permission, type Role } from "@/lib/permissions";
 const items: [string, string, Permission][] = [
   ["Tableau de bord", "/admin", "dashboard"],
@@ -19,12 +19,17 @@ const items: [string, string, Permission][] = [
 export function AdminNavigation({ role }: { role: Role }) {
   const path = usePathname();
   const [open, setOpen] = useState(false);
+  const toggle = useRef<HTMLButtonElement>(null);
   return (
     <>
       <button
+        ref={toggle}
         className="admin-menu-toggle"
         aria-expanded={open}
         aria-controls="admin-navigation"
+        onKeyDown={(e) => {
+          if (e.key === "Escape") setOpen(false);
+        }}
         onClick={() => setOpen(!open)}
       >
         ☰ Menu
@@ -33,6 +38,12 @@ export function AdminNavigation({ role }: { role: Role }) {
         id="admin-navigation"
         className={"admin-navigation " + (open ? "is-open" : "")}
         aria-label="Administration"
+        onKeyDown={(e) => {
+          if (e.key === "Escape" && open) {
+            setOpen(false);
+            toggle.current?.focus();
+          }
+        }}
       >
         {items
           .filter((i) => can(role, i[2]))
@@ -57,7 +68,16 @@ export function AdminNavigation({ role }: { role: Role }) {
         {can(role, "bookings") && (
           <Link href="/admin/registrations">Inscrits</Link>
         )}
-        <button onClick={() => setOpen(!open)}>Menu</button>
+        <button
+          aria-controls="admin-navigation"
+          aria-expanded={open}
+          onClick={() => {
+            setOpen(!open);
+            toggle.current?.focus();
+          }}
+        >
+          Menu
+        </button>
       </nav>
     </>
   );

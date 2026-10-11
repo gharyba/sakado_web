@@ -83,6 +83,13 @@ try {
     "--config",
     "playwright.phase05.config.ts",
   ]);
+  if (process.argv.includes("--phase06"))
+    await run([
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.phase06.config.ts",
+    ]);
 } catch (error) {
   console.error(
     error instanceof Error ? error.message : "Phase 05 validation failed.",

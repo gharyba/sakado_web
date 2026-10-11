@@ -6,17 +6,13 @@ import { cache } from "react";
 import { approvedImagePath } from "./content-policy";
 import { db, databaseConfigured } from "./db";
 import { storage } from "./storage";
+import { illustrationIdentityAllowed } from "./illustration-policy";
 import {
   bytesEligible,
   mediaRegistry,
   invalidRegistry,
 } from "./media-readiness-policy";
 
-const illustrations = new Set([
-  "/images/camp.svg",
-  "/images/coast.svg",
-  "/images/trail.svg",
-]);
 export const sha256 = (bytes: Uint8Array) =>
   createHash("sha256").update(bytes).digest("hex");
 export const getMediaRegistry = cache(async () => {
@@ -40,14 +36,17 @@ export const getMediaRegistry = cache(async () => {
   }
 });
 export async function canUseMediaBytes(bytes: Uint8Array, filename?: string) {
-  return bytesEligible(await getMediaRegistry(), sha256(bytes), filename);
+  const hash = sha256(bytes);
+  return (
+    illustrationIdentityAllowed(filename, hash) &&
+    bytesEligible(await getMediaRegistry(), hash, filename)
+  );
 }
 /** A format-safe URL is not authorization. Filter before DTOs/preloads reach clients. */
 export const publicImagePath = cache(
   async (value: string | null | undefined): Promise<string | null> => {
     const src = approvedImagePath(value);
     if (!src) return null;
-    if (illustrations.has(src)) return src; // Explicit, labeled project demo artwork only.
     try {
       let bytes: Buffer;
       if (src.startsWith("/media/")) {

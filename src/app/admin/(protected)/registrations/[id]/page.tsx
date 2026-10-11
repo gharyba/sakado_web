@@ -39,6 +39,7 @@ export default async function Page({
       </div>
       <AdminForm endpoint="/api/admin/bookings">
         <Hidden name="id" value={id} />
+        <Hidden name="expectedUpdatedAt" value={b.updatedAt.toISOString()} />
         <Block title="L’inscription">
           <Field label="Prénom" name="firstName" value={b.firstName} required />
           <Field label="Nom" name="lastName" value={b.lastName} required />

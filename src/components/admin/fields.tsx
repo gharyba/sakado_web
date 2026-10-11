@@ -16,7 +16,9 @@ export function Field({
   return (
     <label className="admin-field">
       {label}
+      {required && <span aria-hidden="true"> *</span>}
       <input
+        aria-label={label}
         name={name}
         type={type}
         defaultValue={value ?? ""}
