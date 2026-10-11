@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { randomBytes } from "node:crypto";
 import { serializable } from "./transactions";
 import { bookingInput, bookingEdit } from "./admin-validation";
-import { occupied, registrationAllowed, lifecycle } from "./event-policy";
+import { occupied, registrationAvailability, lifecycle } from "./event-policy";
 export class BusinessError extends Error {
   constructor(
     message: string,
@@ -21,19 +21,28 @@ export async function createBooking(db: PrismaClient, input: unknown) {
         eventId: true,
         email: true,
         participantCount: true,
+        status: true,
+        firstName: true,
+        lastName: true,
+        phone: true,
+        notes: true,
       },
     });
     if (prior) {
       if (
         prior.eventId !== data.eventId ||
         prior.email !== data.email ||
-        prior.participantCount !== data.participantCount
+        prior.participantCount !== data.participantCount ||
+        prior.firstName !== data.firstName ||
+        prior.lastName !== data.lastName ||
+        prior.phone !== data.phone ||
+        prior.notes !== data.notes
       )
         throw new BusinessError(
           "La demande a changé. Rechargez le formulaire.",
           409,
         );
-      return { reference: prior.reference };
+      return { reference: prior.reference, status: prior.status };
     }
     const event = await tx.event.findUnique({
       where: { id: data.eventId },
@@ -41,18 +50,26 @@ export async function createBooking(db: PrismaClient, input: unknown) {
         bookings: { select: { status: true, participantCount: true } },
       },
     });
-    if (!event || !registrationAllowed(event))
+    if (!event)
       throw new BusinessError(
         "Les inscriptions sont fermées pour cette sortie.",
         409,
       );
-    if (event.capacity === null || event.price === null)
+    const availability = registrationAvailability(event, event.bookings);
+    if (availability.reason === "UNCONFIRMED")
       throw new BusinessError(
         "Les modalités de cette sortie doivent être confirmées.",
         409,
       );
-    const waiting = event.registrationStatus === "WAITLIST_ONLY";
-    const remaining = event.capacity - occupied(event.bookings);
+    if (!availability.canRegister)
+      throw new BusinessError(
+        availability.reason === "FULL"
+          ? "Cette sortie est complète."
+          : "Les inscriptions sont fermées pour cette sortie.",
+        409,
+      );
+    const waiting = availability.reason === "WAITLIST";
+    const remaining = availability.remaining ?? 0;
     if (!waiting && data.participantCount > remaining)
       throw new BusinessError(
         "Le nombre de places demandé n’est plus disponible.",
@@ -77,7 +94,9 @@ export async function createBooking(db: PrismaClient, input: unknown) {
         ...data,
         reference,
         status: waiting ? "WAITLIST" : "PENDING",
-        totalAmount: new Prisma.Decimal(event.price).mul(data.participantCount),
+        totalAmount: new Prisma.Decimal(event.price!).mul(
+          data.participantCount,
+        ),
         currency: event.currency,
       },
     });
@@ -88,7 +107,10 @@ export async function createBooking(db: PrismaClient, input: unknown) {
         entityId: reference,
       },
     });
-    return { reference };
+    return {
+      reference,
+      status: waiting ? ("WAITLIST" as const) : ("PENDING" as const),
+    };
   });
 }
 export async function updateBooking(

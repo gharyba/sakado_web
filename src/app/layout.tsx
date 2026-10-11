@@ -4,6 +4,7 @@ import "@/styles/tokens.css";
 import "@/styles/primitives.css";
 import "./globals.css";
 import "@/styles/cinematic.css";
+import "@/styles/adventures.css";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: {

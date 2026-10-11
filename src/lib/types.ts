@@ -17,6 +17,10 @@ export type GalleryPhoto = {
   demo: boolean;
 };
 export type Adventure = {
+  registrationReason?: import("./event-policy").RegistrationReason;
+  registrationOpenAt?: string | null;
+  registrationDeadline?: string | null;
+  destinationName?: string | null;
   lifecycle?: string;
   registrationStatus?: string;
   canRegister?: boolean;

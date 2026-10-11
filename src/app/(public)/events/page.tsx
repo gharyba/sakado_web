@@ -1,47 +1,45 @@
+import Link from "@/components/link";
 import { getEvents } from "@/lib/content";
 import { PageIntro } from "@/components/page-intro";
 import { EventCard } from "@/components/event-card";
+import {
+  AdventureListing,
+  readAdventureFilters,
+} from "@/components/adventure-listing";
+import { upcomingAdventures } from "@/lib/adventure-discovery";
 import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata(
-  "Nos aventures",
-  "Découvrez les prochaines aventures camping et randonnée de Sakado Sfax.",
+  "Prochaines aventures",
+  "Découvrez les prochaines sorties Sakado et leurs modalités d’inscription.",
   "/events",
 );
-export default async function EventsPage() {
-  const events = await getEvents();
-  const upcoming = events.filter(
-    (event) =>
-      event.demo ||
-      (event.lifecycle === "UPCOMING" &&
-        event.startsAt &&
-        new Date(event.startsAt) > new Date()),
-  );
-  const past = events.filter((event) => event.status === "FINISHED");
+export default async function EventsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const [events, params] = await Promise.all([getEvents(), searchParams]);
+  const ongoing = events.filter((event) => event.lifecycle === "ONGOING");
   return (
     <div className="container page-section">
-      <PageIntro eyebrow="LE PROCHAIN DÉPART" title="Place à l’aventure.">
+      <PageIntro eyebrow="LE PROCHAIN DÉPART" title="Prochaines aventures">
         <p>
-          Découvrez les prochaines expériences et envoyez votre demande lorsque
-          les inscriptions sont ouvertes.
+          Découvrez les prochaines sorties Sakado. Retrouvez le programme et les
+          informations pratiques avant d’envoyer votre demande.
         </p>
+        <Link className="text-link" href="/adventures">
+          Les aventures passées →
+        </Link>
       </PageIntro>
-      {upcoming.length ? (
-        <div className="event-grid">
-          {upcoming.map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))}
-        </div>
-      ) : (
-        <p className="empty-state">
-          Aucun événement annoncé pour le moment. Suivez Sakado sur Instagram
-          pour les prochaines nouvelles.
-        </p>
-      )}
-      {past.length > 0 && (
+      <AdventureListing
+        events={upcomingAdventures(events)}
+        filters={readAdventureFilters(params)}
+      />
+      {ongoing.length > 0 && (
         <section className="section">
-          <h2>Les aventures passées</h2>
+          <h2>Aventures en cours</h2>
           <div className="event-grid">
-            {past.map((event) => (
+            {ongoing.map((event) => (
               <EventCard key={event.id} event={event} />
             ))}
           </div>

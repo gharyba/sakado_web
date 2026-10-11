@@ -30,3 +30,19 @@ export function priceLabel(price: number | null, currency: string) {
         price,
       );
 }
+export function dateRangeLabel(start: string | null, end: string | null) {
+  if (!start) return dateLabel(null);
+  return end && dateLabel(start) !== dateLabel(end)
+    ? `${dateLabel(start)} → ${dateLabel(end)}`
+    : dateLabel(start);
+}
+export function dateTimeLabel(date: string | null | undefined) {
+  return date
+    ? new Intl.DateTimeFormat("fr-TN", {
+        dateStyle: "long",
+        timeStyle: "short",
+        hourCycle: "h23",
+        timeZone: "Africa/Tunis",
+      }).format(new Date(date))
+    : "À confirmer";
+}

@@ -33,10 +33,63 @@ export function lifecycle(
 ) {
   if (["CANCELLED", "ARCHIVED", "DRAFT", "COMPLETED"].includes(event.status))
     return event.status;
-  if (event.endsAt && event.endsAt < now) return "COMPLETED";
+  if (event.endsAt && event.endsAt <= now) return "COMPLETED";
   if (event.startsAt && event.startsAt <= now)
     return event.endsAt ? "ONGOING" : "COMPLETED";
   return event.status;
+}
+export type RegistrationReason =
+  | "DEMO"
+  | "NOT_UPCOMING"
+  | "CLOSED"
+  | "NOT_YET_OPEN"
+  | "DEADLINE"
+  | "UNCONFIRMED"
+  | "FULL"
+  | "OPEN"
+  | "WAITLIST";
+
+/** Same decision for the public DTO and the transaction; bookings never leave the server. */
+export function registrationAvailability(
+  event: Parameters<typeof registrationAllowed>[0] &
+    Pick<Event, "capacity" | "price">,
+  bookings: Parameters<typeof occupied>[0],
+  now = new Date(),
+): {
+  canRegister: boolean;
+  reason: RegistrationReason;
+  remaining: number | null;
+} {
+  const remaining =
+    event.capacity === null
+      ? null
+      : Math.max(0, event.capacity - occupied(bookings));
+  let reason: RegistrationReason;
+  if (
+    !event.published ||
+    event.source !== "CONFIRMED" ||
+    lifecycle(event, now) !== "UPCOMING" ||
+    !event.startsAt ||
+    event.startsAt <= now
+  )
+    reason = "NOT_UPCOMING";
+  else if (
+    !["OPEN", "FEW_PLACES", "WAITLIST_ONLY"].includes(event.registrationStatus)
+  )
+    reason = event.registrationStatus === "FULL" ? "FULL" : "CLOSED";
+  else if (event.registrationOpenAt && event.registrationOpenAt > now)
+    reason = "NOT_YET_OPEN";
+  else if (event.registrationDeadline && event.registrationDeadline <= now)
+    reason = "DEADLINE";
+  else if (event.capacity === null || event.price === null)
+    reason = "UNCONFIRMED";
+  else if (event.registrationStatus === "WAITLIST_ONLY") reason = "WAITLIST";
+  else reason = remaining !== null && remaining > 0 ? "OPEN" : "FULL";
+  return {
+    canRegister: reason === "OPEN" || reason === "WAITLIST",
+    reason,
+    remaining,
+  };
 }
 export function occupied(
   bookings: Pick<Booking, "status" | "participantCount">[],

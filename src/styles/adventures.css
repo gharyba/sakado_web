@@ -1,0 +1,264 @@
+/* Phase 05: static business information. No animation or scroll ownership. */
+.s-event-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--s-space-4);
+  margin-block: var(--s-space-8);
+  padding: var(--s-space-6);
+  border-radius: var(--s-radius-dialog);
+  background: var(--sand);
+}
+.s-event-filters label {
+  font-weight: 600;
+  min-width: 0;
+}
+.s-event-filter-control {
+  display: grid;
+  gap: var(--s-space-2);
+  min-width: 0;
+  flex: 1 1 12rem;
+}
+.s-event-filters select {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0.6rem;
+  border: 1px solid var(--s-color-border);
+  border-radius: var(--s-radius-control);
+  background: var(--paper);
+  color: var(--ink);
+}
+.s-event-filters .s-filter-checkbox {
+  display: flex;
+  align-items: center;
+  align-self: center;
+  gap: var(--s-space-2);
+  font-weight: 400;
+  flex: 1 1 12rem;
+}
+.s-filter-checkbox input {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+.s-event-result-count {
+  margin-bottom: var(--s-space-4);
+}
+.event-card .s-event-availability {
+  color: var(--forest);
+  font-size: var(--s-text-caption);
+  font-weight: 600;
+}
+.event-card .s-event-capacity {
+  font-size: var(--s-text-caption);
+}
+.event-card .event-info,
+.s-event-page .breadcrumb,
+.s-event-summary dd {
+  overflow-wrap: anywhere;
+}
+.event-card .event-date {
+  align-items: start;
+}
+.event-card .event-date svg {
+  margin-top: 0.25rem;
+}
+.s-event-page .detail-hero-shade {
+  background: linear-gradient(180deg, #102f2959, #102f29ed);
+}
+.s-event-page .detail-hero .s-event-hero-facts {
+  margin-top: var(--s-space-4);
+}
+.s-event-page .detail-hero p {
+  max-width: var(--s-measure);
+}
+.s-event-page .detail-hero .s-event-hero-cta {
+  margin-top: var(--s-space-6);
+  background: var(--paper);
+  color: var(--forest);
+}
+.s-event-summary {
+  top: calc(var(--s-navigation-height) + var(--s-space-4));
+  border-radius: var(--s-radius-dialog);
+}
+.s-event-summary dl > div {
+  font-size: var(--s-text-caption);
+}
+.s-event-summary dl > div > * {
+  min-width: 0;
+  flex: 1;
+}
+.s-event-summary .muted {
+  font-size: var(--s-text-caption);
+}
+.s-event-summary .s-event-availability {
+  font-weight: 600;
+}
+.s-event-page .detail-copy section > p,
+.s-event-page .details-columns p,
+.s-event-page .details-columns li {
+  font-size: var(--s-text-body);
+}
+.s-event-page .program li {
+  font-size: var(--s-text-body);
+}
+.s-event-page .program li p {
+  font-size: var(--s-text-caption);
+}
+.s-event-page .details-columns ul {
+  padding-left: var(--s-space-6);
+}
+.s-event-page .details-columns li {
+  margin-block: var(--s-space-2);
+}
+.s-event-page .details-columns li::marker {
+  color: var(--forest);
+}
+.s-event-page #inscription {
+  scroll-margin-top: calc(var(--s-navigation-height) + var(--s-space-6));
+}
+.s-registration fieldset[hidden] {
+  display: none;
+}
+.s-registration legend.s-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.s-registration input,
+.s-registration textarea {
+  min-width: 0;
+}
+.s-registration-field {
+  margin-bottom: var(--s-space-6);
+}
+.s-registration-field label {
+  margin-bottom: 0;
+}
+.s-registration label,
+.s-registration input,
+.s-registration textarea {
+  font-size: var(--s-text-body);
+}
+.s-registration .form-privacy {
+  font-size: var(--s-text-caption);
+}
+.s-registration-fallback .text-link {
+  display: inline;
+  text-decoration: underline;
+}
+.event-card .event-date,
+.event-card .event-meta {
+  font-size: var(--s-text-caption);
+}
+.s-registration [aria-invalid="true"] {
+  border-color: #9c2929;
+}
+.s-field-error {
+  display: block;
+  color: #8a1f1f;
+  font-weight: 400;
+}
+.s-form-errors {
+  border: 2px solid #9c2929;
+  border-radius: var(--s-radius-card);
+  padding: var(--s-space-4);
+  margin-bottom: var(--s-space-6);
+}
+.s-form-errors a,
+.s-registration .form-privacy a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.s-registration-review dl {
+  display: grid;
+  gap: var(--s-space-3);
+  margin-block: var(--s-space-6);
+}
+.s-registration-review dl > div {
+  display: grid;
+  grid-template-columns: minmax(6rem, 0.7fr) minmax(0, 1.3fr);
+  gap: var(--s-space-4);
+  padding-bottom: var(--s-space-3);
+  border-bottom: 1px solid var(--line);
+}
+.s-registration-review dt {
+  font-weight: 600;
+}
+.s-registration-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-space-3);
+  margin-top: var(--s-space-6);
+}
+.s-registration .button {
+  white-space: normal;
+  min-height: 44px;
+}
+.s-event-mobile-cta {
+  display: none;
+}
+@media (max-width: 699px) {
+  .s-event-filters {
+    padding: var(--s-space-4);
+  }
+  .s-event-filter-control,
+  .s-event-filters .s-filter-checkbox {
+    flex-basis: 100%;
+  }
+  .s-event-page .detail-hero h1 {
+    font-size: clamp(2rem, 8vw, 2.75rem);
+    overflow-wrap: anywhere;
+  }
+  .s-event-page .detail-hero {
+    min-height: 25rem;
+  }
+  .s-event-page-registerable {
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+  }
+  body:has(.s-event-page-registerable) .site-footer {
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+  }
+  .s-event-mobile-cta {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-space-3);
+    background: var(--paper);
+    border-top: 1px solid var(--line);
+    padding: var(--s-space-3) var(--s-space-4)
+      max(var(--s-space-3), env(safe-area-inset-bottom));
+  }
+  .s-event-mobile-cta > span {
+    min-width: 0;
+    font-weight: 600;
+    font-size: var(--s-text-caption);
+  }
+  .s-event-mobile-cta small {
+    display: block;
+    font-weight: 400;
+  }
+  .s-event-mobile-cta .button {
+    max-width: 65%;
+    padding: 0.7rem 1rem;
+    white-space: normal;
+    text-align: center;
+  }
+  .s-event-page:has(.s-registration:focus-within) .s-event-mobile-cta {
+    display: none;
+  }
+  .s-registration-review dl > div {
+    grid-template-columns: 1fr;
+    gap: var(--s-space-1);
+  }
+}

@@ -5,7 +5,16 @@ import { getEvents, getDestinations } from "@/lib/content";
 import { getSettings } from "@/lib/settings";
 import { pageMetadata } from "@/lib/metadata";
 import { publicOrigin, whatsappLink } from "@/lib/content-policy";
-import { dateLabel, priceLabel, statusLabels } from "@/lib/format";
+import { dateRangeLabel, priceLabel } from "@/lib/format";
+import {
+  adventureStateLabel,
+  registrationMessage,
+  registrationCta,
+  relatedAdventures,
+} from "@/lib/adventure-discovery";
+import { eventStructuredData } from "@/lib/event-detail";
+import { EventSummary } from "@/components/event-summary";
+import { EventCard } from "@/components/event-card";
 import { EventProgram } from "@/components/event-program";
 import { Gallery } from "@/components/gallery";
 import { getInstagramMedia } from "@/lib/instagram-content";
@@ -19,7 +28,7 @@ async function getEvent(slug: string) {
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   const event = await getEvent(slug);
-  return event
+  const metadata = event
     ? pageMetadata(
         event.title,
         event.shortDescription,
@@ -27,6 +36,16 @@ export async function generateMetadata({ params }: Props) {
         event.demo,
       )
     : { title: "Aventure introuvable", robots: { index: false } };
+  const origin = publicOrigin();
+  if (event?.coverImage && origin && !event.demo) {
+    const image = { url: `${origin}${event.coverImage}`, alt: event.title };
+    return {
+      ...metadata,
+      openGraph: { ...metadata.openGraph, images: [image] },
+      twitter: { ...metadata.twitter, images: [image.url] },
+    };
+  }
+  return metadata;
 }
 export default async function EventPage({ params }: Props) {
   const { slug } = await params;
@@ -44,26 +63,12 @@ export default async function EventPage({ params }: Props) {
   const destination = destinations.find(
     (item) => item.slug === event.destinationSlug,
   );
-  const schema =
-    !event.demo && event.startsAt && event.location && origin
-      ? {
-          "@context": "https://schema.org",
-          "@type": "Event",
-          name: event.title,
-          description: event.shortDescription,
-          startDate: event.startsAt,
-          ...(event.endsAt ? { endDate: event.endsAt } : {}),
-          location: { "@type": "Place", name: event.location },
-          organizer: {
-            "@type": "Organization",
-            name: settings.name,
-            url: origin,
-          },
-          url: `${origin}/events/${event.slug}`,
-        }
-      : null;
+  const related = relatedAdventures(event, await getEvents());
+  const schema = eventStructuredData(event, origin, settings.name);
   return (
-    <>
+    <div
+      className={`s-event-page${event.canRegister ? " s-event-page-registerable" : ""}`}
+    >
       <div className="container breadcrumb">
         <Link href="/events">Aventures</Link>
         <span>/</span>
@@ -81,7 +86,8 @@ export default async function EventPage({ params }: Props) {
                 : "Illustration temporaire"
           }
           fill
-          priority
+          loading="eager"
+          fetchPriority="high"
           sizes="100vw"
         />
         <div className="detail-hero-shade" />
@@ -93,8 +99,20 @@ export default async function EventPage({ params }: Props) {
           </p>
           <h1>{event.title}</h1>
           <p>
-            {event.location ?? "Lieu à confirmer"} · {dateLabel(event.startsAt)}
+            {event.destinationName ?? event.location ?? "Lieu à confirmer"} ·{" "}
+            {dateRangeLabel(event.startsAt, event.endsAt)}
           </p>
+          <p className="s-event-hero-facts">
+            {adventureStateLabel(event)} ·{" "}
+            {priceLabel(event.price, event.currency)}
+            {event.difficulty && <> · Difficulté : {event.difficulty}</>}
+          </p>
+          <p>{registrationMessage(event)}</p>
+          {event.canRegister && (
+            <a href="#inscription" className="button s-event-hero-cta">
+              {registrationCta(event)} <Icon />
+            </a>
+          )}
         </div>
       </section>
       <div className="container detail-layout">
@@ -115,7 +133,7 @@ export default async function EventPage({ params }: Props) {
                 className="text-link"
                 href={`/destinations/${destination.slug}`}
               >
-                Découvrir la destination <Icon />
+                Découvrir {destination.name} <Icon />
               </Link>
             )}
           </section>
@@ -194,9 +212,19 @@ export default async function EventPage({ params }: Props) {
                 Une demande d’inscription est soumise à la confirmation de
                 Sakado.
               </p>
+              <p className="s-registration-fallback">
+                Si vous ne pouvez pas utiliser le formulaire, vous pouvez aussi{" "}
+                <Link className="text-link" href="/contact">
+                  contacter Sakado
+                </Link>
+                .
+              </p>
               <RegistrationForm
                 eventId={event.id}
                 waitlist={event.registrationStatus === "WAITLIST_ONLY"}
+                price={event.price!}
+                currency={event.currency}
+                availablePlaces={event.availablePlaces}
               />
             </section>
           )}
@@ -207,51 +235,7 @@ export default async function EventPage({ params }: Props) {
             </section>
           )}
         </div>
-        <aside className="adventure-sidebar">
-          <span className="status-badge">{statusLabels[event.status]}</span>
-          <h2>Votre aventure</h2>
-          <dl>
-            {[
-              ["Date", dateLabel(event.startsAt)],
-              ["Fin", event.endsAt ? dateLabel(event.endsAt) : "À confirmer"],
-              ["Durée", event.duration ?? "À confirmer"],
-              ["Difficulté", event.difficulty ?? "À confirmer"],
-              ["Tarif", priceLabel(event.price, event.currency)],
-              [
-                "Places disponibles",
-                event.availablePlaces === null
-                  ? "À confirmer"
-                  : String(event.availablePlaces),
-              ],
-              [
-                "Participants maximum",
-                event.maximumParticipants === null
-                  ? "À confirmer"
-                  : String(event.maximumParticipants),
-              ],
-            ]
-              .filter(
-                ([label]) =>
-                  event.showAvailability !== false ||
-                  !["Places disponibles", "Participants maximum"].includes(
-                    label,
-                  ),
-              )
-              .map(([label, value]) => (
-                <div key={label}>
-                  <dt>{label}</dt>
-                  <dd>{value}</dd>
-                </div>
-              ))}
-          </dl>
-          {event.canRegister && (
-            <a href="#inscription" className="button">
-              {event.registrationStatus === "WAITLIST_ONLY"
-                ? "Rejoindre la liste d’attente"
-                : "S’inscrire"}{" "}
-              <Icon />
-            </a>
-          )}
+        <EventSummary event={event}>
           <Link
             className="button"
             href={`/contact?subject=event&event=${encodeURIComponent(event.title)}`}
@@ -275,7 +259,7 @@ export default async function EventPage({ params }: Props) {
                 ? "Confirmation par l’équipe Sakado. Aucun paiement en ligne."
                 : "Les inscriptions ne sont pas ouvertes pour cette sortie."}
           </p>
-        </aside>
+        </EventSummary>
       </div>
       {instagram.items.length > 0 && (
         <section className="container section">
@@ -288,21 +272,34 @@ export default async function EventPage({ params }: Props) {
           )}
         </section>
       )}
-      <div className="mobile-contact-bar">
-        <Link
-          href={
-            event.canRegister
-              ? "#inscription"
-              : `/contact?subject=event&event=${encodeURIComponent(event.title)}`
-          }
-          className="button"
+      {related.length > 0 && (
+        <section
+          className="container section"
+          aria-labelledby="related-adventures"
         >
-          {event.canRegister
-            ? "S’inscrire à cette aventure"
-            : "Une question sur cette aventure ?"}{" "}
-          <Icon />
-        </Link>
-      </div>
+          <h2 id="related-adventures">D’autres aventures à découvrir</h2>
+          <div className="event-grid">
+            {related.map((item) => (
+              <EventCard key={item.id} event={item} />
+            ))}
+          </div>
+        </section>
+      )}
+      {event.canRegister && (
+        <div className="s-event-mobile-cta">
+          <span>
+            {priceLabel(event.price, event.currency)}
+            {event.showAvailability !== false &&
+              event.availablePlaces !== null &&
+              event.registrationStatus !== "WAITLIST_ONLY" && (
+                <small>{event.availablePlaces} places disponibles</small>
+              )}
+          </span>
+          <a href="#inscription" className="button">
+            {registrationCta(event)}
+          </a>
+        </div>
+      )}
       {schema && (
         <script
           type="application/ld+json"
@@ -311,6 +308,6 @@ export default async function EventPage({ params }: Props) {
           }}
         />
       )}
-    </>
+    </div>
   );
 }

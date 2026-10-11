@@ -93,13 +93,18 @@ test("owner creates draft, publishes program, receives public registration, conf
   await page.getByLabel("Téléphone", { exact: true }).fill("+21620000001");
   await page.getByLabel("Nombre de participants", { exact: true }).fill("2");
   await page
+    .getByRole("button", { name: "Vérifier ma demande", exact: true })
+    .click();
+  await page
     .getByRole("button", {
       name: "Envoyer ma demande d’inscription",
       exact: true,
     })
     .click();
   await expect(
-    page.getByRole("heading", { name: "Demande enregistrée." }),
+    page.getByRole("heading", {
+      name: "Votre demande a bien été enregistrée.",
+    }),
   ).toBeVisible();
   await page.goto("/admin/events/" + id + "/registrations");
   await expect(
@@ -209,17 +214,15 @@ test("API and page authorization, CSRF, inactive and expired sessions", async ({
         expiresAt: new Date(Date.now() - 1000),
       },
     });
-    await page
-      .context()
-      .addCookies([
-        {
-          name: "sakado_admin_session",
-          value: token,
-          url: "http://127.0.0.1:3101",
-          httpOnly: true,
-          sameSite: "Strict",
-        },
-      ]);
+    await page.context().addCookies([
+      {
+        name: "sakado_admin_session",
+        value: token,
+        url: "http://127.0.0.1:3101",
+        httpOnly: true,
+        sameSite: "Strict",
+      },
+    ]);
     await page.goto("/admin");
     await expect(page).toHaveURL(/\/admin\/login$/);
   } finally {

@@ -6,6 +6,7 @@ import { environmentLabels } from "@/lib/format";
 import { pageMetadata } from "@/lib/metadata";
 import { Gallery } from "@/components/gallery";
 import { EventCard } from "@/components/event-card";
+import { upcomingAdventures, pastAdventures } from "@/lib/adventure-discovery";
 type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
@@ -105,18 +106,32 @@ export default async function DestinationPage({ params }: Props) {
             <Gallery photos={place.gallery} />
           </section>
         )}
-        <section className="section">
-          <h2>Les expériences ici</h2>
-          {related.length ? (
-            <div className="event-grid">
-              {related.map((event) => (
-                <EventCard event={event} key={event.id} />
-              ))}
-            </div>
-          ) : (
+        {[
+          ["Prochaines aventures ici", upcomingAdventures(related)],
+          [
+            "Aventures en cours",
+            related.filter((event) => event.lifecycle === "ONGOING"),
+          ],
+          ["Les aventures passées ici", pastAdventures(related)],
+        ].map(
+          ([title, items]) =>
+            (items as typeof related).length > 0 && (
+              <section className="section" key={title as string}>
+                <h2>{title as string}</h2>
+                <div className="event-grid">
+                  {(items as typeof related).map((event) => (
+                    <EventCard event={event} key={event.id} />
+                  ))}
+                </div>
+              </section>
+            ),
+        )}
+        {related.length === 0 && (
+          <section className="section">
+            <h2>Les expériences ici</h2>
             <p>Aucune expérience publiée pour cette destination.</p>
-          )}
-        </section>
+          </section>
+        )}
       </div>
     </>
   );
