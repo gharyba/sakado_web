@@ -16,6 +16,14 @@
   z-index: -2;
   pointer-events: none;
 }
+.background picture {
+  position: absolute;
+  inset: 0;
+}
+.opening {
+  position: absolute;
+  inset: 0;
+}
 .image {
   object-fit: cover;
   object-position: 70% 50%;
@@ -62,6 +70,30 @@
 }
 .content {
   width: min(57%, 40rem);
+}
+.privatePreview .frame {
+  background: linear-gradient(
+    90deg,
+    rgb(10 29 25 / 85%),
+    rgb(10 29 25 / 65%) 38%,
+    rgb(10 29 25 / 8%) 76%
+  );
+}
+.privatePreview .image {
+  object-position: 65% 50%;
+}
+.privatePhoto {
+  position: absolute;
+  right: var(--s-space-6);
+  bottom: 3.5rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: 1rem;
+  border-radius: var(--s-radius-pill);
+  background: rgb(10 29 25 / 90%);
+  color: white;
+  font-size: var(--s-text-caption);
 }
 .title {
   margin: 0;
@@ -226,6 +258,14 @@
   }
 }
 @media (max-width: 699px) {
+  .privatePhoto {
+    position: static;
+    align-self: flex-start;
+    margin-top: 1.25rem;
+  }
+  .privatePreview .frame {
+    background: rgb(10 29 25 / 74%);
+  }
   .scene {
     padding-top: calc(var(--s-navigation-height) + var(--s-space-4));
   }

@@ -4,12 +4,9 @@ import type { Prisma } from "@prisma/client";
 import { db, databaseConfigured } from "./db";
 import { publicImagePath } from "./media-readiness";
 import { demoEnabled, safeSocialUrl } from "./content-policy";
-import {
-  demoEvents,
-  demoDestinations,
-  demoExperiences,
-  demoGallery,
-} from "@/data/demo/content";
+import { clientDemoEnabled } from "./client-demo-policy";
+import { companyActivities } from "@/data/confirmed/company";
+import { demoEvents, demoDestinations, demoGallery } from "@/data/demo/content";
 import type { Adventure, Place, Experience, GalleryPhoto } from "./types";
 import { mapEventDetails } from "./event-detail";
 const eventWhere: Prisma.EventWhereInput = {
@@ -72,21 +69,24 @@ async function publicPhotos<T extends Parameters<typeof photo>[0]>(rows: T[]) {
   return allowed.filter((row): row is GalleryPhoto => row !== null);
 }
 export const getEvents = cache(async (): Promise<Adventure[]> =>
-  demoEnabled()
-    ? demoEvents
-    : !databaseConfigured()
-      ? []
-      : Promise.all(
-          (
-            await db.event.findMany({
-              where: eventWhere,
-              include: eventInclude,
-              orderBy: { startsAt: "asc" },
-            })
-          ).map(event),
-        ),
+  clientDemoEnabled()
+    ? []
+    : demoEnabled()
+      ? demoEvents
+      : !databaseConfigured()
+        ? []
+        : Promise.all(
+            (
+              await db.event.findMany({
+                where: eventWhere,
+                include: eventInclude,
+                orderBy: { startsAt: "asc" },
+              })
+            ).map(event),
+          ),
 );
 export const getDestinations = cache(async (): Promise<Place[]> => {
+  if (clientDemoEnabled()) return [];
   if (demoEnabled()) return demoDestinations;
   if (!databaseConfigured()) return [];
   const rows = await db.destination.findMany({
@@ -104,28 +104,37 @@ export const getDestinations = cache(async (): Promise<Place[]> => {
   );
 });
 export const getExperiences = cache(async (): Promise<Experience[]> =>
-  demoEnabled()
-    ? demoExperiences.filter((c) => c.enabled)
-    : !databaseConfigured()
-      ? []
-      : (
-          await db.eventCategory.findMany({
-            where: { enabled: true, source: "CONFIRMED" },
-            orderBy: { order: "asc" },
-          })
-        ).map((c) => ({ ...c, demo: false })),
+  clientDemoEnabled()
+    ? []
+    : demoEnabled()
+      ? companyActivities.map((activity) => ({
+          ...activity,
+          id: `company-${activity.slug}`,
+          enabled: true,
+          demo: false,
+        }))
+      : !databaseConfigured()
+        ? []
+        : (
+            await db.eventCategory.findMany({
+              where: { enabled: true, source: "CONFIRMED" },
+              orderBy: { order: "asc" },
+            })
+          ).map((c) => ({ ...c, demo: false })),
 );
 export const getGallery = cache(async (): Promise<GalleryPhoto[]> =>
-  demoEnabled()
-    ? demoGallery
-    : !databaseConfigured()
-      ? []
-      : publicPhotos(
-          await db.galleryImage.findMany({
-            where: galleryWhere,
-            orderBy: [{ featured: "desc" }, { order: "asc" }],
-          }),
-        ),
+  clientDemoEnabled()
+    ? []
+    : demoEnabled()
+      ? demoGallery
+      : !databaseConfigured()
+        ? []
+        : publicPhotos(
+            await db.galleryImage.findMany({
+              where: galleryWhere,
+              orderBy: [{ featured: "desc" }, { order: "asc" }],
+            }),
+          ),
 );
 export const getSocialLinks = cache(async () =>
   !demoEnabled() && databaseConfigured()

@@ -21,12 +21,17 @@ import { ParallaxHero } from "@/components/home/parallax-hero";
 import { resolveHeroMedia } from "@/lib/hero";
 import { AboutStory } from "@/components/home/about-story";
 import { MotionSurface } from "@/components/motion/surface";
+import { getClientDemoAssets } from "@/lib/client-demo";
+import { ClientHome } from "@/components/client-demo/client-home";
+import { CompanyTeam, CompanyTimeline } from "@/components/company/sections";
 export const metadata = pageMetadata(
   "Camping & randonnée en Tunisie",
   "Explorez la Tunisie avec Sakado Sfax. Découvrez les aventures, les expériences en pleine nature et les prochains événements.",
   "/",
 );
 export default async function Home() {
+  const clientAssets = await getClientDemoAssets();
+  if (clientAssets) return <ClientHome assets={clientAssets} />;
   const [settings, events, destinations, categories, photos, instagram] =
     await Promise.all([
       getSettings(),
@@ -122,6 +127,7 @@ export default async function Home() {
         mission={settings.mission}
         sinceYear={settings.sinceYear}
       />
+      <CompanyTimeline standalone />
       <section className="section section-sand">
         <div className="container">
           <SectionHeading
@@ -151,6 +157,7 @@ export default async function Home() {
           )}
         </div>
       </section>
+      <CompanyTeam />
       <section className="section container">
         <SectionHeading
           eyebrow="DES INSTANTS QUI RESTENT"

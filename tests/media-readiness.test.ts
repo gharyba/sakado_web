@@ -56,6 +56,26 @@ const registry = () =>
     manifestHash,
   );
 
+test("the unreviewed hardware upload stays withheld without changing its legacy record", () => {
+  const r = registry();
+  assert.equal(
+    bytesEligible(
+      r,
+      "ac847f45641cb91bc1530bfd938f6dc44b7f1f98900851c9a2b66fa1b02eef37",
+      "renamed.webp",
+    ),
+    false,
+  );
+  assert.equal(
+    bytesEligible(
+      r,
+      "0".repeat(64),
+      "/media/879605b7-d54d-4fc7-aca1-42303a26b326.webp",
+    ),
+    false,
+  );
+});
+
 test("all 17 source identities and registered derivative hashes remain blocked; 85 axes stay pending", () => {
   const r = registry();
   assert.equal(r.valid, true);

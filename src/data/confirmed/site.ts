@@ -1,4 +1,5 @@
 // Only client-confirmed facts belong here. Empty values must remain empty until confirmed.
+import { company } from "./company";
 export const confirmedSite = {
   footerText: "Le grand air. Les belles rencontres. L’aventure en Tunisie.",
   contactCtaTitle: "Votre prochaine aventure commence par un échange.",
@@ -13,12 +14,11 @@ export const confirmedSite = {
   instagramHandle: "@Sakado_sfax",
   logoPath: null as string | null,
   heroImage: null as string | null,
-  about:
-    "Sakado Sfax, c’est le camping, la randonnée et les aventures en pleine nature en Tunisie. Retrouvez ici nos prochaines expériences et suivez l’aventure sur Instagram.",
-  story: null as string | null,
-  mission: null as string | null,
-  values: [] as string[],
-  sinceYear: null as number | null,
+  about: company.about,
+  story: company.story as string | null,
+  mission: company.mission as string | null,
+  values: company.values as string[],
+  sinceYear: company.founded as number | null,
   whySakado: [] as { title: string; description: string }[],
   communityMetrics: [] as { label: string; value: string }[],
 };

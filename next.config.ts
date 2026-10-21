@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 const config: NextConfig = {
   poweredByHeader: false,
+  // Private local material is runtime-only and must never enter deployment traces.
+  outputFileTracingExcludes: {
+    "/*": ["./.local/**/*", "./SAKADO-MEDIA/**/*"],
+  },
   outputFileTracingIncludes: {
     "/*": [
       "./docs/media/asset-manifest.json",

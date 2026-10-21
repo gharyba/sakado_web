@@ -2,11 +2,36 @@
 
 French, mobile-first Next.js platform for camping, hiking and organized nature experiences in Tunisia.
 
+## Official local application — Phase 09B
+
+The official database-backed application is the primary development target. Use Node 24 and the locked dependencies. This workspace already has local PostgreSQL configuration and data; preserve `.env` and do not rerun migrations or fixture/bootstrap commands to preview it.
+
+If the existing database is stopped, start it in one terminal:
+
+```powershell
+npm run db:local
+```
+
+In another terminal, clear a previously selected preview mode and start the application:
+
+```powershell
+Remove-Item Env:DEMO_MODE -ErrorAction SilentlyContinue
+npm run dev
+```
+
+Open http://127.0.0.1:3000; administration is at `/admin` and requires the existing login. `npm run dev` forces official mode even if the legacy `.env` contains `DEMO_MODE=true`, accepts only a loopback PostgreSQL URL and disables private media. Child-process origin overrides keep local administration path-based; `.env` and production configuration are unchanged. Confirmed history/team and the seven existing CMS categories are visible. Events/destinations remain honestly empty until confirmed records are supplied.
+
+Optional database-free preview: `npm run dev:demo`, or `$env:DEMO_MODE='true'; npm run dev`. Optional **private local photo preview**: `npm run dev:client`. Stop the current app before switching modes; both previews use port 3000, reject staging/production and grant no public media approval. `npm run dev:app` retains direct Next development for explicit developer configuration. The official logo/photos remain unapproved, so wordmark, initials and safe illustrations are intentional. See [PHASE_09B](docs/PHASE_09B.md), historical [PHASE_09](docs/PHASE_09.md) and [CLIENT_DEMO](docs/CLIENT_DEMO.md).
+
+The initial implementation notes below are historical; the audited PostgreSQL/CMS architecture in [ARCHITECTURE](docs/ARCHITECTURE.md) supersedes their SQLite and deferred-feature claims. Do not run historical fixture commands against a developer or real database.
+
 ## Initial inspection
 
 The supplied workspace was empty: no existing application, Prisma schema, Git repository, logo, Instagram screenshot or authorized photographs were available. This implementation therefore establishes the requested foundation. The brand name, business activity and Instagram URL are the confirmed inputs. The wordmark, favicon and illustrations are temporary assets, not the official logo or Sakado photographs.
 
-## Run locally
+## Historical bootstrap record
+
+The commands and database/E2E descriptions in this older section are superseded by the current instructions above and `AGENTS.md`. Do not overwrite this workspace's `.env` or invoke historical fixtures for normal development.
 
 Requires Node.js 24 and npm. Dependencies are locked in `package-lock.json`.
 
@@ -15,10 +40,10 @@ npm ci
 Copy-Item .env.example .env
 npm run db:deploy
 npm run db:generate
-npm run dev
+npm run dev:app
 ```
 
-Open http://127.0.0.1:3000. `.env` is already configured for a local demo in this workspace. No administrator account or administrator secret is created by default.
+Open http://127.0.0.1:3000. For the separately authorized private client-preview view, use `npm run dev:client`; it prepares the private derivatives and starts a loopback-only, database-disconnected preview. No administrator account or administrator secret is created by default.
 
 ```powershell
 npm run typecheck

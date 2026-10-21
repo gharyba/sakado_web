@@ -6,18 +6,20 @@ export function SiteFooter({
   instagramUrl,
   socialLinks,
   footerText,
+  privatePreview = false,
 }: {
   footerText: string;
+  privatePreview?: boolean;
   name: string;
   logo: string | null;
   instagramUrl: string;
   socialLinks: { id: string; label: string; url: string }[];
 }) {
   return (
-    <footer className="site-footer">
+    <footer className="site-footer s-company-footer">
       <div className="container footer-top">
         <div>
-          <Brand name={name} logo={logo} />
+          <Brand name={name} logo={logo} privatePreview={privatePreview} />
           <p>
             Le grand air. Les belles rencontres.
             <br />

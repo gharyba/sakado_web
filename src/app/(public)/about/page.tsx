@@ -2,17 +2,24 @@ import { getSettings } from "@/lib/settings";
 import { PageIntro } from "@/components/page-intro";
 import { ContactCTA } from "@/components/contact-cta";
 import { pageMetadata } from "@/lib/metadata";
+import { getClientDemoAssets } from "@/lib/client-demo";
+import { ClientDemoDetail } from "@/components/client-demo/client-home";
+import { CompanyTeam, CompanyTimeline } from "@/components/company/sections";
+import { MotionToggle } from "@/components/motion/preference";
 export const metadata = pageMetadata(
   "À propos",
   "Découvrez Sakado Sfax, camping, randonnée et aventures en pleine nature en Tunisie.",
   "/about",
 );
 export default async function AboutPage() {
+  const assets = await getClientDemoAssets();
+  if (assets) return <ClientDemoDetail assets={assets} section="about" />;
   const settings = await getSettings();
   return (
     <>
       <div className="container page-section">
         <PageIntro eyebrow="SAKADO SFAX" title="L’aventure commence ici." />
+        <MotionToggle />
         <div className="prose">
           <p className="large-copy">{settings.about}</p>
           {settings.story ? (
@@ -45,6 +52,8 @@ export default async function AboutPage() {
           {settings.sinceYear && <p>Depuis {settings.sinceYear}.</p>}
         </div>
       </div>
+      <CompanyTimeline standalone />
+      <CompanyTeam />
       <ContactCTA
         whatsappNumber={settings.whatsappNumber}
         title={settings.contactCtaTitle}

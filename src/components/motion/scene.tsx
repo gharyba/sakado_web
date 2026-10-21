@@ -8,8 +8,12 @@ export function MotionScene({
   children,
   className = "",
   enabled = true,
+  cinematic = false,
   ...props
-}: HTMLAttributes<HTMLDivElement> & { enabled?: boolean }) {
+}: HTMLAttributes<HTMLDivElement> & {
+  enabled?: boolean;
+  cinematic?: boolean;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const preference = useMotionPreference();
   const [ready, setReady] = useState(false);
@@ -53,13 +57,14 @@ export function MotionScene({
       cleanup?.();
       setReady(false);
     };
-  }, [preference, enabled]);
+  }, [preference, enabled, cinematic]);
   return (
     <div
       {...props}
       ref={ref}
       className={`s-motion-scene ${className}`}
       data-motion-scene
+      data-motion-profile={cinematic ? "cinematic" : undefined}
       data-motion-state={ready && preference === "on" ? "ready" : "static"}
     >
       {children}

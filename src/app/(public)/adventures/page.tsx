@@ -7,6 +7,8 @@ import {
 } from "@/components/adventure-listing";
 import { pastAdventures } from "@/lib/adventure-discovery";
 import { pageMetadata } from "@/lib/metadata";
+import { clientDemoActive } from "@/lib/client-demo";
+import { ClientComingSoon } from "@/components/client-demo/client-home";
 export const metadata = pageMetadata(
   "Les aventures passées",
   "Les récits et souvenirs publiés des aventures Sakado.",
@@ -17,6 +19,12 @@ export default async function AdventuresPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  if (await clientDemoActive())
+    return (
+      <div className="page-section">
+        <ClientComingSoon title="Nos aventures" standalone />
+      </div>
+    );
   const [events, params] = await Promise.all([getEvents(), searchParams]);
   return (
     <div className="container page-section">

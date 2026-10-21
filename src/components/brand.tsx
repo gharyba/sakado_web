@@ -1,10 +1,38 @@
 import Image from "next/image";
 import Link from "@/components/link";
-export function Brand({ name, logo }: { name: string; logo: string | null }) {
+import { MotionSurface } from "./motion/surface";
+export function Brand({
+  name,
+  logo,
+  privatePreview = false,
+}: {
+  name: string;
+  logo: string | null;
+  privatePreview?: boolean;
+}) {
+  const image = logo ? (
+    <Image
+      unoptimized
+      src={logo}
+      alt={name}
+      width={privatePreview ? 80 : 150}
+      height={privatePreview ? 80 : 60}
+    />
+  ) : null;
   return (
-    <Link className="brand" href="/" aria-label={`${name} · TUNISIE — Accueil`}>
+    <Link
+      className={`brand${privatePreview ? " s-client-brand" : ""}`}
+      href="/"
+      aria-label={`${name} · TUNISIE — Accueil`}
+    >
       {logo ? (
-        <Image unoptimized src={logo} alt={name} width={150} height={60} />
+        privatePreview ? (
+          <MotionSurface className="s-client-logo-motion">
+            {image}
+          </MotionSurface>
+        ) : (
+          image
+        )
       ) : (
         <span>
           {name.replace(" SFAX", "")}

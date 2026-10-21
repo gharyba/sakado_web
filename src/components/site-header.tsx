@@ -4,10 +4,12 @@ export function SiteHeader({
   name,
   logo,
   demo,
+  privatePreview = false,
 }: {
   name: string;
   logo: string | null;
   demo: boolean;
+  privatePreview?: boolean;
 }) {
   return (
     <>
@@ -16,11 +18,15 @@ export function SiteHeader({
       </a>
       {demo && (
         <div className="preview-banner">
-          Version de démonstration · Aventures et illustrations fictives ·
-          Aucune réservation ouverte
+          Aperçu client · Illustrations et fiches d’exemple · Aucune réservation
+          ouverte
         </div>
       )}
-      <NavigationShell brand={<Brand name={name} logo={logo} />} />
+      <NavigationShell
+        brand={
+          <Brand name={name} logo={logo} privatePreview={privatePreview} />
+        }
+      />
     </>
   );
 }

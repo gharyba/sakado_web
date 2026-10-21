@@ -24,7 +24,7 @@ export default async function ContactPage({
       : "general";
   const event =
     typeof params.event === "string" ? params.event.slice(0, 200) : "";
-  const enabled = databaseConfigured();
+  const enabled = !settings.demo && databaseConfigured();
   const whatsapp = whatsappLink(settings.whatsappNumber);
   return (
     <div className="container page-section">

@@ -8,6 +8,8 @@ import { PageIntro } from "@/components/page-intro";
 import { Gallery } from "@/components/gallery";
 import { pageMetadata } from "@/lib/metadata";
 import { MotionToggle } from "@/components/motion/preference";
+import { getClientDemoAssets } from "@/lib/client-demo";
+import { ClientDemoDetail } from "@/components/client-demo/client-home";
 export const metadata = pageMetadata(
   "Galerie",
   "Les aventures, la nature et les moments partagés de Sakado Sfax en images.",
@@ -18,6 +20,8 @@ export default async function GalleryPage({
 }: {
   searchParams: Promise<{ view?: string; page?: string }>;
 }) {
+  const assets = await getClientDemoAssets();
+  if (assets) return <ClientDemoDetail assets={assets} section="gallery" />;
   const params = await searchParams;
   const view = params.view === "instagram" ? "instagram" : "photos";
   const page = mediaPage(params.page);
