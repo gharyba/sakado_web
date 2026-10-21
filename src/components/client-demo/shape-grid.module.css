@@ -1,0 +1,32 @@
+.texture {
+  --s-shape-grid-accent: var(--amber, #e3b675);
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  /* A quiet map grid on the existing sage surface, fading away from copy. */
+  background-image:
+    linear-gradient(to right, rgb(22 62 53 / 10%) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(22 62 53 / 10%) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(110deg, transparent 30%, #000 100%);
+}
+
+.texture canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+@media (max-width: 899px), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .texture {
+    background-size: 40px 40px;
+    opacity: 0.6;
+  }
+  .texture canvas {
+    display: none;
+  }
+}
