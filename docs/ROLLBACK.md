@@ -6,6 +6,8 @@ Application rollback and database recovery are separate decisions. No rollback c
 
 Retain a previously validated source/artifact, exact commit/build ID/runtime/lockfile, compatible schema expectations, media registry, current configuration inventory and object keys. Verify backup/restore evidence, migration compatibility and who can approve/execute rollback. Never package .env, dumps, signed evidence or uploaded private data in the release. Reconcile current rights revocations in both active and previous registries: an old artifact must not restore withdrawn media permission.
 
+Phase 10.1 adds a required compatibility condition: retained rollback artifacts must preserve the dynamic `/media` optimizer rejection. Earlier builds could serve cached renditions after direct-media withdrawal; they are not acceptable public rollback candidates without an equivalent reviewed fix. Check direct reads and optimizer rejection on both candidate and rollback. No provider rollback or cache purge was performed; actual release-switch/persistence evidence remains required.
+
 ## Decision tree
 
 | Trigger                                                 | Action                                                                                                          | Never assume                                              |

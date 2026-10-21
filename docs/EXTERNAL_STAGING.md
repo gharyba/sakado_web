@@ -1,5 +1,7 @@
 # External staging — Phase 08 runbook
 
+Phase 10.1 preparation addendum: [PHASE_10_1](PHASE_10_1.md) records current local recovery, dependency/native investigation and the unchanged external approval matrix. No external target is newly confirmed. Dynamic `/media` and private routes must return 400 as optimizer inputs, even when a media item is public; direct media serves through its policy checks. Use an existing public static icon for an allowed `/_next/image` encode check and verify direct-media withdrawal/cache isolation separately. Do not restore the former dynamic-optimizer behavior to pass a hosted smoke test.
+
 Status on 2026-10-11: **BLOCKED**. The user explicitly confirms no approved staging hostname, runtime verification, dedicated PostgreSQL, persistent storage, access restriction, HTTPS endpoint, staging owner or external deployment. Authorization covers repository preparation only. No Hostinger capability is assumed. `staging.sakado.tn` is a proposed pattern, not an approved or existing target.
 
 ## Target and authorization boundary
@@ -81,7 +83,7 @@ All items below are **NOT TESTED externally**. Use synthetic events/destinations
 | Proxy trust              | Record original Host/protocol and controlled forwarded-header spoof rejection at the provider. Leave TRUST_PROXY=false unless authorized after proof                            |
 | Headers and caches       | CSP, nosniff, referrer, frame and configured permissions policy; no-store/private admin/API/health. Shared caches must never expose another session's content                   |
 | Health and failures      | Operational 200 {status:ok}; authorized isolated DB outage 503 {status:unavailable}. Demo 200 is not operational evidence. No stacks/paths/credentials in public/admin failures |
-| Image optimization       | Harmless authorized swatch via /media and /_next/image; status/content-type/cache/rights withdrawal behavior recorded. Private media must not enter shared optimizer cache      |
+| Image optimization       | Synthetic swatch via direct /media; its optimizer URL rejected 400 before/after withdrawal. Allowed public static icon optimizes 200; verify no private/withdrawn provider cache exposure |
 | Logs                     | Restricted startup/health/login/registration/upload/error logs reviewed for URLs/secrets/tokens/passwords/PII/private paths; retain sanitized references only                   |
 
 Known local finding from the Phase 08 failure regression: framework Prisma errors include database address/server stack paths in restricted test output although HTTP responses hide them. Hosted log access, retention and redaction must be inspected; do not infer safe provider logs from a safe public error body.

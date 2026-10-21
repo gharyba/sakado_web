@@ -441,13 +441,20 @@ async function main() {
     const before = await http(media.src);
     assert.equal(before.status, 200);
     assert.equal(hash(Buffer.from(await before.arrayBuffer())), media.sha256);
-    const optimized = await http(
+    const dynamicOptimized = await http(
       `/_next/image?url=${encodeURIComponent(media.src)}&w=640&q=75`,
+      { headers: { Accept: "image/webp" } },
+    );
+    assert.equal(dynamicOptimized.status, 400);
+    const optimized = await http(
+      "/_next/image?url=%2Fadmin%2Ficon-192.png&w=640&q=75",
       { headers: { Accept: "image/webp" } },
     );
     assert.equal(optimized.status, 200);
     assert.ok(optimized.headers.get("content-type").startsWith("image/"));
     report.imageOptimization = {
+      dynamicMediaRejected: true,
+      source: "public static icon only",
       status: optimized.status,
       bytes: (await optimized.arrayBuffer()).byteLength,
       contentType: optimized.headers.get("content-type"),
@@ -599,6 +606,14 @@ async function main() {
       const served = await http(media.src);
       assert.equal(served.status, 200);
       assert.equal(hash(Buffer.from(await served.arrayBuffer())), media.sha256);
+      assert.equal(
+        (
+          await http(
+            `/_next/image?url=${encodeURIComponent(media.src)}&w=640&q=75`,
+          )
+        ).status,
+        400,
+      );
       await stop();
       assert.deepEqual(await fingerprint(source), snapshot);
       await start();

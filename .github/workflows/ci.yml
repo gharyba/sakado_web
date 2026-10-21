@@ -41,6 +41,8 @@ jobs:
       - name: Tracked secret safety
         run: npm run check:secrets
       - run: npm run db:generate
+      - name: Node 24 Linux native preflight (no database connection)
+        run: npm run check:native -- --linux
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
@@ -90,6 +92,8 @@ jobs:
           cache: npm
       - run: npm ci --include=dev --no-audit --no-fund
       - run: npm run build
+      - name: Node 24 Linux native preflight (query engine covered by guarded integration)
+        run: npm run check:native -- --linux
       - run: npx playwright install --with-deps chromium
       - name: Guard service identity, then run isolated integration and Phase 05/06/10 browser tests
         run: npm run test:ci

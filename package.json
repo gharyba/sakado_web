@@ -29,6 +29,7 @@
     "test:phase10:public": "playwright test --config playwright.phase10-public.config.ts",
     "test:ci": "tsx scripts/test-ci.ts",
     "check:secrets": "node scripts/check-secrets.mjs",
+    "check:native": "node scripts/check-native-runtime.mjs",
     "test:production-env": "node scripts/check-production-startup.mjs",
     "rehearse:deployment": "node scripts/rehearse-deployment.mjs",
     "test:staging": "node scripts/rehearse-staging.mjs",

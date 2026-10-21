@@ -111,6 +111,8 @@ test("synthetic image is normalized, private by default and explicitly publishab
       ).status(),
     ).toBe(200);
     expect((await request.get(row.src)).status()).toBe(200);
+    const optimizerUrl = `/_next/image?url=${encodeURIComponent(row.src)}&w=640&q=75`;
+    const optimizerPublished = await request.get(optimizerUrl);
     expect(
       (
         await page.request.post("/api/admin/gallery", {
@@ -120,6 +122,13 @@ test("synthetic image is normalized, private by default and explicitly publishab
       ).status(),
     ).toBe(200);
     expect((await request.get(row.src)).status()).toBe(404);
+    const optimizerWithdrawn = await request.get(optimizerUrl);
+    console.log(
+      `Synthetic media optimizer boundary: published=${optimizerPublished.status()}, withdrawn=${optimizerWithdrawn.status()}`,
+    );
+    // Dynamic /media rights checks must never be bypassed by the shared optimizer cache.
+    expect(optimizerPublished.status()).toBe(400);
+    expect(optimizerWithdrawn.status()).toBe(400);
   } finally {
     await db.$disconnect();
   }
