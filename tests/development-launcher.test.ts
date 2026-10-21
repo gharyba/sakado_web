@@ -4,13 +4,17 @@ import { spawnSync } from "node:child_process";
 
 test("the official local launcher refuses remote databases without exposing credentials", () => {
   const marker = "local-launcher-sensitive-probe";
+  const database = new URL(
+    "postgresql://probe@not-a-local-host.invalid/sakado",
+  );
+  database.password = marker;
   const result = spawnSync(process.execPath, ["scripts/dev.mjs"], {
     env: {
       ...process.env,
       NODE_ENV: "development",
       STAGING_MODE: "false",
       DEMO_MODE: "false",
-      DATABASE_URL: `postgresql://probe:${marker}@not-a-local-host.invalid/sakado`,
+      DATABASE_URL: database.href,
     },
     encoding: "utf8",
     timeout: 10000,

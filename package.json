@@ -25,6 +25,8 @@
     "test:phase04": "playwright test --config playwright.phase04.config.ts",
     "test:phase05": "node scripts/test-phase05.mjs",
     "test:phase06": "node scripts/test-phase05.mjs --phase06",
+    "test:phase10": "node scripts/test-phase05.mjs --phase10",
+    "test:phase10:public": "playwright test --config playwright.phase10-public.config.ts",
     "test:ci": "tsx scripts/test-ci.ts",
     "check:secrets": "node scripts/check-secrets.mjs",
     "test:production-env": "node scripts/check-production-startup.mjs",

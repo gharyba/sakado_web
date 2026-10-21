@@ -91,5 +91,5 @@ jobs:
       - run: npm ci --include=dev --no-audit --no-fund
       - run: npm run build
       - run: npx playwright install --with-deps chromium
-      - name: Guard service identity, then run isolated integration and Phase 05/06 browser tests
+      - name: Guard service identity, then run isolated integration and Phase 05/06/10 browser tests
         run: npm run test:ci

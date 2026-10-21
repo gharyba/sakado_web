@@ -2,6 +2,8 @@
 
 Status: **PUBLIC LAUNCH BLOCKED**. Local validation is not production clearance. This checklist records technical evidence separately from business, privacy and media decisions; no legal compliance is asserted.
 
+Phase 10 addendum (2026-10-21): [PHASE_10](PHASE_10.md) records the current official-app audit, focused transactional actor/upload fixes, isolated CMS/security tests, read-only local database checks, public accessibility/load observations and severity/action blockers. Its local evidence supersedes historical test counts below, without clearing infrastructure, CI, privacy, media or launch gates. No external deployment is authorized. The existing verified dump predates the seven-category import; require fresh current-state verified recovery before risky writes.
+
 Phase 08 preparation addendum (2026-10-11): the user confirms no external staging hostname/resources/HTTPS/access restriction and authorizes repository work only. External validation and `v1.0.0-rc.1` remain **BLOCKED**. [PHASE_08](PHASE_08.md) records the local checks; [EXTERNAL_STAGING](EXTERNAL_STAGING.md) defines the future authorized runbook. No historical blocker below is cleared by a prepared script, the Phase 07 merge, an offline RC consistency result or draft release notes. All 17 assets/85 pending approvals, production privacy/policies/owners/recovery and final launch authorization remain unchanged.
 
 | Area                         | Gate                            | Evidence / required action                                                                                                                                                                                                                                          |

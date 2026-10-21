@@ -1,5 +1,7 @@
 # PostgreSQL backup and restore
 
+Phase 10 verification (2026-10-21): the Phase 09B dump still matches its stored SHA-256 and historical successful separate-database restore report. It represents the **pre-seven-category-import** state; Phase 10 did not create a new backup/restore or write the original database. Do not describe it as a complete current snapshot. Before risky writes or release, create a separately authorized fresh backup and verify its restore; preserve the historical restricted recovery files. Current source-data preservation was checked read-only across all 15 tables/schema. See [PHASE_10](PHASE_10.md).
+
 Phase 07 rehearsal uses only a **new synthetic cluster**. The historical verified real-data backup remains at the restricted location documented in DEPLOYMENT; this phase does not refresh it or copy its participant/authentication data into staging.
 
 ## Approved-target procedure

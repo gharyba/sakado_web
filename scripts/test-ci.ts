@@ -7,6 +7,7 @@ async function main() {
   await verifyPhase05Cluster();
   for (const args of [
     ["--import", "tsx", "tests/database.integration.ts"],
+    ["--import", "tsx", "tests/phase10-database.ts"],
     [
       "node_modules/@playwright/test/cli.js",
       "test",
@@ -18,6 +19,12 @@ async function main() {
       "test",
       "--config",
       "playwright.phase06.config.ts",
+    ],
+    [
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.phase10.config.ts",
     ],
   ])
     await new Promise<void>((resolve, reject) => {

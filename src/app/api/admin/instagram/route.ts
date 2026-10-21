@@ -11,6 +11,7 @@ import {
 import { importInstagramMedia } from "@/lib/instagram-import";
 import { id } from "@/lib/admin-validation";
 import { mediaSelectionAllowed } from "@/lib/media-readiness";
+import { requireActiveActor } from "@/lib/admin-actor";
 export async function POST(request: NextRequest) {
   return adminEndpoint(request, "gallery", async (user) => {
     const input = await readJson(request, 60000);
@@ -23,6 +24,7 @@ export async function POST(request: NextRequest) {
         409,
       );
     const result = await serializable(db, async (tx) => {
+      await requireActiveActor(tx, user.id, "gallery");
       const intent = String(input.intent ?? "save");
       let entityId = "bulk";
       let message = "Publication enregistrée.";

@@ -5,6 +5,8 @@ import { normalizeImage, storage } from "@/lib/storage";
 import { db } from "@/lib/db";
 import { rateLimit } from "@/lib/rate-limit";
 import { canUseMediaBytes } from "@/lib/media-readiness";
+import { requireActiveActor } from "@/lib/admin-actor";
+import { serializable } from "@/lib/transactions";
 export async function POST(request: NextRequest) {
   return adminEndpoint(request, "gallery", async (user) => {
     if (Number(request.headers.get("content-length") ?? 0) > 11 * 1024 * 1024)
@@ -14,7 +16,11 @@ export async function POST(request: NextRequest) {
     const bytes = await readBounded(request, 11 * 1024 * 1024);
     const form = await new Response(new Uint8Array(bytes), {
       headers: { "Content-Type": request.headers.get("content-type") ?? "" },
-    }).formData();
+    })
+      .formData()
+      .catch(() => {
+        throw new RequestError("Formulaire de fichier invalide.");
+      });
     const file = form.get("file");
     if (!(file instanceof File)) return jsonError("Choisissez une photo.", 400);
     const alt = String(form.get("alt") ?? "").trim();
@@ -42,7 +48,8 @@ export async function POST(request: NextRequest) {
       );
     const src = await storage().put(optimized);
     try {
-      await db.$transaction(async (tx) => {
+      await serializable(db, async (tx) => {
+        await requireActiveActor(tx, user.id, "gallery");
         const row = await tx.galleryImage.create({
           data: {
             src,
@@ -66,7 +73,8 @@ export async function POST(request: NextRequest) {
     }
     return NextResponse.json(
       {
-        message: "Photo ajoutée. Vous pouvez maintenant la publier.",
+        message:
+          "Photo ajoutée à la galerie privée. Vérifiez les autorisations avant publication.",
         redirect: "/admin/gallery",
       },
       { headers: { "Cache-Control": "private, no-store" } },
