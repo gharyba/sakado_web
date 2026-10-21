@@ -3,12 +3,16 @@ import { getExperiences, getEvents } from "@/lib/content";
 import { PageIntro } from "@/components/page-intro";
 import { EventCard } from "@/components/event-card";
 import { pageMetadata } from "@/lib/metadata";
+import { getClientDemoAssets } from "@/lib/client-demo";
+import { ClientDemoDetail } from "@/components/client-demo/client-home";
 export const metadata = pageMetadata(
   "Nos expériences",
   "Camping, randonnée et expériences en pleine nature avec Sakado Sfax.",
   "/experiences",
 );
 export default async function ExperiencesPage() {
+  const assets = await getClientDemoAssets();
+  if (assets) return <ClientDemoDetail assets={assets} section="experiences" />;
   const [categories, events] = await Promise.all([
     getExperiences(),
     getEvents(),
@@ -33,6 +37,9 @@ export default async function ExperiencesPage() {
             </p>
             <h2>{category.name}</h2>
             <p>{category.description}</p>
+            <Link className="text-link" href="/contact">
+              Parlons de cette expérience →
+            </Link>
             <div className="event-grid">
               {events
                 .filter((event) => event.category === category.name)

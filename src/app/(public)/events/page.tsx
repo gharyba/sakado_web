@@ -8,6 +8,8 @@ import {
 } from "@/components/adventure-listing";
 import { upcomingAdventures } from "@/lib/adventure-discovery";
 import { pageMetadata } from "@/lib/metadata";
+import { clientDemoActive } from "@/lib/client-demo";
+import { ClientComingSoon } from "@/components/client-demo/client-home";
 export const metadata = pageMetadata(
   "Prochaines aventures",
   "Découvrez les prochaines sorties Sakado et leurs modalités d’inscription.",
@@ -18,6 +20,12 @@ export default async function EventsPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  if (await clientDemoActive())
+    return (
+      <div className="page-section">
+        <ClientComingSoon title="Nos événements" standalone />
+      </div>
+    );
   const [events, params] = await Promise.all([getEvents(), searchParams]);
   const ongoing = events.filter((event) => event.lifecycle === "ONGOING");
   return (

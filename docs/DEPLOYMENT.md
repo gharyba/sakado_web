@@ -1,5 +1,9 @@
 # SAKADO 2.0 — Hostinger deployment plan
 
+Phase 10.1 update (2026-10-21): [PHASE_10_1](PHASE_10_1.md) provides the current recovery proof, dependency decision, provider/owner matrix and exact future CI instructions. New `check:native -- --linux` checks Node/native modules without querying a database; only Windows execution is currently verified. Dynamic `/media` and private routes are excluded from the public image optimizer to preserve publication/withdrawal checks. Use direct policy-controlled media and prove provider/CDN cache isolation in staging. Current local backup now includes seven categories; no external persistence/backup or deployment clearance is granted.
+
+Phase 10 update (2026-10-21): see [PHASE_10](PHASE_10.md) for the current official-application audit and local checks. Public Hostinger documentation was rechecked: eligible managed Next.js/Node 24 and external PostgreSQL are documented capabilities, not proof of this account's provisioning. The [managed Node limits](https://www.hostinger.com/support/hostinger-node-js-limits-for-web-and-cloud-plans/) describe one long-running app process, shared resources, 120-second requests and no extra always-running services. Verify actual native dependencies, process PORT/start settings, HTTPS/proxy and approved persistence in separately authorized staging. No persistent upload path, external DB, hostname or access restriction is confirmed; all external tests remain BLOCKED/NOT TESTED. The current Phase 10 CI additions are prepared, not a passing Linux run. No deployment or resource creation was performed.
+
 Phase 08 update (2026-10-11): the user confirms **no external staging environment is provisioned** and authorizes repository preparation only. Historical compatibility references below are not current-plan proof. Read [EXTERNAL_STAGING](EXTERNAL_STAGING.md) and [RELEASE_CANDIDATE](RELEASE_CANDIDATE.md) before any separately authorized external operation. Hostinger capabilities, approved hostname, PostgreSQL, persistent storage, access restriction and HTTPS remain unverified. No external resources, credentials, DNS or deployment are authorized by the preparation files.
 
 Verified 2026-10-09. **User-selected target: managed Node.js Web App hosting**, not VPS. No hosting account was accessed and no deployment was performed. Exact plan entitlement, region, resource ceilings, domain and external service budget are **TO BE CONFIRMED**.
@@ -35,9 +39,9 @@ Select DB/storage regions close to hosting and target audience after measured la
 
 Current scripts:
 
-- build: `prisma generate && next build`
-- start: `next start --hostname 127.0.0.1`
-- start:hostinger: `next start --hostname 0.0.0.0`
+- build: `npm run build` — pre/post public-media gates, Prisma generation, Next production build and private deployment-trace gate
+- start: `node scripts/start.mjs` — Node/environment validation, then loopback Next server
+- start:hostinger: `node scripts/start.mjs --hostinger` — validated server on 0.0.0.0 with platform process PORT
 - typecheck: `next typegen && tsc --noEmit`
 - deploy migrations: `prisma migrate deploy`
 

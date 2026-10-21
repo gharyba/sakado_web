@@ -1,5 +1,7 @@
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { cinematicReveal, cinematicStory } from "./cinematic";
+import { cinematicTravel, cinematicScale } from "./cinematic-policy";
 import {
   canPin,
   motionDistance,
@@ -69,6 +71,9 @@ export function mountScene(root: HTMLElement): () => void {
             reduced: conditions.reduced,
           });
           if (tier === "static") return;
+          const cinematic = root.dataset.motionProfile === "cinematic";
+          const revealBudget = { active: 0 };
+          const cinematicCleanups: Array<() => void> = [];
           // Nested scenes own their descendants. One transform owner per element.
           const elements = Array.from(
             root.querySelectorAll<HTMLElement>("[data-motion]"),
@@ -79,7 +84,7 @@ export function mountScene(root: HTMLElement): () => void {
             const effect = element.dataset.motion as MotionEffect;
             if (!motionEffects.includes(effect)) continue;
             const raw = element.dataset.motionDistance;
-            const distance = motionDistance(
+            const distance = (cinematic ? cinematicTravel : motionDistance)(
               effect,
               tier,
               raw === undefined ? undefined : Number(raw),
@@ -153,7 +158,7 @@ export function mountScene(root: HTMLElement): () => void {
                   y: distance / 2,
                   ...(element.dataset.motionScale
                     ? {
-                        scale: motionScale(
+                        scale: (cinematic ? cinematicScale : motionScale)(
                           tier,
                           Number(element.dataset.motionScale),
                         ),
@@ -174,6 +179,19 @@ export function mountScene(root: HTMLElement): () => void {
             // Reveals play once on entry, never hide future content while waiting for scroll.
             if (interactive || revealed.has(element)) continue;
             rememberStyles(element);
+            if (cinematic) {
+              cinematicCleanups.push(
+                cinematicReveal(
+                  element,
+                  effect,
+                  tier,
+                  distance,
+                  revealed,
+                  revealBudget,
+                ),
+              );
+              continue;
+            }
             const tween = gsap.fromTo(
               element,
               {
@@ -211,7 +229,14 @@ export function mountScene(root: HTMLElement): () => void {
           }
           // Delayed fromTo start states must never survive a media-context revert.
           // Targets have one animation owner; preserve their exact pre-scene inline styles.
-          return () => restoreStyles(elements);
+          if (cinematic) cinematicStory(root, tier, rememberStyles);
+          return () => {
+            cinematicCleanups.forEach((cleanup) => cleanup());
+            restoreStyles();
+            elements.forEach((element) => {
+              delete element.dataset.cinematicRevealing;
+            });
+          };
         },
         root,
       );

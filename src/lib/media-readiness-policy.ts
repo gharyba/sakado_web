@@ -228,6 +228,14 @@ export function bytesEligible(
   hash: string,
   filename?: string,
 ) {
+  // Existing non-Sakado hardware upload is awaiting explicit editorial review.
+  // Withhold its identity without changing the file or its legacy CMS flags.
+  if (
+    hash === "ac847f45641cb91bc1530bfd938f6dc44b7f1f98900851c9a2b66fa1b02eef37" ||
+    filename?.split(/[\\/]/).pop()?.toLowerCase() ===
+      "879605b7-d54d-4fc7-aca1-42303a26b326.webp"
+  )
+    return false;
   if (!registry.valid) return false;
   const matches = [
     registry.hashes.get(hash),

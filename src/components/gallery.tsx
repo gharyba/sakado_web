@@ -4,12 +4,16 @@ import { useRef, useState } from "react";
 import type { GalleryPhoto } from "@/lib/types";
 import { Icon } from "./icon";
 import { useMotionPreference } from "./motion/preference";
+import { Motion } from "./motion/motion";
 export function Gallery({
   photos,
   cinematic = false,
+  revealPreview = false,
 }: {
   photos: GalleryPhoto[];
   cinematic?: boolean;
+  /** Private preview only: viewport entrances limited to three concurrent images. */
+  revealPreview?: boolean;
 }) {
   const [selected, setSelected] = useState<GalleryPhoto | null>(null);
   const [category, setCategory] = useState("Tout");
@@ -55,11 +59,16 @@ export function Gallery({
       >
         {photos
           .filter((photo) => category === "Tout" || photo.category === category)
-          .map((photo) => (
+          .map((photo, index) => (
             <a
               key={photo.id}
               className="gallery-photo"
-              href={photo.src}
+              href={photo.fullSrc ?? photo.src}
+              style={
+                photo.width && photo.height
+                  ? { aspectRatio: `${photo.width} / ${photo.height}` }
+                  : undefined
+              }
               onClick={(event) => {
                 if (
                   !dialog.current?.showModal ||
@@ -77,13 +86,51 @@ export function Gallery({
               aria-label={`${photo.caption ?? photo.alt}${photo.demo ? " Illustration · Démo" : ""} — Agrandir : ${photo.alt}`}
             >
               <div className="s-gallery-visual" aria-hidden="true">
-                <Image
-                  unoptimized
-                  src={photo.src}
-                  alt=""
-                  fill
-                  sizes="(max-width: 700px) 100vw, 33vw"
-                />
+                {revealPreview ? (
+                  // CSS owns card depth; the separate inner target owns its entrance.
+                  <Motion
+                    effect="foreground"
+                    distance={
+                      index === 0
+                        ? 12
+                        : index === 4
+                          ? -10
+                          : index === 8
+                            ? 8
+                            : index === 10
+                              ? -6
+                              : 0
+                    }
+                    aria-hidden="true"
+                    style={{ position: "absolute", inset: 0 }}
+                  >
+                    <Motion
+                      effect="image"
+                      choreography="scene"
+                      data-motion-group="gallery"
+                      delay={(index % 3) * 0.06}
+                      distance={8}
+                      initialOpacity={0.75}
+                      style={{ position: "absolute", inset: 0 }}
+                    >
+                      <Image
+                        unoptimized
+                        src={photo.src}
+                        alt=""
+                        fill
+                        sizes="(max-width: 700px) 100vw, 33vw"
+                      />
+                    </Motion>
+                  </Motion>
+                ) : (
+                  <Image
+                    unoptimized
+                    src={photo.src}
+                    alt=""
+                    fill
+                    sizes="(max-width: 700px) 100vw, 33vw"
+                  />
+                )}
               </div>
               <span>
                 {photo.caption ?? photo.alt}
@@ -120,7 +167,7 @@ export function Gallery({
             <div className="lightbox-image">
               <Image
                 unoptimized
-                src={selected.src}
+                src={selected.fullSrc ?? selected.src}
                 alt={selected.alt}
                 fill
                 sizes="90vw"

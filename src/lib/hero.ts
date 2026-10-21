@@ -5,7 +5,11 @@ const illustrations = new Set([
   "/images/coast.svg",
   "/images/trail.svg",
 ]);
-export type HeroMedia = { src: string | null; placeholder: boolean };
+export type HeroMedia = {
+  src: string | null;
+  placeholder: boolean;
+  mobileSrc?: string;
+};
 
 /** Settings select media explicitly; never derive hero imagery from gallery records. */
 export function resolveHeroMedia(

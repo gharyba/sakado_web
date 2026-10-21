@@ -1,6 +1,20 @@
 import type { NextConfig } from "next";
 const config: NextConfig = {
   poweredByHeader: false,
+  images: {
+    // Dynamic /media must retain per-request publication checks and no-store responses.
+    // It must never enter the optimizer's public cache, including after withdrawal.
+    localPatterns: [
+      { pathname: "/images/**", search: "" },
+      { pathname: "/admin/icon-192.png", search: "" },
+      { pathname: "/admin/icon-512.png", search: "" },
+      { pathname: "/_next/static/media/**", search: "" },
+    ],
+  },
+  // Private local material is runtime-only and must never enter deployment traces.
+  outputFileTracingExcludes: {
+    "/*": ["./.local/**/*", "./SAKADO-MEDIA/**/*"],
+  },
   outputFileTracingIncludes: {
     "/*": [
       "./docs/media/asset-manifest.json",

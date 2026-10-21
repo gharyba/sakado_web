@@ -1,0 +1,58 @@
+/* Phase 09: reading comfort; no admin selectors or motion ownership. */
+.s-company-footer .footer-top p,
+.s-company-footer .footer-links {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+.s-company-footer .footer-links > a {
+  min-height: 44px;
+  font-size: inherit;
+}
+.s-company-footer .footer-top > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.s-company-footer .footer-bottom,
+.s-company-footer .footer-note .eyebrow {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+.s-company-footer .footer-bottom {
+  align-items: center;
+  flex-wrap: wrap;
+}
+.s-company-footer .footer-bottom a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.s-company-site .event-info p,
+.s-company-site .event-meta,
+.s-company-site .event-date,
+.s-company-site .experience-category p,
+.s-company-site .destination-content > span:last-child,
+.s-company-site .demo-note {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+.s-company-site .image-badge,
+.s-company-site .image-category,
+.s-company-site .destination-content .eyebrow {
+  font-size: 0.8125rem;
+}
+.s-company-site .experience-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+}
+.s-company-site .experience-category {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.s-company-site .experience-category h3 {
+  font-size: 1.375rem;
+}
+@media (max-width: 699px) {
+  .s-company-footer .footer-top {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem;
+  }
+}

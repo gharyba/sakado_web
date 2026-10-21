@@ -1,6 +1,20 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { stagingEnabled } from "./lib/staging-policy";
+import { demoEnabled } from "./lib/content-policy";
+import {
+  clientDemoEnabled,
+  clientDemoHeaders,
+  clientDemoRequestAllowed,
+} from "./lib/client-demo-policy";
 export function proxy(request: NextRequest) {
+  if (clientDemoEnabled()) {
+    if (!clientDemoRequestAllowed(request.headers))
+      return new NextResponse(null, {
+        status: 404,
+        headers: clientDemoHeaders,
+      });
+    return NextResponse.next({ headers: clientDemoHeaders });
+  }
   const path = request.nextUrl.pathname;
   const adminHost = process.env.ADMIN_URL
     ? new URL(process.env.ADMIN_URL).host
@@ -19,6 +33,7 @@ export function proxy(request: NextRequest) {
     ? NextResponse.rewrite(rewrite)
     : NextResponse.next();
   if (
+    demoEnabled() ||
     stagingEnabled() ||
     dedicated ||
     path === "/admin" ||

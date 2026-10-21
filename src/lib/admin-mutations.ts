@@ -17,6 +17,7 @@ import { hashPassword } from "./security";
 import { lifecycle, occupied } from "./event-policy";
 import { can, type Role, type Permission } from "./permissions";
 import { eventWriteIssue } from "./admin-event-policy";
+import { requireActiveActor } from "./admin-actor";
 type Admin = { id: string; role: Role };
 export async function mutate(
   db: PrismaClient,
@@ -30,12 +31,7 @@ export async function mutate(
   const target = input.id ? id.parse(input.id) : null;
   const intent = String(input.intent ?? "save");
   return serializable(db, async (tx) => {
-    const actor = await tx.adminUser.findUnique({
-      where: { id: admin.id },
-      select: { active: true, role: true },
-    });
-    if (!actor?.active || !can(actor.role, resource))
-      throw new BusinessError("Accès non autorisé.", 403);
+    await requireActiveActor(tx, admin.id, resource);
     let entityId = target ?? "main";
     let redirect: string | undefined;
     let action = resource.toUpperCase() + "_UPDATED";

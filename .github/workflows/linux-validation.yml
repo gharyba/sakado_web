@@ -51,15 +51,7 @@ jobs:
         run: npm run lint
       - name: Unit tests only (no database fixtures)
         run: npm test
-      - name: Sharp native module smoke check
-        run: |
-          node --input-type=module <<'NODE'
-          import sharp from "sharp";
-          const bytes = await sharp({
-            create: { width: 2, height: 2, channels: 3, background: "#163e35" },
-          }).webp().toBuffer();
-          if (!bytes.length) throw new Error("Sharp produced no output");
-          console.log("Sharp WebP encode passed");
-          NODE
+      - name: Native Node 24 Linux preflight (no database connection)
+        run: npm run check:native -- --linux
       - name: Production build
         run: npm run build

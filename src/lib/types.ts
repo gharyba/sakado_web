@@ -9,6 +9,9 @@ export type ScheduleItem = {
   order: number;
 };
 export type GalleryPhoto = {
+  fullSrc?: string;
+  width?: number;
+  height?: number;
   id: string;
   src: string;
   alt: string;

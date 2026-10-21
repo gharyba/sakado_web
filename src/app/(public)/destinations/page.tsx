@@ -2,12 +2,20 @@ import { getDestinations } from "@/lib/content";
 import { PageIntro } from "@/components/page-intro";
 import { DestinationCard } from "@/components/destination-card";
 import { pageMetadata } from "@/lib/metadata";
+import { clientDemoActive } from "@/lib/client-demo";
+import { ClientComingSoon } from "@/components/client-demo/client-home";
 export const metadata = pageMetadata(
   "Destinations",
   "Découvrez le futur catalogue de destinations nature de Sakado Sfax en Tunisie.",
   "/destinations",
 );
 export default async function DestinationsPage() {
+  if (await clientDemoActive())
+    return (
+      <div className="page-section">
+        <ClientComingSoon title="De nouveaux horizons" standalone />
+      </div>
+    );
   const destinations = await getDestinations();
   return (
     <div className="container page-section">

@@ -77,18 +77,27 @@ try {
     "Fresh isolated Phase 05 cluster ready on loopback:55435; original database excluded.",
   );
   await run(["--import", "tsx", "tests/database.integration.ts"]);
+  if (process.argv.includes("--phase10"))
+    await run(["--import", "tsx", "tests/phase10-database.ts"]);
   await run([
     "node_modules/@playwright/test/cli.js",
     "test",
     "--config",
     "playwright.phase05.config.ts",
   ]);
-  if (process.argv.includes("--phase06"))
+  if (process.argv.includes("--phase06") || process.argv.includes("--phase10"))
     await run([
       "node_modules/@playwright/test/cli.js",
       "test",
       "--config",
       "playwright.phase06.config.ts",
+    ]);
+  if (process.argv.includes("--phase10"))
+    await run([
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.phase10.config.ts",
     ]);
 } catch (error) {
   console.error(
