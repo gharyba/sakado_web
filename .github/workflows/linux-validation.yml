@@ -43,6 +43,8 @@ jobs:
           npm --version
       - name: Install locked dependencies
         run: npm ci --include=dev --no-audit --no-fund
+      - name: Production dependency advisories
+        run: npm audit --omit=dev --audit-level=high
       - name: Generate Prisma Client (no migration)
         run: npm run db:generate
       - name: Generate Next types and validate TypeScript
@@ -55,3 +57,13 @@ jobs:
         run: npm run check:native -- --linux
       - name: Production build
         run: npm run build
+      - name: Retain native and artifact context in job summary
+        if: ${{ success() }}
+        run: |
+          mkdir -p .local/validation
+          node scripts/record-validation-evidence.mjs --linux > .local/validation/context.json
+          cat .local/validation/context.json
+          echo '### Native and artifact context (not release approval)' >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat .local/validation/context.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"

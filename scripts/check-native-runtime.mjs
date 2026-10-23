@@ -2,6 +2,8 @@ import { randomBytes } from "node:crypto";
 
 // No .env loading, fixtures, files, network calls or database queries.
 async function main() {
+  if (process.argv.slice(2).some((arg) => arg !== "--linux"))
+    throw new Error("Unsupported native check argument");
   if (process.versions.node.split(".")[0] !== "24")
     throw new Error("Node 24 required");
   if (process.argv.includes("--linux") && process.platform !== "linux")
@@ -13,13 +15,23 @@ async function main() {
       import("@prisma/client"),
     ]);
   const image = await sharp({
-    create: { width: 3, height: 2, channels: 3, background: "#163e35" },
+    create: { width: 3, height: 2, channels: 3, background: "#14233d" },
   })
-    .webp()
+    .webp({ lossless: true })
     .toBuffer();
-  const decoded = await sharp(image).metadata();
-  if (decoded.format !== "webp" || decoded.width !== 3 || decoded.height !== 2)
-    throw new Error("Sharp encode/decode failed");
+  // Metadata parsing does not exercise the WebP pixel decoder.
+  const { data: pixels, info } = await sharp(image)
+    .removeAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  if (
+    info.width !== 3 ||
+    info.height !== 2 ||
+    info.channels !== 3 ||
+    pixels.length !== 18 ||
+    !pixels.every((value, index) => value === [0x14, 0x23, 0x3d][index % 3])
+  )
+    throw new Error("Sharp pixel encode/decode failed");
   const password = randomBytes(24).toString("base64url");
   const digest = await argon2.hash(password, { type: argon2.argon2id });
   if (
@@ -32,12 +44,25 @@ async function main() {
     datasourceUrl: "postgresql://validation:dummy@127.0.0.1:9/unavailable",
   });
   await client.$disconnect();
+  // Whitelist ABI metadata only. The full diagnostic report includes private data.
+  const { glibcVersionRuntime } = process.report.getReport().header;
   console.log(
     JSON.stringify({
       node: process.versions.node,
       platform: process.platform,
       arch: process.arch,
+      openssl: process.versions.openssl,
+      nodeModuleAbi: process.versions.modules,
+      libc:
+        process.platform === "linux"
+          ? {
+              family: glibcVersionRuntime ? "glibc" : "non-glibc",
+              version: glibcVersionRuntime ?? null,
+            }
+          : { family: "not-applicable", version: null },
+      libvips: sharp.versions.vips,
       sharpWebpRoundTrip: true,
+      sharpDecodedPixelBytes: pixels.length,
       argon2idVerify: true,
       prismaClient: Prisma.prismaVersion.client,
       prismaConstructed: true,

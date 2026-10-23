@@ -38,6 +38,8 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci --include=dev --no-audit --no-fund
+      - name: Production dependency advisories
+        run: npm audit --omit=dev --audit-level=high
       - name: Tracked secret safety
         run: npm run check:secrets
       - run: npm run db:generate
@@ -52,6 +54,17 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Phase 04 media browser regression
         run: npm run test:phase04
+
+      - name: Retain native and artifact context in job summary
+        if: ${{ success() }}
+        run: |
+          mkdir -p .local/validation
+          node scripts/record-validation-evidence.mjs --linux > .local/validation/context.json
+          cat .local/validation/context.json
+          echo '### Native and artifact context (not release approval)' >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat .local/validation/context.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
 
   integration:
     name: PostgreSQL Integration and Admin Workflows
@@ -97,3 +110,13 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Guard service identity, then run isolated integration and Phase 05/06/10 browser tests
         run: npm run test:ci
+      - name: Retain native and artifact context in job summary
+        if: ${{ success() }}
+        run: |
+          mkdir -p .local/validation
+          node scripts/record-validation-evidence.mjs --linux > .local/validation/context.json
+          cat .local/validation/context.json
+          echo '### Native and artifact context (not release approval)' >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat .local/validation/context.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
