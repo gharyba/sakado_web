@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { stagingEnabled } from "./lib/staging-policy";
 import { demoEnabled } from "./lib/content-policy";
+import { presentationHeaders } from "./lib/official-presentation-policy";
 import {
   clientDemoEnabled,
   clientDemoHeaders,
@@ -32,6 +33,13 @@ export function proxy(request: NextRequest) {
   const response = rewrite
     ? NextResponse.rewrite(rewrite)
     : NextResponse.next();
+  if (
+    process.env.OFFICIAL_PRESENTATION === "true" &&
+    process.env.NODE_ENV === "development"
+  ) {
+    for (const [key, value] of Object.entries(presentationHeaders))
+      response.headers.set(key, value);
+  }
   if (
     demoEnabled() ||
     stagingEnabled() ||

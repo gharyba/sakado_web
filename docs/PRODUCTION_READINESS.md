@@ -1,5 +1,7 @@
 # Production readiness — Phase 06 baseline and Phase 07 evidence
 
+Current pre-commit update (2026-10-23): both full and production dependency audits now report zero findings after the braces advisory was withdrawn upstream; this was not a package update or audit suppression. Earlier five-entry results below are retained as dated observations. Presentation permission/revocation fixes and executed regressions are recorded in [PRECOMMIT_SECURITY](PRECOMMIT_SECURITY.md). **Public launch remains BLOCKED** by the remaining provider, Linux, persistence, privacy and release evidence gates.
+
 2026-10-23 current revalidation: [Phase 10.1](PHASE_10_1.md#current-revalidation--2026-10-23) records fresh verified local recovery, the Next.js 16.4.1 security patch and production-advisory CI gates. Current production audit: 0 findings; full audit: 5 high development lint-chain entries with no published patched braces release. Earlier zero-production claims describe their execution date. Exact-candidate Linux/Hostinger, persistent media, privacy/business, hosted security and release gates remain unresolved. All 17 assets remain BLOCKED and all 85 source approvals PENDING REVIEW. No deployment/publication/remote CI execution is implied.
 
 Status: **PUBLIC LAUNCH BLOCKED**. Local validation is not production clearance. This checklist records technical evidence separately from business, privacy and media decisions; no legal compliance is asserted.

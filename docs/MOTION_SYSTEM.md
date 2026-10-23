@@ -1,5 +1,15 @@
 # SAKADO 2.0 — motion system
 
+## Homepage scroll atmosphere and pointer light
+
+The official homepage now mounts a decorative, aria-hidden `AmbientBackground` through the existing `MotionScene`. Its fixed layers sit behind content within the public page's isolated stacking context. The static navy/sapphire/indigo/dusk gradient remains available without JavaScript or when motion is off.
+
+A single document-length ScrollTrigger crossfades three prepainted gradient planes; desktop travel is bounded to 48px total and mobile/coarse pointers receive opacity changes only. Fine-pointer mouse movement retargets two existing GSAP quickTo tweens per light, with a slower gold light trailing the blue halo. No replacement cursor, custom frame loop, wheel interception, animated blur or background-position repaint is added. All decorative layers ignore pointer events.
+
+The shared animation toggle, system reduced motion, save-data and page visibility state control the entire scene. Media-context cleanup removes pointer listeners and the page-size observer, and the existing runtime restores owned inline styles and releases its triggers. This explicitly extends the earlier static public-atmosphere design under the user's scrolling-gradient and mouse-interaction request.
+
+Latest official hero: [Cinematic Redesign 02](CINEMATIC_REDESIGN_02.md) supersedes the original subtle hero recipe only for opt-in `data-hero-cinematic` scenes. Its single photographic camera reaches scale 1.07 under the explicit redesign authorization; the generic Motion scale cap remains 1.05. It reuses this runtime's contexts, responsive cleanup and preference controller. Mobile/coarse pointers retain a short text entrance with no scrubbed camera. No photographic depth layers were supplied.
+
 Status: Phase 01 engine and Phase 03 single-image hero choreography implemented, 2026-10-09. Motion enhances server-rendered content; it never owns business rules. Multi-plane choreography and approved image assets remain **TO BE CONFIRMED**.
 
 ## Boundaries

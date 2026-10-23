@@ -2,13 +2,21 @@
   position: relative;
   isolation: isolate;
   overflow: clip;
-  background: #102f29;
-  color: #fff;
+  background: var(--s-hero-canvas, #102f29);
+  color: var(--s-hero-ink, #fff);
 }
 .scene {
   min-height: 100svh;
   padding: calc(var(--s-navigation-height) + var(--s-space-8)) var(--s-gutter)
     var(--s-space-6);
+}
+:global(.s-company-site) .hero {
+  background: transparent;
+}
+:global(.s-company-site) .background,
+:global(.s-company-site) .shade {
+  /* Fade only decorative planes; controls and content keep their full opacity. */
+  mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
 }
 .background {
   position: absolute;
@@ -28,19 +36,28 @@
   object-fit: cover;
   object-position: 70% 50%;
 }
+.presentation .image {
+  /* Keep the square supplied composition/embedded mark; no fabricated layers. */
+  object-fit: contain;
+  object-position: right center;
+}
 .shade {
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgb(10 29 25 / 50%), rgb(10 29 25 / 8%)),
+    linear-gradient(
+      90deg,
+      rgb(var(--s-hero-veil-rgb, 10 29 25) / 50%),
+      rgb(var(--s-hero-veil-rgb, 10 29 25) / 8%)
+    ),
     linear-gradient(
       0deg,
-      #102f29,
+      var(--s-hero-canvas, #102f29),
       transparent 28%,
       transparent 80%,
-      rgb(10 29 25 / 25%)
+      rgb(var(--s-hero-veil-rgb, 10 29 25) / 25%)
     );
 }
 .stage {
@@ -63,20 +80,77 @@
   border-radius: 2.5rem;
   background: linear-gradient(
     90deg,
-    rgb(10 29 25 / 90%),
-    rgb(10 29 25 / 84%) 62%,
-    rgb(10 29 25 / 12%) 85%
+    rgb(var(--s-hero-veil-rgb, 10 29 25) / 90%),
+    rgb(var(--s-hero-veil-rgb, 10 29 25) / 84%) 62%,
+    rgb(var(--s-hero-veil-rgb, 10 29 25) / 12%) 85%
   );
 }
 .content {
   width: min(57%, 40rem);
 }
+.cinemaFrame {
+  isolation: isolate;
+  background: transparent;
+  border-color: transparent;
+}
+.window {
+  position: absolute;
+  inset: -4px;
+  z-index: -1;
+  overflow: hidden;
+  border: 4px solid rgb(var(--s-hero-border-rgb, 244 239 228) / 90%);
+  border-radius: inherit;
+  background: var(--s-hero-canvas, #0b1714);
+  pointer-events: none;
+  transform-origin: center center;
+}
+.camera {
+  position: absolute;
+  /* 80px overscan covers the maximum 60px camera translation, before scale. */
+  inset: -5rem -2rem;
+}
+.camera picture {
+  position: absolute;
+  inset: 0;
+}
+.window .image {
+  object-fit: cover;
+  object-position: 65% 52%;
+}
+.cinemaShade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(var(--s-hero-veil-rgb, 7 17 15) / 92%),
+      rgb(var(--s-hero-veil-rgb, 7 17 15) / 64%) 48%,
+      rgb(var(--s-hero-veil-rgb, 7 17 15) / 12%)
+    ),
+    linear-gradient(
+      0deg,
+      rgb(var(--s-hero-veil-rgb, 7 17 15) / 88%),
+      transparent 40%
+    );
+}
+.lineMask {
+  display: block;
+  overflow: clip;
+  padding-block: 0.08em;
+  margin-block: -0.04em;
+}
+.lineMask > span {
+  display: block;
+}
+.word {
+  display: inline-block;
+}
 .privatePreview .frame {
   background: linear-gradient(
     90deg,
-    rgb(10 29 25 / 85%),
-    rgb(10 29 25 / 65%) 38%,
-    rgb(10 29 25 / 8%) 76%
+    rgb(var(--s-hero-veil-rgb, 10 29 25) / 85%),
+    rgb(var(--s-hero-veil-rgb, 10 29 25) / 65%) 38%,
+    rgb(var(--s-hero-veil-rgb, 10 29 25) / 8%) 76%
   );
 }
 .privatePreview .image {
@@ -91,7 +165,7 @@
   align-items: center;
   padding-inline: 1rem;
   border-radius: var(--s-radius-pill);
-  background: rgb(10 29 25 / 90%);
+  background: rgb(var(--s-hero-veil-rgb, 10 29 25) / 90%);
   color: white;
   font-size: var(--s-text-caption);
 }
@@ -123,16 +197,16 @@
   border: 0;
   border-radius: var(--s-radius-pill);
   padding: 0.875rem 1.25rem;
-  background: #e3b675;
-  color: #102f29;
+  background: var(--s-hero-accent, #e3b675);
+  color: var(--s-hero-canvas, #102f29);
   font-size: var(--s-text-caption);
 }
 .primary span {
   min-width: 0;
 }
 .hero .primary:hover {
-  background: #f0c992;
-  color: #102f29;
+  background: var(--s-hero-accent-hover, #f0c992);
+  color: var(--s-hero-canvas, #102f29);
 }
 .secondary {
   display: inline-flex;
@@ -200,17 +274,17 @@
 .controls :global(.s-button) {
   border-radius: var(--s-radius-pill);
   background: transparent;
-  border-color: #b9c9c3;
-  color: #fff;
+  border-color: var(--s-hero-control-border, #b9c9c3);
+  color: var(--s-hero-ink, #fff);
   font-size: var(--s-text-caption);
 }
 .controls :global(.s-button:hover:not(:disabled)) {
-  background: #fff;
-  color: #102f29;
+  background: var(--s-hero-ink, #fff);
+  color: var(--s-hero-canvas, #102f29);
 }
 .controls :global(.s-caption) {
   margin: 0;
-  color: #fff;
+  color: var(--s-hero-ink, #fff);
   font-size: var(--s-text-caption);
 }
 .assetNotice {
@@ -221,10 +295,10 @@
   margin: 0;
   padding: 0.25rem 0.75rem;
   border-radius: var(--s-radius-dialog);
-  background: rgb(10 29 25 / 90%);
+  background: rgb(var(--s-hero-veil-rgb, 10 29 25) / 90%);
   text-align: right;
   font-size: var(--s-text-caption);
-  color: #fff;
+  color: var(--s-hero-ink, #fff);
 }
 .hero a:focus-visible,
 .hero button:focus-visible {
@@ -245,9 +319,9 @@
     align-items: stretch;
     background: linear-gradient(
       90deg,
-      rgb(10 29 25 / 90%),
-      rgb(10 29 25 / 84%) 80%,
-      rgb(10 29 25 / 25%)
+      rgb(var(--s-hero-veil-rgb, 10 29 25) / 90%),
+      rgb(var(--s-hero-veil-rgb, 10 29 25) / 84%) 80%,
+      rgb(var(--s-hero-veil-rgb, 10 29 25) / 25%)
     );
   }
   .assetNotice {
@@ -258,13 +332,20 @@
   }
 }
 @media (max-width: 699px) {
+  .cinemaFrame .cinemaShade {
+    background: linear-gradient(
+      90deg,
+      rgb(var(--s-hero-veil-rgb, 7 17 15) / 88%),
+      rgb(var(--s-hero-veil-rgb, 7 17 15) / 58%)
+    );
+  }
   .privatePhoto {
     position: static;
     align-self: flex-start;
     margin-top: 1.25rem;
   }
   .privatePreview .frame {
-    background: rgb(10 29 25 / 74%);
+    background: rgb(var(--s-hero-veil-rgb, 10 29 25) / 74%);
   }
   .scene {
     padding-top: calc(var(--s-navigation-height) + var(--s-space-4));
@@ -276,8 +357,8 @@
     border-radius: 1.75rem;
     background: linear-gradient(
       90deg,
-      rgb(10 29 25 / 90%),
-      rgb(10 29 25 / 84%)
+      rgb(var(--s-hero-veil-rgb, 10 29 25) / 90%),
+      rgb(var(--s-hero-veil-rgb, 10 29 25) / 84%)
     );
   }
   .content {
@@ -315,4 +396,8 @@
     flex-direction: column;
     text-align: center;
   }
+}
+/* Keep responsive legacy frame veils out of the coordinated official scene. */
+.frame.cinemaFrame {
+  background: transparent;
 }

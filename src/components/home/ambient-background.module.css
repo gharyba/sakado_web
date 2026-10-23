@@ -1,0 +1,73 @@
+.ambient[data-ambient-background] {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: clip;
+  pointer-events: none;
+  user-select: none;
+  contain: paint;
+  opacity: 0;
+}
+.ambient[data-motion-state="ready"] {
+  opacity: 1;
+}
+.sapphire,
+.indigo,
+.dusk {
+  position: absolute;
+  inset: -5%;
+  opacity: 0;
+}
+.sapphire {
+  background:
+    radial-gradient(ellipse at 12% 28%, rgb(42 100 164 / 46%), transparent 62%),
+    radial-gradient(ellipse at 88% 76%, rgb(49 69 139 / 34%), transparent 60%);
+}
+.indigo {
+  background:
+    radial-gradient(ellipse at 78% 35%, rgb(88 68 146 / 40%), transparent 62%),
+    radial-gradient(ellipse at 15% 80%, rgb(43 75 127 / 36%), transparent 58%);
+}
+.dusk {
+  background:
+    radial-gradient(ellipse at 22% 65%, rgb(151 109 58 / 24%), transparent 60%),
+    radial-gradient(ellipse at 88% 22%, rgb(67 72 142 / 36%), transparent 64%);
+}
+.halo,
+.spark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  opacity: 0;
+}
+.halo {
+  width: min(38rem, 85vw);
+  background: radial-gradient(
+    circle,
+    rgb(90 129 216 / 12%),
+    rgb(73 89 170 / 6%) 38%,
+    transparent 72%
+  );
+}
+.spark {
+  width: 11rem;
+  background: radial-gradient(
+    circle,
+    rgb(234 202 140 / 12%),
+    rgb(216 183 123 / 4%) 32%,
+    transparent 70%
+  );
+}
+@media (hover: none), (pointer: coarse) {
+  .halo,
+  .spark {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ambient[data-ambient-background] {
+    display: none;
+  }
+}

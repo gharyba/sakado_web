@@ -6,6 +6,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { clientAsset, getClientDemoAssets } from "@/lib/client-demo";
 import { confirmedSite } from "@/data/confirmed/site";
 import previewStyles from "@/components/client-demo/client-preview.module.css";
+import { getOfficialPresentation } from "@/lib/official-presentation";
+import "@/styles/forest-environment.css";
 export default async function PublicLayout({
   children,
 }: {
@@ -38,6 +40,8 @@ export default async function PublicLayout({
     );
   }
   const [s, links] = await Promise.all([getSettings(), getSocialLinks()]);
+  const presentation = await getOfficialPresentation();
+  const logo = presentation?.logo?.src ?? s.logoPath;
   const schema = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -48,17 +52,30 @@ export default async function PublicLayout({
   };
   return (
     <div className="s-company-site">
-      <SiteHeader name={s.name} logo={s.logoPath} demo={s.demo} />
+      <SiteHeader
+        name={s.name}
+        logo={logo}
+        demo={s.demo}
+        logoDimensions={presentation?.logo ?? undefined}
+      />
       <main id="main" tabIndex={-1}>
         {children}
       </main>
       <SiteFooter
         name={s.name}
-        logo={s.logoPath}
+        logo={logo}
+        logoDimensions={presentation?.logo ?? undefined}
         instagramUrl={s.instagramUrl}
         socialLinks={links}
         footerText={s.footerText}
       />
+      {presentation && (
+        <p className="container notice" data-official-presentation>
+          Revue privée locale du site officiel · PostgreSQL actif · images non
+          autorisées à la publication.{" "}
+          <a href="/dev/presentation">Accès à la présentation</a>
+        </p>
+      )}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

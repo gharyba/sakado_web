@@ -5,18 +5,20 @@ export function Brand({
   name,
   logo,
   privatePreview = false,
+  logoDimensions,
 }: {
   name: string;
   logo: string | null;
   privatePreview?: boolean;
+  logoDimensions?: { width: number; height: number };
 }) {
   const image = logo ? (
     <Image
       unoptimized
       src={logo}
       alt={name}
-      width={privatePreview ? 80 : 150}
-      height={privatePreview ? 80 : 60}
+      width={logoDimensions?.width ?? (privatePreview ? 80 : 150)}
+      height={logoDimensions?.height ?? (privatePreview ? 80 : 60)}
     />
   ) : null;
   return (

@@ -40,9 +40,6 @@ export const company = {
 export const companyTeam = [
   { name: "Ben Beya Mohamed", role: "Fondateur", initials: "BM" },
   { name: "Bouzrara Manel", role: "Gérante", initials: "BM" },
-  { name: "Aladin Jemni", role: "Graphiste / Animateur", initials: "AJ" },
-  { name: "Jad Tagougui", role: "Photographe / Vidéaste", initials: "JT" },
-  { name: "Ayoub Hamza", role: "Guitariste / Chanteur", initials: "AH" },
 ] as const;
 
 export const companyActivities = [

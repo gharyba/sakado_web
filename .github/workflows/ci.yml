@@ -52,6 +52,8 @@ jobs:
         run: npm run build
       - run: npm run test:production-env
       - run: npx playwright install --with-deps chromium
+      - name: Synthetic production presentation denial (no private assets or database)
+        run: npm run test:presentation:security
       - name: Phase 04 media browser regression
         run: npm run test:phase04
 

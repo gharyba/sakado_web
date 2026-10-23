@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Image from "next/image";
 import Link from "@/components/link";
 import { Icon } from "@/components/icon";
@@ -60,6 +61,7 @@ function HeroPicture({ media }: { media: HeroMedia }) {
         unoptimized={
           media.src.startsWith("/media/") ||
           media.src.startsWith("/dev/client-media/") ||
+          media.src.startsWith("/dev/presentation-media/") ||
           media.src.endsWith(".svg")
         }
         className={styles.image}
@@ -104,19 +106,48 @@ function HeroContent({
 }) {
   return (
     <div className={styles.content}>
-      <Motion effect="text" distance={10}>
-        <Motion
-          effect="reveal"
-          choreography={privatePreview ? "opening" : undefined}
-          distance={10}
-          initialOpacity={0.65}
-        >
-          <h1 id="hero-heading" className={styles.title}>
-            {title}
+      {!privatePreview ? (
+        <div data-hero-copy>
+          <h1 id="hero-heading" className={styles.title} aria-label={title}>
+            {(title.match(/[^.!?]+[.!?]?/g) ?? [title]).map((line, index) => {
+              const words = line.trim().split(/\s+/);
+              return (
+                <span
+                  className={styles.lineMask}
+                  aria-hidden="true"
+                  key={index}
+                >
+                  <span data-hero-line>
+                    {words.map((word, wordIndex) => (
+                      <Fragment key={wordIndex}>
+                        <span className={styles.word} data-hero-word>
+                          {word}
+                        </span>
+                        {wordIndex < words.length - 1 ? " " : null}
+                      </Fragment>
+                    ))}
+                  </span>
+                </span>
+              );
+            })}
           </h1>
           <p className={styles.description}>{description}</p>
+        </div>
+      ) : (
+        <Motion effect="text" distance={10}>
+          <Motion
+            effect="reveal"
+            choreography={privatePreview ? "opening" : undefined}
+            distance={10}
+            initialOpacity={0.65}
+          >
+            <h1 id="hero-heading" className={styles.title}>
+              {title}
+            </h1>
+            <p className={styles.description}>{description}</p>
+          </Motion>
         </Motion>
-      </Motion>
+      )}
       {/* Essential controls stay outside translated/revealed wrappers. */}
       <HeroActions privatePreview={privatePreview} />
     </div>
@@ -137,7 +168,7 @@ export function ParallaxHero({
 }) {
   return (
     <section
-      className={`${styles.hero}${privatePreview ? ` ${styles.privatePreview}` : ""}`}
+      className={`${styles.hero}${privatePreview ? ` ${styles.privatePreview}` : ""}${media.privatePresentation ? ` ${styles.presentation}` : ""}`}
       data-parallax-hero=""
       data-navigation-hero="dark"
       aria-labelledby="hero-heading"
@@ -145,13 +176,36 @@ export function ParallaxHero({
       <MotionScene
         enabled={Boolean(media.src)}
         cinematic={privatePreview}
+        data-hero-cinematic={!privatePreview ? "" : undefined}
         className={styles.scene}
       >
         {/* One scenic source, one moving image plane: no fabricated depth layers. */}
-        <HeroBackground media={media} privatePreview={privatePreview} />
-        <div className={styles.shade} aria-hidden="true" />
+        {privatePreview && <HeroBackground media={media} privatePreview />}
+        {privatePreview && <div className={styles.shade} aria-hidden="true" />}
         <div className={styles.stage}>
-          <div className={styles.frame} data-hero-frame="">
+          <div
+            className={`${styles.frame}${!privatePreview ? ` ${styles.cinemaFrame}` : ""}`}
+            data-hero-frame=""
+          >
+            {!privatePreview && (
+              <div
+                className={styles.window}
+                data-hero-window
+                aria-hidden="true"
+              >
+                {media.src && (
+                  <div
+                    className={styles.camera}
+                    data-hero-camera
+                    data-motion="background"
+                    aria-hidden="true"
+                  >
+                    <HeroPicture media={media} />
+                  </div>
+                )}
+                <div className={styles.cinemaShade} />
+              </div>
+            )}
             <HeroContent
               title={title}
               description={description}

@@ -1,4 +1,10 @@
-# Phase 10.1 â€” staging blockers and recovery validation
+# Phase 10.1 — staging blockers and recovery validation
+
+## Pre-commit security update - 2026-10-23
+
+The Windows runtime-directory ACL check is now fail-closed, viewing sessions are individually revocable, and synthetic production/session regressions are implemented. See [PRECOMMIT_SECURITY](PRECOMMIT_SECURITY.md) for executed tests and the final checkpoint review. The earlier recovery/design records below are retained as historical evidence.
+
+Fresh full and production npm audits both returned **0 findings** with the package lock unchanged. [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) was withdrawn on October 23, 2026; GitHub states it is not practically exploitable. This explains the disappearance of the earlier five lint-chain entries; no dependency patch, downgrade or suppression occurred in this correction. Earlier audit counts remain valid dated observations. Zero reported findings is not a security guarantee or production clearance. Linux/hosted validation, durable storage/recovery and human release approvals remain unresolved.
 
 ## Sites continuation - 2026-10-23
 
@@ -8,9 +14,9 @@ Corrected the native preflight's metadata-only WebP claim to a real raw-pixel de
 
 See [SITES_INTEGRATION](SITES_INTEGRATION.md) for implementation, final tests, preservation and remaining owner actions. The A-K recovery/security review and historical evidence below are retained. **External staging and production launch remain BLOCKED.**
 
-## Current revalidation â€” 2026-10-23
+## Current revalidation — 2026-10-23
 
-This dated Aâ€“K update supersedes current-status claims in the October 21 record below. The historical record is retained. **External staging, release approval and public launch remain BLOCKED.** No provider account, remote database, deployment, workflow dispatch, media approval, Git staging, commit, merge, tag or push was performed.
+This dated A–K update supersedes current-status claims in the October 21 record below. The historical record is retained. **External staging, release approval and public launch remain BLOCKED.** No provider account, remote database, deployment, workflow dispatch, media approval, Git staging, commit, merge, tag or push was performed.
 
 ### A. Executive summary and checkpoint
 
@@ -46,7 +52,7 @@ Registry metadata confirmed Node 24 and the installed React/Playwright ranges re
 
 The user authorized temporarily pausing presentation port 3134. Root `npm ci` encountered EPERM because the running authoritative PostgreSQL service holds embedded-postgres libraries in `node_modules`. PostgreSQL was kept running. A clean `npm ci --include=dev --no-audit --no-fund` completed in the separate source copy. Its dependency files were copied into the working installation; thirteen files held by PostgreSQL were verified byte-identical and preserved. The full installed tree (`npm ls --all`) passed, Prisma was regenerated, and native/application checks ran on the working project. Do not describe the interrupted root install as a passing root `npm ci`.
 
-Post-patch production audit reports **0 findings**. Full audit remains **5 high entries**, all in `eslint-config-next â†’ @next/eslint-plugin-next â†’ fast-glob â†’ micromatch â†’ braces`. These five package entries arise from the development lint chain, not five independent production vulnerabilities. Direct package: `eslint-config-next` 16.4.0; transitive affected chain includes fast-glob 3.3.1, micromatch 4.0.8 and braces 3.0.3. [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) describes nested-brace stack exhaustion; no patched braces version was listed when checked. It is relevant to developer/CI glob processing; no request path to this lint dependency was established. Trusted source and bounded CI reduce opportunity but do not resolve the advisory.
+Post-patch production audit reports **0 findings**. Full audit remains **5 high entries**, all in `eslint-config-next → @next/eslint-plugin-next → fast-glob → micromatch → braces`. These five package entries arise from the development lint chain, not five independent production vulnerabilities. Direct package: `eslint-config-next` 16.4.0; transitive affected chain includes fast-glob 3.3.1, micromatch 4.0.8 and braces 3.0.3. [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) describes nested-brace stack exhaustion; no patched braces version was listed when checked. It is relevant to developer/CI glob processing; no request path to this lint dependency was established. Trusted source and bounded CI reduce opportunity but do not resolve the advisory.
 
 The 16.4.1 lint plugin still depends on the affected chain, so updating it would not remediate this finding. No forced framework downgrade, broad dependency refresh, audit suppression, invented override or `audit fix --force` was applied. A verified upstream compatible fix or explicit scoped security-owner decision remains required. Both prepared quality workflows now run `npm audit --omit=dev --audit-level=high`; the known development findings remain visible in the full audit and this report. Audit results are time-bound, not a security guarantee.
 
@@ -66,19 +72,19 @@ Sharp needs actual Linux encode/decode and installed platform binaries; Argon2 n
 
 Public provider documentation was rechecked on 2026-10-23. [Hostinger's Node deployment guide](https://www.hostinger.com/support/how-to-deploy-a-nodejs-website-in-hostinger/) documents supported plans/frameworks and Node 24; this does not verify this account. [Managed Node limits](https://www.hostinger.com/support/hostinger-node-js-limits-for-web-and-cloud-plans/) describe request/resource limits and restrictions on background workers, custom ports and additional services. [External database guidance](https://www.hostinger.com/support/connecting-a-supabase-database-to-a-hostinger-node-js-application/) confirms external PostgreSQL connectivity as a documented option. Its Supabase example is not a provider selection or proof of this account's TLS/network access.
 
-| Requirement                    | Repository/public capability evidence                                 | Actual account evidence / exact remaining input                                                                                                      |
-| ------------------------------ | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Eligible Hostinger plan        | Managed Node/Next backend documented for supported plans              | Plan name, region, resource quotas, runtime entitlement and operator confirmation                                                                    |
-| Node 24 Linux / Next server    | Node policy and server build/start path prepared                      | Actual selectable runtime, Linux/libc/OpenSSL and native/query smoke                                                                                 |
-| PORT / bind                    | `start:hostinger` consumes process PORT; local default stays loopback | Managed listener, forwarding and readiness observed on authorized target; do not deploy local 3134                                                   |
-| PostgreSQL                     | Prisma PostgreSQL schema; external connectivity documented            | Approved separate staging provider/region/target, no MySQL substitution                                                                              |
-| Database TLS / pooling         | No remote target configured or tested                                 | Verified certificate/hostname policy, supported Prisma pooling mode, pool size Ã— processes below provider limit, migration/direct connection policy |
-| Dedicated secrets / privileges | Production startup validates required settings                        | Separately provisioned non-production secrets and least-privilege app/migration roles; secret manager ownership                                      |
-| HTTPS / access restriction     | noindex and secure-cookie policy prepared                             | Named hostname, valid TLS, access restriction at edge/application and direct-origin denial; noindex alone is not access control                      |
-| Media persistence              | Local adapter only                                                    | Approved durable mount proof or approved private object-storage adapter and recovery tests                                                           |
-| Logs / monitoring              | Sanitized error events and minimal health endpoint                    | Retention/access/redaction, uptime/error alert destination, incident responder and measured restart/timeouts                                         |
-| Recovery ownership             | Fresh local database restore verified                                 | Encrypted off-device database+object policy, owners, schedule, RPO/RTO and provider restore exercise                                                 |
-| Rollback                       | Local runbook and synthetic rehearsal                                 | Retained reviewed previous artifact/config, compatible schema and media authorization rules, actual hosted rollback and post-rollback checks         |
+| Requirement                    | Repository/public capability evidence                                 | Actual account evidence / exact remaining input                                                                                                     |
+| ------------------------------ | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Eligible Hostinger plan        | Managed Node/Next backend documented for supported plans              | Plan name, region, resource quotas, runtime entitlement and operator confirmation                                                                   |
+| Node 24 Linux / Next server    | Node policy and server build/start path prepared                      | Actual selectable runtime, Linux/libc/OpenSSL and native/query smoke                                                                                |
+| PORT / bind                    | `start:hostinger` consumes process PORT; local default stays loopback | Managed listener, forwarding and readiness observed on authorized target; do not deploy local 3134                                                  |
+| PostgreSQL                     | Prisma PostgreSQL schema; external connectivity documented            | Approved separate staging provider/region/target, no MySQL substitution                                                                             |
+| Database TLS / pooling         | No remote target configured or tested                                 | Verified certificate/hostname policy, supported Prisma pooling mode, pool size × processes below provider limit, migration/direct connection policy |
+| Dedicated secrets / privileges | Production startup validates required settings                        | Separately provisioned non-production secrets and least-privilege app/migration roles; secret manager ownership                                     |
+| HTTPS / access restriction     | noindex and secure-cookie policy prepared                             | Named hostname, valid TLS, access restriction at edge/application and direct-origin denial; noindex alone is not access control                     |
+| Media persistence              | Local adapter only                                                    | Approved durable mount proof or approved private object-storage adapter and recovery tests                                                          |
+| Logs / monitoring              | Sanitized error events and minimal health endpoint                    | Retention/access/redaction, uptime/error alert destination, incident responder and measured restart/timeouts                                        |
+| Recovery ownership             | Fresh local database restore verified                                 | Encrypted off-device database+object policy, owners, schedule, RPO/RTO and provider restore exercise                                                |
+| Rollback                       | Local runbook and synthetic rehearsal                                 | Retained reviewed previous artifact/config, compatible schema and media authorization rules, actual hosted rollback and post-rollback checks        |
 
 Owner inputs are non-secret plan/region/runtime details, staging hostname/access method, approved DB/storage location and budgets, data residency/retention, responsible operators and approval scope. Supply credentials through an approved private channel later. No account access, purchase, DNS change, remote connection or deployment occurred.
 
@@ -89,7 +95,7 @@ The existing server-only `MediaStorage` interface already separates `put/read/re
 | Stage                  | Current implementation / operational consequence                                                                                                                                                                                            |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Upload authorization   | Admin endpoint checks authentication, resource permission, origin, demo-write denial and limits; active actor is rechecked inside the serializable write transaction                                                                        |
-| Validation             | Bounded multipart, JPEG/PNG/WebP type/extension, nonempty â‰¤10 MB, decoder format/pixel limits, source and normalized-byte readiness checks                                                                                                |
+| Validation             | Bounded multipart, JPEG/PNG/WebP type/extension, nonempty ≤10 MB, decoder format/pixel limits, source and normalized-byte readiness checks                                                                                                  |
 | Normalize/store        | Sharp strips/re-encodes to WebP, bounded 2400px; random UUID file, exclusive create under MEDIA_LOCAL_DIR/default uploads; no arbitrary path keys                                                                                           |
 | Metadata               | Gallery row stores `/media/<uuid>.webp`, alt/source/authorization; initially private; audit record in transaction. Failed new-record transaction removes only the newly written object                                                      |
 | Read                   | `/media/[key]` checks valid key, database metadata, confirmed/published/authorized content and visible parents, or authenticated admin; byte readiness still applies; private no-store response                                             |
@@ -178,7 +184,7 @@ Separate explicit approval is required for a source checkpoint/push/remote workf
 
 ---
 
-## Historical Phase 10.1 execution â€” 2026-10-21
+## Historical Phase 10.1 execution — 2026-10-21
 
 Date: 2026-10-21. Official application first. **External staging and public launch remain BLOCKED.** This phase authorizes local preparation and isolated validation only; no cloud resources, deployment, DNS, workflow dispatch, production credentials, main merge, Git staging/commit/push or media publication.
 
@@ -206,7 +212,7 @@ Adapted the previously inspected guarded Phase 09B process into a new ignored sc
 
 | Recovery evidence          | Actual result                                                                                                                |
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Private recovery directory | `C:/Users/Dell/SAKADO-backups/2026-10-21-phase10-1-fe6d4ea9/` â€” outside Git/web/release roots                              |
+| Private recovery directory | `C:/Users/Dell/SAKADO-backups/2026-10-21-phase10-1-fe6d4ea9/` — outside Git/web/release roots                                |
 | Access                     | Inheritance disabled; only the current local owner and SYSTEM granted access                                                 |
 | Dump                       | `sakado.custom.dump`, **37,145 bytes**, custom format; archive listing and restore succeeded                                 |
 | SHA-256                    | `1b741044cd8e10b4b8008671ded3766cec8bcf98312eb91ba0d39dcd16d6f9e5`                                                           |

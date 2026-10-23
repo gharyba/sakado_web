@@ -5,11 +5,13 @@ export function SiteHeader({
   logo,
   demo,
   privatePreview = false,
+  logoDimensions,
 }: {
   name: string;
   logo: string | null;
   demo: boolean;
   privatePreview?: boolean;
+  logoDimensions?: { width: number; height: number };
 }) {
   return (
     <>
@@ -24,7 +26,12 @@ export function SiteHeader({
       )}
       <NavigationShell
         brand={
-          <Brand name={name} logo={logo} privatePreview={privatePreview} />
+          <Brand
+            name={name}
+            logo={logo}
+            privatePreview={privatePreview}
+            logoDimensions={logoDimensions}
+          />
         }
       />
     </>

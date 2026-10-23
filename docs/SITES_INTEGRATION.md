@@ -2,6 +2,8 @@
 
 Date: 2026-10-23. Scope: local official-application preparation only. **External staging and production launch remain BLOCKED.**
 
+This is the retained earlier continuation report. Its five-entry development audit result is historical: the later [pre-commit security review](PRECOMMIT_SECURITY.md) records the October 23 upstream advisory withdrawal, fresh zero-finding audits and subsequent local security corrections.
+
 ## Repository and preservation
 
 The requested `feat/phase10-production-readiness` is not the active checkout. The actual branch is `feat/official-client-presentation`, HEAD `0f8404a051bf9d1f816fc9135d7ec78bb0db0b1c`, with existing presentation, Cinematic Redesigns 00-03 and Phase 10.1 changes. No branch switch, stash, reset, clean, stage or commit was performed.

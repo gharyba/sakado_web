@@ -23,8 +23,8 @@
   pointer-events: none;
   /* Local contrast veil: readable even when a future image has a bright sky. */
   background: linear-gradient(
-    rgb(16 27 25 / 78%),
-    rgb(16 27 25 / 72%) calc(100% - 2rem),
+    rgb(var(--s-navigation-veil-rgb, 16 27 25) / 78%),
+    rgb(var(--s-navigation-veil-rgb, 16 27 25) / 72%) calc(100% - 2rem),
     transparent
   );
   opacity: 0;
@@ -99,8 +99,8 @@
   border-radius: var(--s-radius-pill);
   min-height: 44px;
   padding: 0.75rem 1.25rem;
-  background: #e3b675;
-  color: #102f29;
+  background: var(--s-navigation-accent, #e3b675);
+  color: var(--s-navigation-action-ink, #102f29);
   font: 600 var(--s-text-caption) / 1.25 var(--s-font-body);
   white-space: nowrap;
 }
@@ -109,7 +109,7 @@
 }
 .header .action:hover,
 .dialog .panelAction:hover {
-  background: #f0c992;
+  background: var(--s-navigation-accent-hover, #f0c992);
 }
 .header a:focus-visible,
 .header button:focus-visible,
@@ -198,7 +198,7 @@
     transform var(--s-duration-fast) var(--s-ease);
 }
 .dialog::backdrop {
-  background: rgb(16 27 25 / 50%);
+  background: rgb(var(--s-navigation-veil-rgb, 16 27 25) / 50%);
   transition: opacity var(--s-duration-fast) var(--s-ease);
 }
 .dialog[data-closing="true"] {

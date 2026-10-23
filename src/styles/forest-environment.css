@@ -1,0 +1,223 @@
+/* Deep navy, ivory and gold across the public presentation. */
+.s-company-site {
+  position: relative;
+  isolation: isolate;
+  --s-theme-night: #080e1b;
+  --s-theme-pine: #0c172b;
+  --s-theme-moss: #14233d;
+  --s-theme-shadow: #1d3150;
+  --s-theme-atmosphere: #27446d;
+  --s-theme-surface: rgb(20 35 61 / 82%);
+  --paper: #f5f1e8;
+  --sand: #14233d;
+  --forest: #1d3150;
+  --deep: #080e1b;
+  --ink: #f5f1e8;
+  --muted: #c7d1e2;
+  --line: rgb(183 195 215 / 22%);
+  --amber: #e2c591;
+  --s-color-canvas: #0c172b;
+  --s-color-surface: #14233d;
+  --s-color-muted-surface: #1d3150;
+  --s-color-ink: #f5f1e8;
+  --s-color-muted: #c7d1e2;
+  --s-color-border: #5d7191;
+  --s-color-focus: #e2c591;
+  --s-color-focus-inverse: #e2c591;
+  --green: #c7d1e2;
+  --s-hero-canvas: #080e1b;
+  --s-hero-veil-rgb: 8 14 27;
+  --s-hero-border-rgb: 245 241 232;
+  --s-hero-ink: #f5f1e8;
+  --s-hero-accent: var(--amber);
+  --s-hero-accent-hover: #e9ce98;
+  --s-hero-control-border: #7b8ba4;
+  --s-navigation-veil-rgb: 8 14 27;
+  --s-navigation-accent: var(--amber);
+  --s-navigation-accent-hover: #e9ce98;
+  --s-navigation-action-ink: #080e1b;
+  min-height: 100svh;
+  color: var(--ink);
+  color-scheme: dark;
+  background-color: var(--s-theme-night);
+  background-image:
+    radial-gradient(ellipse at 18% 16%, rgb(39 68 109 / 28%), transparent 38%),
+    radial-gradient(ellipse at 84% 40%, rgb(29 49 80 / 24%), transparent 42%),
+    radial-gradient(ellipse at 45% 83%, rgb(39 68 109 / 22%), transparent 46%),
+    linear-gradient(
+      165deg,
+      transparent 18%,
+      rgb(29 49 80 / 12%) 52%,
+      transparent 86%
+    ),
+    linear-gradient(
+      180deg,
+      #080e1b 0%,
+      #112741 23%,
+      #242449 46%,
+      #30283e 68%,
+      #152941 86%,
+      #080e1b 100%
+    );
+  /* Static color journey remains readable with JavaScript or motion disabled. */
+}
+
+.s-company-site
+  :is(
+    .manifesto,
+    .experience-section,
+    .section-sand,
+    .why-section,
+    .social-section,
+    .instagram-section,
+    .contact-cta,
+    .site-footer
+  ),
+.s-company-site #equipe {
+  background: transparent;
+  color: var(--ink);
+}
+.s-company-site :is(.manifesto, .social-section) {
+  border-block: 0;
+}
+.s-company-site
+  :is(
+    .eyebrow,
+    .text-link,
+    .brand small,
+    .manifesto svg,
+    .experience-icon,
+    .why-number,
+    .instagram-controls button,
+    .lightbox-close,
+    .gallery-filters button.active
+  ) {
+  color: var(--amber);
+}
+.s-company-site
+  :is(
+    .about-signature,
+    .experience-category p,
+    .social-inner p:not(.eyebrow),
+    .footer-top p,
+    .footer-bottom,
+    .demo-note
+  ) {
+  color: var(--muted);
+}
+.s-company-site
+  :is(
+    .event-card,
+    .experience-category,
+    .adventure-sidebar,
+    .contact-aside,
+    .s-event-filters,
+    .notice,
+    .success-message,
+    .instagram-controls button,
+    .lightbox-close
+  ) {
+  background: var(--s-theme-surface);
+  border-color: var(--line);
+  color: var(--ink);
+}
+.s-company-site :is(.event-card, .experience-category, .contact-aside) {
+  box-shadow: 0 16px 40px rgb(0 0 0 / 12%);
+}
+.s-company-site
+  :is(
+    .form-stack input,
+    .form-stack textarea,
+    .form-stack select,
+    .s-event-filters select
+  ) {
+  background: #0c172b;
+  color: var(--ink);
+  border-color: var(--s-color-border);
+}
+.s-company-site :is(.button, .s-button) {
+  background: var(--amber);
+  color: var(--s-theme-night);
+}
+.s-company-site :is(.button, .s-button):hover {
+  background: #e9ce98;
+  color: var(--s-theme-night);
+}
+.s-company-site :is(.button-light, .button-outline) {
+  background: var(--s-theme-surface);
+  color: var(--ink);
+  border-color: var(--s-color-border);
+}
+.s-company-site .status-badge {
+  background: var(--amber);
+  color: var(--s-theme-night);
+}
+.s-company-site .image-badge {
+  background: #14233d;
+  color: var(--paper);
+}
+.s-company-site [data-story-timeline] li::before {
+  background: rgb(39 68 109 / 18%);
+  border-color: var(--line);
+}
+.s-company-site [data-story-timeline] li > span {
+  color: var(--amber);
+}
+.s-company-site [data-story-progress] {
+  background: var(--amber);
+}
+.s-company-site [data-story-timeline] :is(ol, li) {
+  border-color: var(--line);
+}
+.s-company-site [data-story-timeline] p,
+.s-company-site #equipe :is(p, small) {
+  color: var(--muted);
+}
+.s-company-site #equipe .eyebrow {
+  color: var(--amber);
+}
+.s-company-site #equipe [data-motion="image"],
+.s-company-site #equipe [data-motion="image"] > div {
+  background: linear-gradient(145deg, #1d3150, #0c172b);
+  color: var(--paper);
+}
+.s-company-site :is(a, button, input, textarea, select, summary):focus-visible {
+  outline-color: var(--amber);
+}
+
+/* Carry the palette through older photographic and dialog treatments. */
+.s-company-site
+  :is(
+    .why-grid p,
+    .why-section .section-description,
+    .destination-content > span:last-child
+  ) {
+  color: var(--muted);
+}
+.s-company-site
+  :is(
+    .about-art > small,
+    .image-category,
+    .instagram-card-icon,
+    .instagram-card-play
+  ) {
+  background: rgb(8 14 27 / 78%);
+}
+.s-company-site .destination-overlay {
+  background: linear-gradient(transparent 25%, rgb(8 14 27 / 92%));
+}
+.s-company-site :is(.gallery-photo, .instagram-card)::after {
+  background: linear-gradient(transparent, rgb(8 14 27 / 84%));
+}
+.s-company-site :is(.lightbox, .instagram-dialog) {
+  background: var(--s-color-surface);
+  color: var(--ink);
+}
+.s-company-site :is(.lightbox, .instagram-dialog)::backdrop {
+  background: rgb(4 8 17 / 90%);
+}
+.s-company-site .instagram-card-fallback {
+  background:
+    radial-gradient(ellipse at 80% 0%, #27446d 0%, transparent 65%),
+    var(--s-color-surface);
+}

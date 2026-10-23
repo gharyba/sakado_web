@@ -2,6 +2,9 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cinematicReveal, cinematicStory } from "./cinematic";
 import { cinematicTravel, cinematicScale } from "./cinematic-policy";
+import { cinematicHero } from "./hero";
+import { cinematicCompanyStory } from "./company-story";
+import { ambientBackground } from "./ambient";
 import {
   canPin,
   motionDistance,
@@ -74,6 +77,55 @@ export function mountScene(root: HTMLElement): () => void {
           const cinematic = root.dataset.motionProfile === "cinematic";
           const revealBudget = { active: 0 };
           const cinematicCleanups: Array<() => void> = [];
+          if (root.hasAttribute("data-ambient-background")) {
+            const cleanup = ambientBackground(
+              root,
+              tier,
+              rememberStyles,
+              requestRefresh,
+            );
+            if (cleanup) cinematicCleanups.push(cleanup);
+          }
+          if (root.hasAttribute("data-hero-cinematic")) {
+            cinematicHero(root, tier, rememberStyles);
+          }
+          if (root.hasAttribute("data-company-story")) {
+            const cleanup = cinematicCompanyStory(root, tier, rememberStyles);
+            if (cleanup) cinematicCleanups.push(cleanup);
+          }
+          // Homepage headings keep visible server text until their own viewport entry.
+          for (const heading of root.querySelectorAll<HTMLElement>(
+            "[data-home-words]",
+          )) {
+            if (heading.closest("[data-motion-scene]") !== root) continue;
+            const words = Array.from(
+              heading.querySelectorAll<HTMLElement>("[data-home-word]"),
+            );
+            if (!words.length) continue;
+            words.forEach(rememberStyles);
+            const tween = gsap.fromTo(
+              words,
+              { yPercent: tier === "mobile" ? 12 : 70, opacity: 0.45 },
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: tier === "mobile" ? 0.28 : 0.58,
+                stagger:
+                  words.length > 1
+                    ? Math.min(0.06, 0.24 / (words.length - 1))
+                    : 0,
+                ease: "power3.out",
+                paused: true,
+                immediateRender: false,
+              },
+            );
+            ScrollTrigger.create({
+              trigger: heading,
+              start: "top 90%",
+              once: true,
+              onEnter: () => tween.play(),
+            });
+          }
           // Nested scenes own their descendants. One transform owner per element.
           const elements = Array.from(
             root.querySelectorAll<HTMLElement>("[data-motion]"),
@@ -81,6 +133,8 @@ export function mountScene(root: HTMLElement): () => void {
             (element) => element.closest("[data-motion-scene]") === root,
           );
           for (const element of elements) {
+            // The coordinated hero timeline exclusively owns its camera target.
+            if (element.hasAttribute("data-hero-camera")) continue;
             const effect = element.dataset.motion as MotionEffect;
             if (!motionEffects.includes(effect)) continue;
             const raw = element.dataset.motionDistance;
@@ -229,7 +283,8 @@ export function mountScene(root: HTMLElement): () => void {
           }
           // Delayed fromTo start states must never survive a media-context revert.
           // Targets have one animation owner; preserve their exact pre-scene inline styles.
-          if (cinematic) cinematicStory(root, tier, rememberStyles);
+          if (cinematic && !root.hasAttribute("data-company-story"))
+            cinematicStory(root, tier, rememberStyles);
           return () => {
             cinematicCleanups.forEach((cleanup) => cleanup());
             restoreStyles();

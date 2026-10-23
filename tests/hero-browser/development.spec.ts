@@ -9,7 +9,7 @@ const background = (page: Page) =>
 async function ready(page: Page) {
   await page.goto("/");
   await expect(scene(page)).toHaveAttribute("data-motion-state", "ready");
-  await expect(hero(page).locator('[data-motion="reveal"]')).toHaveCSS(
+  await expect(hero(page).locator("[data-hero-copy] h1")).toHaveCSS(
     "opacity",
     "1",
   );
@@ -79,15 +79,15 @@ test("desktop composition, image load, native parallax, stable controls and navb
     const m = new DOMMatrix(getComputedStyle(el).transform);
     return { y: m.m42, scale: m.a };
   });
-  expect(Math.abs(movement.y)).toBeLessThanOrEqual(32);
+  expect(Math.abs(movement.y)).toBeLessThanOrEqual(60);
   expect(movement.scale).toBeGreaterThanOrEqual(1);
-  expect(movement.scale).toBeLessThanOrEqual(1.035);
-  const text = hero(page).locator('[data-motion="text"]');
+  expect(movement.scale).toBeLessThanOrEqual(1.07);
+  const text = hero(page).locator("[data-hero-copy]");
   expect(
     await text.evaluate((el) =>
       Math.abs(new DOMMatrix(getComputedStyle(el).transform).m42),
     ),
-  ).toBeLessThanOrEqual(10);
+  ).toBeLessThanOrEqual(64);
   for (const link of await hero(page).locator("a").all()) {
     await expect(link).toHaveCSS("transform", "none");
     await expect(link).toHaveCSS("opacity", "1");
@@ -126,7 +126,7 @@ test("tablet/mobile composition, focal crop and lightweight motion reflow", asyn
   ]) {
     await page.setViewportSize({ width, height });
     await page.evaluate(() => window.scrollTo(0, 0));
-    await expect(hero(page).locator('[data-motion="reveal"]')).toHaveCSS(
+    await expect(hero(page).locator("[data-hero-copy] h1")).toHaveCSS(
       "opacity",
       "1",
     );
@@ -137,7 +137,7 @@ test("tablet/mobile composition, focal crop and lightweight motion reflow", asyn
     ).toBe(true);
     await expect(hero(page).locator("[data-hero-image]")).toHaveCSS(
       "object-position",
-      "70% 50%",
+      "65% 52%",
     );
     if (width < 700)
       await expect(background(page)).toHaveCSS("transform", "none");
@@ -146,7 +146,7 @@ test("tablet/mobile composition, focal crop and lightweight motion reflow", asyn
         await background(page).evaluate(
           (el) => new DOMMatrix(getComputedStyle(el).transform).a,
         ),
-      ).toBeLessThanOrEqual(1.014);
+      ).toBeLessThanOrEqual(1.025);
     }
     const frame = await hero(page).locator("[data-hero-frame]").boundingBox();
     const primary = await hero(page)

@@ -3,15 +3,18 @@ import { useEffect, useId, useRef, useState } from "react";
 import { InstagramMediaCard } from "./instagram-media-card";
 import { InstagramMediaDialog } from "./instagram-media-dialog";
 import { Icon } from "./icon";
+import { HomeWords } from "./home/home-words";
 import type { InstagramMediaItem } from "@/lib/instagram-policy";
 export function InstagramMediaMarquee({
   items,
   title = "Nos aventures",
   subtitle = "Revivez quelques-uns de nos meilleurs moments.",
+  animatedTitle = false,
 }: {
   items: InstagramMediaItem[];
   title?: string;
   subtitle?: string;
+  animatedTitle?: boolean;
 }) {
   const id = useId();
   const viewport = useRef<HTMLDivElement>(null),
@@ -108,7 +111,9 @@ export function InstagramMediaMarquee({
       <div className="container instagram-heading">
         <div>
           <p className="eyebrow">LES MOMENTS SAKADO</p>
-          <h2 id={id}>{title}</h2>
+          <h2 id={id} aria-label={animatedTitle ? title : undefined}>
+            {animatedTitle ? <HomeWords text={title} /> : title}
+          </h2>
           <p>{subtitle}</p>
         </div>
         {items.length > 1 && (

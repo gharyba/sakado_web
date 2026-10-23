@@ -3,6 +3,7 @@ import { MotionScene } from "@/components/motion/scene";
 import { Motion } from "@/components/motion/motion";
 import { MotionSurface } from "@/components/motion/surface";
 import { company, companyTeam } from "@/data/confirmed/company";
+import { HomeWords } from "@/components/home/home-words";
 // Retain the established shared CSS geometry while moving server presentation out of the private adapter.
 import styles from "../client-demo/client-preview.module.css";
 
@@ -34,8 +35,10 @@ export function CompanyHeading({
 /** Shared confirmed chapters; no database or permission decisions inside motion. */
 export function CompanyTimeline({
   standalone = false,
+  animateHeading = false,
 }: {
   standalone?: boolean;
+  animateHeading?: boolean;
 }) {
   const timeline = (
     <MotionScene cinematic data-story-timeline className={styles.timelineScene}>
@@ -70,8 +73,16 @@ export function CompanyTimeline({
       className={styles.section + " container"}
       aria-labelledby="company-history-heading"
     >
-      <h2 id="company-history-heading" className={styles.pageTitle}>
-        Notre histoire
+      <h2
+        id="company-history-heading"
+        className={styles.pageTitle}
+        aria-label={animateHeading ? "Notre histoire" : undefined}
+      >
+        {animateHeading ? (
+          <HomeWords text="Notre histoire" />
+        ) : (
+          "Notre histoire"
+        )}
       </h2>
       {timeline}
     </section>
@@ -83,7 +94,7 @@ export function CompanyTimeline({
 export function CompanyTeam({
   portraits = [],
 }: {
-  portraits?: readonly CompanyPortrait[];
+  portraits?: readonly (CompanyPortrait | undefined)[];
 }) {
   return (
     <section className={`${styles.section} ${styles.teamSection}`} id="equipe">
