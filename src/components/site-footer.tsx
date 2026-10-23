@@ -7,9 +7,11 @@ export function SiteFooter({
   socialLinks,
   footerText,
   privatePreview = false,
+  logoDimensions,
 }: {
   footerText: string;
   privatePreview?: boolean;
+  logoDimensions?: { width: number; height: number };
   name: string;
   logo: string | null;
   instagramUrl: string;
@@ -19,7 +21,12 @@ export function SiteFooter({
     <footer className="site-footer s-company-footer">
       <div className="container footer-top">
         <div>
-          <Brand name={name} logo={logo} privatePreview={privatePreview} />
+          <Brand
+            name={name}
+            logo={logo}
+            privatePreview={privatePreview}
+            logoDimensions={logoDimensions}
+          />
           <p>
             Le grand air. Les belles rencontres.
             <br />

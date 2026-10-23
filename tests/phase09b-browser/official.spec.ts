@@ -53,7 +53,7 @@ for (const viewport of [
     ).toHaveCount(0);
     await fs.mkdir(".local/phase09b/screenshots", { recursive: true });
     await expect(
-      page.locator('[data-parallax-hero] [data-motion="reveal"]'),
+      page.locator("[data-parallax-hero] [data-hero-copy] h1"),
     ).toHaveCSS("opacity", "1");
     await page.screenshot({
       path: `.local/phase09b/screenshots/${info.project.name}-hero-${viewport.width}.png`,

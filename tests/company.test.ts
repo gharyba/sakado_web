@@ -18,15 +18,12 @@ test("Phase 09 facts retain the confirmed years, founder and all three chapters"
   assert.equal(confirmedSite.sinceYear, company.founded);
   assert.equal(confirmedSite.logoPath, null); // No inferred public logo approval.
 });
-test("the exact supplied team order/roles and seven unique activities are maintained", () => {
+test("the two permanent team members and seven unique activities are maintained", () => {
   assert.deepEqual(
     companyTeam.map((member) => [member.name, member.role]),
     [
       ["Ben Beya Mohamed", "Fondateur"],
       ["Bouzrara Manel", "Gérante"],
-      ["Aladin Jemni", "Graphiste / Animateur"],
-      ["Jad Tagougui", "Photographe / Vidéaste"],
-      ["Ayoub Hamza", "Guitariste / Chanteur"],
     ],
   );
   assert.deepEqual(

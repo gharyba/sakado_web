@@ -102,18 +102,35 @@ test("story is progressively enhanced; reduced motion and MotionToggle restore s
   const story = page.locator(".s-about-story");
   await story.scrollIntoViewIfNeeded();
   await expect(story).toHaveAttribute("data-motion-state", "ready");
+  // The taller three-chapter scene can center on chapter two. Inspect chapter one
+  // at its actual timeline position rather than assuming the first image stays on.
+  await story.locator("[data-story-list]").evaluate((node) => {
+    const rect = node.getBoundingClientRect();
+    scrollTo(
+      0,
+      rect.top +
+        scrollY -
+        innerHeight * 0.7 +
+        (rect.height + innerHeight * 0.32) * 0.15,
+    );
+  });
   await expect(story.locator(".s-story-passage").first()).toBeVisible();
   await expect(story.locator(".s-story-passage").first()).toHaveCSS(
     "opacity",
     "1",
   );
-  await expect(story.locator(".s-story-image")).toHaveCSS("opacity", "1");
+  await expect(story.locator("[data-story-frame]").first()).toHaveCSS(
+    "opacity",
+    "1",
+  );
   await page.screenshot({ path: info.outputPath("about-story-desktop.png") });
   await page.getByRole("button", { name: "Désactiver les animations" }).click();
   await expect(story).toHaveAttribute("data-motion-state", "static");
   expect(
     await story
-      .locator("[data-motion]")
+      .locator(
+        "[data-story-frame], [data-story-camera], [data-story-phase], [data-story-word], [data-story-emphasis], [data-story-progress]",
+      )
       .evaluateAll((nodes) => nodes.every((n) => !n.getAttribute("style"))),
   ).toBe(true);
   await page.goto("/gallery");

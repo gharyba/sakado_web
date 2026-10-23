@@ -9,6 +9,8 @@ export type HeroMedia = {
   src: string | null;
   placeholder: boolean;
   mobileSrc?: string;
+  /** Read-only local presentation DTO; never supplied by public media resolution. */
+  privatePresentation?: boolean;
 };
 
 /** Settings select media explicitly; never derive hero imagery from gallery records. */

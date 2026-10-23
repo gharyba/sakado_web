@@ -22,7 +22,7 @@ test("production ignores CLIENT_DEMO and never serves private assets", async ({
   await expect(page.locator(".s-client-preview-label")).toHaveCount(0);
   await expect(page.locator('[src^="/dev/client-media/"]')).toHaveCount(0);
   // Phase 09 makes confirmed names/roles public with initials; portraits remain private.
-  await expect(page.locator("#equipe article h3")).toHaveCount(5);
+  await expect(page.locator("#equipe article h3")).toHaveCount(2);
   await expect(page.locator("#equipe img")).toHaveCount(0);
   await expect(page.locator(".s-preview-shape-grid")).toHaveCount(0);
   await expect(page.locator("[data-gallery-carousel]")).toHaveCount(0);

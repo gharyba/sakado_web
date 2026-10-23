@@ -1,13 +1,7 @@
 import { test, expect } from "@playwright/test";
 import fs from "node:fs/promises";
 
-const members = [
-  "Ben Beya Mohamed",
-  "Bouzrara Manel",
-  "Aladin Jemni",
-  "Jad Tagougui",
-  "Ayoub Hamza",
-];
+const members = ["Ben Beya Mohamed", "Bouzrara Manel"];
 for (const viewport of [
   { width: 1440, height: 900 },
   { width: 768, height: 1024 },

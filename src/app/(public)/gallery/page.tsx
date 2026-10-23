@@ -10,6 +10,8 @@ import { pageMetadata } from "@/lib/metadata";
 import { MotionToggle } from "@/components/motion/preference";
 import { getClientDemoAssets } from "@/lib/client-demo";
 import { ClientDemoDetail } from "@/components/client-demo/client-home";
+import { getOfficialPresentation } from "@/lib/official-presentation";
+import { PresentationGallery } from "@/components/company/presentation-gallery";
 export const metadata = pageMetadata(
   "Galerie",
   "Les aventures, la nature et les moments partagés de Sakado Sfax en images.",
@@ -22,6 +24,7 @@ export default async function GalleryPage({
 }) {
   const assets = await getClientDemoAssets();
   if (assets) return <ClientDemoDetail assets={assets} section="gallery" />;
+  const presentation = await getOfficialPresentation();
   const params = await searchParams;
   const view = params.view === "instagram" ? "instagram" : "photos";
   const page = mediaPage(params.page);
@@ -90,6 +93,9 @@ export default async function GalleryPage({
             <MotionToggle />
           </div>
           <Gallery photos={photos} cinematic />
+          {presentation && (
+            <PresentationGallery photos={presentation.gallery} />
+          )}
         </>
       )}
     </div>

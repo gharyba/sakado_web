@@ -46,7 +46,7 @@ for (const viewport of [
     );
     await expect(page.locator("#equipe img")).toHaveCount(0);
     await expect(page.getByText("Photo à venir", { exact: true })).toHaveCount(
-      5,
+      2,
     );
     await expect(page.locator(".brand img")).toHaveCount(0);
     await expect(page.getByText("Youssef Gharbi", { exact: true })).toHaveCount(
@@ -141,7 +141,9 @@ test("demo preserves admin authorization and denies private media/evidence", asy
 }) => {
   await page.goto("/admin");
   await expect(page).toHaveURL(/\/admin\/login/);
-  expect((await request.get("/api/admin/exports?type=events")).status()).toBe(401);
+  expect((await request.get("/api/admin/exports?type=events")).status()).toBe(
+    401,
+  );
   expect((await request.post("/api/admin/events", { data: {} })).status()).toBe(
     401,
   );
@@ -173,7 +175,7 @@ test("reduced motion and mobile menu keep the complete company presentation usab
   } else {
     // The development illustration is intentionally absent from production.
     await expect(page.locator('[data-motion="background"]')).toHaveCount(0);
-    await expect(page.locator('[data-parallax-hero] h1')).toBeVisible();
+    await expect(page.locator("[data-parallax-hero] h1")).toBeVisible();
   }
   const menu = page.getByRole("button", {
     name: "Ouvrir la navigation",
@@ -199,7 +201,9 @@ test("reduced motion and mobile menu keep the complete company presentation usab
     await page.setViewportSize({ width, height: 812 });
     await page.locator(".site-footer").scrollIntoViewIfNeeded();
     expect(
-      await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
     ).toBe(true);
     await expect(page.locator(".footer-links > a").first()).toBeVisible();
   }

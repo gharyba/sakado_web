@@ -1,11 +1,14 @@
 import { getSettings } from "@/lib/settings";
+import { getGallery } from "@/lib/content";
+import { CompanyStory } from "@/components/company/company-story";
 import { PageIntro } from "@/components/page-intro";
 import { ContactCTA } from "@/components/contact-cta";
 import { pageMetadata } from "@/lib/metadata";
 import { getClientDemoAssets } from "@/lib/client-demo";
 import { ClientDemoDetail } from "@/components/client-demo/client-home";
-import { CompanyTeam, CompanyTimeline } from "@/components/company/sections";
+import { CompanyTeam } from "@/components/company/sections";
 import { MotionToggle } from "@/components/motion/preference";
+import { getOfficialPresentation } from "@/lib/official-presentation";
 export const metadata = pageMetadata(
   "À propos",
   "Découvrez Sakado Sfax, camping, randonnée et aventures en pleine nature en Tunisie.",
@@ -14,7 +17,11 @@ export const metadata = pageMetadata(
 export default async function AboutPage() {
   const assets = await getClientDemoAssets();
   if (assets) return <ClientDemoDetail assets={assets} section="about" />;
-  const settings = await getSettings();
+  const [settings, presentation, photos] = await Promise.all([
+    getSettings(),
+    getOfficialPresentation(),
+    getGallery(),
+  ]);
   return (
     <>
       <div className="container page-section">
@@ -52,8 +59,8 @@ export default async function AboutPage() {
           {settings.sinceYear && <p>Depuis {settings.sinceYear}.</p>}
         </div>
       </div>
-      <CompanyTimeline standalone />
-      <CompanyTeam />
+      <CompanyStory photos={presentation?.gallery ?? photos} />
+      <CompanyTeam portraits={presentation?.portraits} />
       <ContactCTA
         whatsappNumber={settings.whatsappNumber}
         title={settings.contactCtaTitle}

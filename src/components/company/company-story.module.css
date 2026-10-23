@@ -1,0 +1,302 @@
+.section {
+  padding-block: clamp(64px, 8vw, 112px);
+  background: transparent;
+  color: var(--ink);
+}
+.scene {
+  --s-story-frame-height: min(52svh, 560px);
+  --s-story-row: calc((var(--s-story-frame-height) + min(60svh, 600px)) / 3);
+}
+.header {
+  max-width: 780px;
+  margin-bottom: clamp(36px, 5vw, 64px);
+}
+.header h2 {
+  margin: 12px 0 24px;
+  font-size: clamp(48px, 6.5vw, 88px);
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+.lead {
+  font-size: clamp(18px, 1.8vw, 23px);
+  line-height: 1.65;
+}
+.kicker {
+  margin-top: 20px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.progressTrack {
+  height: 1px;
+  background: var(--line);
+  margin-bottom: 36px;
+  overflow: hidden;
+}
+.progressTrack > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--amber);
+}
+.chapters {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr);
+  grid-template-rows: repeat(3, minmax(var(--s-story-row), auto));
+  column-gap: clamp(48px, 6vw, 88px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.chapter {
+  display: contents;
+}
+.chapter:nth-child(1) {
+  --s-story-row-index: 1;
+}
+.chapter:nth-child(2) {
+  --s-story-row-index: 2;
+}
+.chapter:nth-child(3) {
+  --s-story-row-index: 3;
+}
+.year,
+.copy,
+.frame {
+  grid-row: var(--s-story-row-index);
+}
+.year {
+  grid-column: 2;
+  align-self: start;
+  color: var(--amber);
+  font-size: clamp(30px, 3.8vw, 48px);
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+  z-index: 2;
+  padding-top: 8px;
+  pointer-events: none;
+}
+.copy {
+  grid-column: 2;
+  padding: 76px 0 36px;
+  min-width: 0;
+  z-index: 2;
+}
+.chapterLabel {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  margin: 0 0 12px;
+}
+.copy h3 {
+  font-size: clamp(26px, 2.8vw, 43px);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  margin: 0 0 20px;
+  overflow-wrap: anywhere;
+}
+.wordMask {
+  display: inline-block;
+  overflow: clip;
+  vertical-align: bottom;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+  margin-right: 0.2em;
+}
+.wordMask > span {
+  display: inline-block;
+}
+.emphasis {
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 0;
+}
+.values {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+  margin-top: 18px;
+}
+.frame {
+  grid-column: 1;
+  position: relative;
+  align-self: start;
+  height: calc(var(--s-story-row) - 24px);
+  min-height: 240px;
+  margin: 0 0 24px;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  background: var(--s-color-surface, #14233d);
+  isolation: isolate;
+}
+.camera {
+  position: absolute;
+  inset: -18px;
+}
+.camera > picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.camera img {
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+.frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(transparent 55%, rgb(8 14 27 / 88%));
+}
+.frame figcaption {
+  position: absolute;
+  z-index: 1;
+  inset: auto 18px 18px;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: end;
+  color: #f5f1e8;
+  text-shadow: 0 1px 3px #080e1b;
+}
+.frame figcaption > span {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+.frame small {
+  max-width: 230px;
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: right;
+}
+.chapter:last-child .frame {
+  grid-column: 1 / -1;
+  width: 100%;
+  height: auto;
+  align-self: stretch;
+}
+.chapter:last-child .frame::after {
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgb(8 14 27 / 40%) 35%,
+      rgb(8 14 27 / 96%) 57%
+    ),
+    linear-gradient(transparent 55%, rgb(8 14 27 / 88%));
+}
+.chapter:last-child .frame figcaption {
+  right: auto;
+  width: calc(45% - 36px);
+}
+.chapter:last-child h3 {
+  color: var(--amber);
+}
+.mediaNote {
+  color: var(--muted);
+  font-size: 12px;
+  max-width: 720px;
+  line-height: 1.7;
+  margin: 24px 0 0;
+}
+.notes {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 48px;
+  border-top: 1px solid var(--line);
+  margin-top: 40px;
+  padding-top: 32px;
+}
+.notes p {
+  line-height: 1.8;
+  margin: 0 0 16px;
+}
+.handoff {
+  align-self: end;
+  text-align: right;
+}
+.handoff > span {
+  display: block;
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 20px;
+}
+/* Grid rows reserve identical document height before and after enhancement.
+   The same three figures share one CSS-sticky visual slot; no copied photo planes. */
+@media (min-width: 1200px) and (min-height: 800px) and (prefers-reduced-motion: no-preference) {
+  .scene[data-story-layout="sticky"] .frame {
+    grid-row: 1 / -1;
+    position: sticky;
+    top: calc(var(--s-navigation-height, 88px) + 24px);
+    height: var(--s-story-frame-height);
+    margin-bottom: 0;
+    align-self: start;
+  }
+}
+@media (min-width: 700px) and (max-width: 1199px) {
+  .scene {
+    --s-story-row: max(360px, 38svh);
+  }
+  .chapters {
+    column-gap: 32px;
+  }
+  .frame {
+    height: 320px;
+  }
+  .copy {
+    padding-top: 64px;
+  }
+  .copy h3 {
+    font-size: clamp(27px, 3.8vw, 38px);
+  }
+}
+@media (max-width: 699px) {
+  .chapters {
+    display: block;
+  }
+  .chapter {
+    display: block;
+    margin-bottom: 48px;
+  }
+  .year {
+    display: block;
+    padding-top: 0;
+    margin-bottom: 18px;
+    font-size: 36px;
+  }
+  .frame,
+  .chapter:last-child .frame {
+    height: clamp(260px, 76vw, 440px);
+    width: 100%;
+    min-height: 0;
+    margin-bottom: 24px;
+  }
+  .chapter:last-child .frame::after {
+    background: linear-gradient(transparent 55%, rgb(8 14 27 / 88%));
+  }
+  .chapter:last-child .frame figcaption {
+    right: 18px;
+    width: auto;
+  }
+  .camera {
+    inset: 0;
+  }
+  .copy {
+    padding: 0;
+  }
+  .copy h3 {
+    font-size: clamp(30px, 8.5vw, 42px);
+  }
+  .notes {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .handoff {
+    text-align: left;
+  }
+  .frame small {
+    font-size: 11px;
+  }
+}

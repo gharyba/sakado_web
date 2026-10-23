@@ -1,6 +1,8 @@
 type Environment = Record<string, string | undefined>;
 /** Checks configuration, not legal clearance, storage durability or connectivity. Never returns values. */
 export function productionEnvironmentIssues(env: Environment): string[] {
+  if (env.NODE_ENV === "production" && env.OFFICIAL_PRESENTATION === "true")
+    return ["Local official presentation is forbidden in production."];
   if (env.NODE_ENV !== "production" || env.DEMO_MODE === "true") return [];
   const issues: string[] = [];
   if (env.STAGING_MODE && !["true", "false"].includes(env.STAGING_MODE))
