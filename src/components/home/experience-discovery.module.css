@@ -1,0 +1,223 @@
+/* Redesign 04: server-rendered editorial discovery over the shared atmosphere. */
+.root {
+  position: relative;
+  padding-block: clamp(3.5rem, 7vw, 6.5rem);
+  background: transparent;
+  color: var(--ink);
+}
+.root::after {
+  content: "";
+  position: absolute;
+  inset: auto 8% 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--line) 25%,
+    var(--line) 75%,
+    transparent
+  );
+  pointer-events: none;
+}
+.heading {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: clamp(2rem, 4vw, 3.5rem);
+}
+.heading > div {
+  flex: 1 1 26rem;
+  min-width: 0;
+}
+.root .heading h2 [data-home-word] {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.root .heading h2 {
+  max-width: 15ch;
+  font-size: clamp(2.25rem, 4.4vw, 4rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  margin: 0.875rem 0 0;
+  overflow-wrap: anywhere;
+}
+.root .allLink {
+  min-height: 44px;
+  flex-shrink: 0;
+  padding-block: 0.75rem;
+  font-size: 0.9375rem;
+}
+.root .surface .grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.grid > li {
+  min-width: 0;
+  display: flex;
+}
+.root .grid .card {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1.5rem;
+  min-width: 0;
+  min-height: 44px;
+  padding: clamp(1.25rem, 2.4vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  background: linear-gradient(145deg, rgb(29 49 80 / 58%), rgb(12 23 43 / 72%));
+  box-shadow: none;
+  text-decoration: none;
+}
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--amber);
+}
+.number {
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  font-variant-numeric: tabular-nums;
+}
+.root .card .icon {
+  width: auto;
+  display: inline-flex;
+  color: var(--amber);
+}
+.copy {
+  min-width: 0;
+}
+.root .card h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.625rem, 2.2vw, 2rem);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  margin: 0;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.root .card p {
+  margin: 1rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.root .card small {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  margin-top: 1rem;
+}
+.arrow {
+  display: flex;
+  align-self: end;
+  margin-top: auto;
+  padding-top: 0.25rem;
+  color: var(--amber);
+  pointer-events: none;
+}
+.root .card:focus-visible,
+.root .allLink:focus-visible,
+.upcoming a:focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 4px;
+}
+.root .card:is(:hover, :focus-visible) {
+  border-color: var(--amber);
+  background-color: rgb(29 49 80 / 80%);
+}
+.root .unavailable {
+  padding-block: 1.5rem;
+  line-height: 1.7;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+}
+.upcoming {
+  padding-top: clamp(3rem, 6vw, 5rem);
+  padding-bottom: clamp(2rem, 4vw, 3.5rem);
+}
+.upcoming :global(.section-heading) {
+  align-items: end;
+  gap: 1.5rem;
+}
+.upcoming :global(.section-heading) h2 {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  line-height: 1.15;
+}
+.upcoming .empty {
+  display: flex;
+  align-items: start;
+  gap: clamp(1rem, 3vw, 2rem);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border: 1px solid var(--line);
+  border-radius: 1.25rem;
+  background: linear-gradient(115deg, rgb(29 49 80 / 45%), rgb(12 23 43 / 30%));
+  text-align: left;
+}
+.emptyIcon {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--amber);
+}
+.empty p {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+.empty :global(.text-link) {
+  min-height: 44px;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  padding-block: 0.5rem;
+  overflow-wrap: anywhere;
+}
+/* All transitions are opt-in. Pending/no-JS/off/save-data stays static. */
+.root .surface .card {
+  transition: none;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .root .surface[data-cinematic-motion="on"] .card {
+    transition:
+      border-color 180ms ease-out,
+      background-color 180ms ease-out;
+  }
+  .root .surface[data-cinematic-motion="on"] .arrow {
+    transition: transform 180ms ease-out;
+  }
+  .root .surface[data-cinematic-motion="on"] .card:hover .arrow {
+    transform: translateX(4px);
+  }
+}
+@media (min-width: 700px) and (max-width: 1199px) {
+  .root .surface .grid {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, max(18rem, calc((100% - 1rem) / 2))), 1fr)
+    );
+  }
+}
+@media (max-width: 699px) {
+  .heading {
+    display: block;
+  }
+  .root .allLink {
+    margin-top: 1rem;
+  }
+  .root .surface .grid {
+    grid-template-columns: 1fr;
+  }
+  .upcoming .empty {
+    flex-direction: column;
+  }
+}
