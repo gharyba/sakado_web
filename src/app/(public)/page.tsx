@@ -1,4 +1,3 @@
-import Link from "@/components/link";
 import {
   getEvents,
   getDestinations,
@@ -8,8 +7,6 @@ import {
 import { getSettings } from "@/lib/settings";
 import { pageMetadata } from "@/lib/metadata";
 import { demoWhy } from "@/data/demo/content";
-import { EventCard } from "@/components/event-card";
-import { ExperienceCategory } from "@/components/experience-category";
 import { DestinationCard } from "@/components/destination-card";
 import { SectionHeading } from "@/components/section-heading";
 import { Gallery } from "@/components/gallery";
@@ -20,7 +17,8 @@ import { Icon } from "@/components/icon";
 import { ParallaxHero } from "@/components/home/parallax-hero";
 import { resolveHeroMedia } from "@/lib/hero";
 import { AboutStory } from "@/components/home/about-story";
-import { MotionSurface } from "@/components/motion/surface";
+import { ExperienceDiscovery } from "@/components/home/experience-discovery";
+import { UpcomingAdventures } from "@/components/home/upcoming-adventures";
 import { MotionScene } from "@/components/motion/scene";
 import { HomeWords } from "@/components/home/home-words";
 import { AmbientBackground } from "@/components/home/ambient-background";
@@ -96,58 +94,8 @@ export default async function Home() {
             </span>
           </div>
         </div>
-        <section className="section container" id="adventures">
-          <SectionHeading
-            animated
-            eyebrow="ON PART OÙ, ENSUITE ?"
-            title="Les prochaines aventures"
-            description="Un peu moins de quotidien. Un peu plus d’horizon."
-            href="/events"
-            linkText="Toutes les aventures"
-          />
-          {settings.demo && (
-            <p className="demo-note">
-              Aperçus de démonstration : lieux, dates, tarifs et disponibilités
-              à confirmer.
-            </p>
-          )}
-          {upcoming.length ? (
-            <div className="event-grid">
-              {upcoming.slice(0, 3).map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </div>
-          ) : (
-            <div className="empty-state">
-              Les prochaines aventures seront annoncées ici.{" "}
-              <Link href="/contact">Contactez Sakado pour en savoir plus.</Link>
-            </div>
-          )}
-        </section>
-        <section className="experience-section">
-          <div className="container">
-            <SectionHeading
-              animated
-              eyebrow="À CHACUN SON ÉVASION"
-              title="Quelle aventure vous ressemble ?"
-            />
-            {categories.length ? (
-              <MotionSurface className="experience-grid s-activity-surface">
-                {categories.map((category, index) => (
-                  <ExperienceCategory
-                    key={category.id}
-                    category={category}
-                    index={index}
-                  />
-                ))}
-              </MotionSurface>
-            ) : (
-              <p>
-                Les expériences seront publiées après confirmation par Sakado.
-              </p>
-            )}
-          </div>
-        </section>
+        <UpcomingAdventures events={upcoming} demo={settings.demo} />
+        <ExperienceDiscovery categories={categories} />
         <AboutStory
           about={settings.about}
           story={settings.story}

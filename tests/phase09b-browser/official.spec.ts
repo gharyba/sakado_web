@@ -21,7 +21,7 @@ for (const viewport of [
     });
     const response = await page.goto("/");
     expect(response?.status()).toBe(200);
-    await expect(page.locator("h1")).toHaveText(
+    await expect(page.locator("h1")).toHaveAccessibleName(
       "Explorez. Respirez. Vivez l’aventure.",
     );
     await expect(
