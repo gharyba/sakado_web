@@ -160,7 +160,7 @@ test("official public navigation links and metadata resolve without writes", asy
   ]) {
     expect((await page.goto(route))?.status(), route).toBe(200);
     await expect(page.locator("html")).toHaveAttribute("lang", "fr");
-    await expect(page.locator("title")).not.toBeEmpty();
+    await expect(page.locator("head > title")).not.toBeEmpty();
     await expect(page.locator('meta[name="description"]')).toHaveAttribute(
       "content",
       /.+/,

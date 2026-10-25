@@ -1,63 +1,63 @@
-/* Deep navy, ivory and gold across the public presentation. */
+/* Shared Midnight Forest values match Partners, Contact and Footer. */
 .s-company-site {
   position: relative;
   isolation: isolate;
-  --s-theme-night: #080e1b;
-  --s-theme-pine: #0c172b;
-  --s-theme-moss: #14233d;
-  --s-theme-shadow: #1d3150;
-  --s-theme-atmosphere: #27446d;
-  --s-theme-surface: rgb(20 35 61 / 82%);
-  --paper: #f5f1e8;
-  --sand: #14233d;
-  --forest: #1d3150;
-  --deep: #080e1b;
-  --ink: #f5f1e8;
-  --muted: #c7d1e2;
-  --line: rgb(183 195 215 / 22%);
-  --amber: #e2c591;
-  --s-color-canvas: #0c172b;
-  --s-color-surface: #14233d;
-  --s-color-muted-surface: #1d3150;
-  --s-color-ink: #f5f1e8;
-  --s-color-muted: #c7d1e2;
-  --s-color-border: #5d7191;
-  --s-color-focus: #e2c591;
-  --s-color-focus-inverse: #e2c591;
-  --green: #c7d1e2;
-  --s-hero-canvas: #080e1b;
-  --s-hero-veil-rgb: 8 14 27;
-  --s-hero-border-rgb: 245 241 232;
-  --s-hero-ink: #f5f1e8;
+  --s-theme-night: #07110f;
+  --s-theme-pine: #0b1714;
+  --s-theme-moss: #10201b;
+  --s-theme-shadow: #163126;
+  --s-theme-atmosphere: #1c3a2c;
+  --s-theme-surface: rgb(22 49 38 / 82%);
+  --paper: #f2efe6;
+  --sand: #10201b;
+  --forest: #163126;
+  --deep: #07110f;
+  --ink: #f2efe6;
+  --muted: #b2beb4;
+  --line: rgb(178 190 180 / 24%);
+  --amber: #c9a675;
+  --s-color-canvas: #0b1714;
+  --s-color-surface: #10201b;
+  --s-color-muted-surface: #163126;
+  --s-color-ink: #f2efe6;
+  --s-color-muted: #b2beb4;
+  --s-color-border: #728c7d;
+  --s-color-focus: #c9a675;
+  --s-color-focus-inverse: #c9a675;
+  --green: #b2beb4;
+  --s-hero-canvas: #07110f;
+  --s-hero-veil-rgb: 7 17 15;
+  --s-hero-border-rgb: 242 239 230;
+  --s-hero-ink: #f2efe6;
   --s-hero-accent: var(--amber);
-  --s-hero-accent-hover: #e9ce98;
-  --s-hero-control-border: #7b8ba4;
-  --s-navigation-veil-rgb: 8 14 27;
+  --s-hero-accent-hover: #e2c79f;
+  --s-hero-control-border: #728c7d;
+  --s-navigation-veil-rgb: 7 17 15;
   --s-navigation-accent: var(--amber);
-  --s-navigation-accent-hover: #e9ce98;
-  --s-navigation-action-ink: #080e1b;
+  --s-navigation-accent-hover: #e2c79f;
+  --s-navigation-action-ink: #07110f;
   min-height: 100svh;
   color: var(--ink);
   color-scheme: dark;
   background-color: var(--s-theme-night);
   background-image:
-    radial-gradient(ellipse at 18% 16%, rgb(39 68 109 / 28%), transparent 38%),
-    radial-gradient(ellipse at 84% 40%, rgb(29 49 80 / 24%), transparent 42%),
-    radial-gradient(ellipse at 45% 83%, rgb(39 68 109 / 22%), transparent 46%),
+    radial-gradient(ellipse at 18% 16%, rgb(28 58 44 / 28%), transparent 38%),
+    radial-gradient(ellipse at 84% 40%, rgb(22 49 38 / 24%), transparent 42%),
+    radial-gradient(ellipse at 45% 83%, rgb(28 58 44 / 22%), transparent 46%),
     linear-gradient(
       165deg,
       transparent 18%,
-      rgb(29 49 80 / 12%) 52%,
+      rgb(22 49 38 / 12%) 52%,
       transparent 86%
     ),
     linear-gradient(
       180deg,
-      #080e1b 0%,
-      #112741 23%,
-      #242449 46%,
-      #30283e 68%,
-      #152941 86%,
-      #080e1b 100%
+      #07110f 0%,
+      #10201b 23%,
+      #163126 46%,
+      #1c3a2c 68%,
+      #10201b 86%,
+      #07110f 100%
     );
   /* Static color journey remains readable with JavaScript or motion disabled. */
 }
@@ -131,7 +131,7 @@
     .form-stack select,
     .s-event-filters select
   ) {
-  background: #0c172b;
+  background: #0b1714;
   color: var(--ink);
   border-color: var(--s-color-border);
 }
@@ -140,7 +140,7 @@
   color: var(--s-theme-night);
 }
 .s-company-site :is(.button, .s-button):hover {
-  background: #e9ce98;
+  background: #e2c79f;
   color: var(--s-theme-night);
 }
 .s-company-site :is(.button-light, .button-outline) {
@@ -153,11 +153,11 @@
   color: var(--s-theme-night);
 }
 .s-company-site .image-badge {
-  background: #14233d;
+  background: #10201b;
   color: var(--paper);
 }
 .s-company-site [data-story-timeline] li::before {
-  background: rgb(39 68 109 / 18%);
+  background: rgb(28 58 44 / 18%);
   border-color: var(--line);
 }
 .s-company-site [data-story-timeline] li > span {
@@ -178,7 +178,7 @@
 }
 .s-company-site #equipe [data-motion="image"],
 .s-company-site #equipe [data-motion="image"] > div {
-  background: linear-gradient(145deg, #1d3150, #0c172b);
+  background: linear-gradient(145deg, #163126, #0b1714);
   color: var(--paper);
 }
 .s-company-site :is(a, button, input, textarea, select, summary):focus-visible {
@@ -201,23 +201,23 @@
     .instagram-card-icon,
     .instagram-card-play
   ) {
-  background: rgb(8 14 27 / 78%);
+  background: rgb(7 17 15 / 78%);
 }
 .s-company-site .destination-overlay {
-  background: linear-gradient(transparent 25%, rgb(8 14 27 / 92%));
+  background: linear-gradient(transparent 25%, rgb(7 17 15 / 92%));
 }
 .s-company-site :is(.gallery-photo, .instagram-card)::after {
-  background: linear-gradient(transparent, rgb(8 14 27 / 84%));
+  background: linear-gradient(transparent, rgb(7 17 15 / 84%));
 }
 .s-company-site :is(.lightbox, .instagram-dialog) {
   background: var(--s-color-surface);
   color: var(--ink);
 }
 .s-company-site :is(.lightbox, .instagram-dialog)::backdrop {
-  background: rgb(4 8 17 / 90%);
+  background: rgb(7 17 15 / 90%);
 }
 .s-company-site .instagram-card-fallback {
   background:
-    radial-gradient(ellipse at 80% 0%, #27446d 0%, transparent 65%),
+    radial-gradient(ellipse at 80% 0%, #1c3a2c 0%, transparent 65%),
     var(--s-color-surface);
 }

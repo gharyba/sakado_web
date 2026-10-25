@@ -27,9 +27,13 @@ for (const viewport of [
     });
     const response = await page.goto("/");
     expect(response?.headers()["x-robots-tag"]).toContain("noindex");
-    await expect(page.locator("h1")).toHaveText(
-      "Explorez. Respirez. Vivez l’aventure.",
-    );
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "Explorez. Respirez. Vivez l’aventure.",
+        exact: true,
+      }),
+    ).toBeVisible();
     await expect(page.locator(".experience-category h3")).toHaveText(
       companyActivities.map((activity) => activity.name),
     );
@@ -45,17 +49,15 @@ for (const viewport of [
       companyTeam.map((member) => member.role),
     );
     await expect(page.locator("#equipe img")).toHaveCount(0);
-    await expect(page.getByText("Photo à venir", { exact: true })).toHaveCount(
-      2,
-    );
+    await expect(
+      page.getByText("Portrait à venir", { exact: true }),
+    ).toHaveCount(2);
     await expect(page.locator(".brand img")).toHaveCount(0);
     await expect(page.getByText("Youssef Gharbi", { exact: true })).toHaveCount(
       0,
     );
     await fs.mkdir(".local/phase09/screenshots", { recursive: true });
-    await expect(
-      page.locator('[data-parallax-hero] [data-motion="reveal"]'),
-    ).toHaveCSS("opacity", "1");
+    await expect(page.locator("[data-hero-copy]")).toHaveCSS("opacity", "1");
     await page.screenshot({
       path: `.local/phase09/screenshots/${info.project.name}-hero-${viewport.width}.png`,
     });
@@ -91,7 +93,7 @@ for (const viewport of [
     expect(
       Number.parseFloat(
         await page
-          .locator(".footer-links > a")
+          .locator(".site-footer nav a")
           .first()
           .evaluate((el) => getComputedStyle(el).fontSize),
       ),
@@ -121,9 +123,9 @@ test("all public demo routes and illustrative detail CTAs work without PostgreSQ
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   }
   await page.goto("/experiences");
-  await expect(page.getByRole("heading", { level: 2 })).toHaveText(
-    companyActivities.map((activity) => activity.name),
-  );
+  await expect(
+    page.getByRole("main").getByRole("heading", { level: 2 }),
+  ).toHaveText(companyActivities.map((activity) => activity.name));
   await page
     .getByRole("link", { name: "Parlons de cette expérience →" })
     .first()
@@ -205,7 +207,7 @@ test("reduced motion and mobile menu keep the complete company presentation usab
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true);
-    await expect(page.locator(".footer-links > a").first()).toBeVisible();
+    await expect(page.locator(".site-footer nav a").first()).toBeVisible();
   }
 });
 

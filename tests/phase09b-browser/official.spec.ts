@@ -166,9 +166,9 @@ test("official routes use confirmed categories, honest empty listings and actual
   for (const route of ["/events/demo-camping", "/destinations/demo-foret"])
     expect((await request.get(route)).status(), route).toBe(404);
   await page.goto("/experiences");
-  await expect(page.getByRole("heading", { level: 2 })).toHaveText(
-    companyActivities.map((a) => a.name),
-  );
+  await expect(
+    page.getByRole("main").getByRole("heading", { level: 2 }),
+  ).toHaveText(companyActivities.map((a) => a.name));
   await page
     .getByRole("link", { name: "Parlons de cette expérience →" })
     .first()

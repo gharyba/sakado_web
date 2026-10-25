@@ -192,6 +192,8 @@
 }
 .word {
   display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 .privatePreview .frame {
   background: linear-gradient(

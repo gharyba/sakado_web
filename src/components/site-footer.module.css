@@ -63,6 +63,10 @@
   max-height: 6rem;
   object-fit: contain;
 }
+.identity :global(.brand > span) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 .identity p {
   max-width: 29ch;
   margin-top: 1.5rem;

@@ -51,3 +51,19 @@ test("production optimizer refuses private presentation paths", async ({
   );
   expect(response.status()).toBe(400);
 });
+
+test("database outage health is minimal, uncached and distinct from demo mode", async ({
+  request,
+}, info) => {
+  // This configuration uses an unreachable synthetic endpoint, never the real DB.
+  const response = await request.get("/api/health");
+  expect(response.headers()["cache-control"]).toContain("no-store");
+  expect(response.headers()["x-robots-tag"]).toContain("noindex");
+  if (info.project.name === "demo-production") {
+    expect(response.status()).toBe(200);
+    expect(await response.json()).toEqual({ status: "ok", mode: "demo" });
+  } else {
+    expect(response.status()).toBe(503);
+    expect(await response.json()).toEqual({ status: "unavailable" });
+  }
+});

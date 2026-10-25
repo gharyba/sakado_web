@@ -8,6 +8,7 @@ import { cinematicTeamStory } from "./team-story";
 import { cinematicFinalJourney } from "./final-journey";
 import { cinematicPartners } from "./partners";
 import { ambientBackground } from "./ambient";
+import { createMediaContext } from "./media-context";
 import {
   canPin,
   motionDistance,
@@ -46,7 +47,7 @@ export function mountScene(root: HTMLElement): () => void {
     ScrollTrigger.enable();
     engineDisabled = false;
   }
-  const media = gsap.matchMedia();
+  const media = createMediaContext();
   let live = true;
   const revealed = new WeakSet<HTMLElement>();
   const originalStyles = new Map<HTMLElement, string | null>();

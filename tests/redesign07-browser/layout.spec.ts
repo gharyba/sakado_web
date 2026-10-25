@@ -135,7 +135,7 @@ test("scroll reverses copy, fields keep focus/value, and both preferences clean 
       .evaluate((el) =>
         getComputedStyle(el).getPropertyValue("--s-theme-night").trim(),
       ),
-  ).toBe("#080e1b");
+  ).toBe("#07110f");
 });
 
 test("CMS closing copy and legal/social links survive the redesign", async ({
