@@ -122,8 +122,10 @@ export function CompanyStory({
             );
           })}
         </ol>
-        {photos.some((photo) =>
-          photo.src.startsWith("/dev/presentation-media/"),
+        {photos.some(
+          (photo) =>
+            photo.src.startsWith("/dev/presentation-media/") ||
+            photo.src.startsWith("/_client-review/media/"),
         ) && (
           <p className={styles.mediaNote}>
             Photographies réservées à cette présentation privée. Elles

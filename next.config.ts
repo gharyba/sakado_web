@@ -1,5 +1,11 @@
 import type { NextConfig } from "next";
 const config: NextConfig = {
+  ...(process.env.CLIENT_REVIEW_ARTIFACT === "true"
+    ? {
+        distDir: ".next-client-review",
+        typescript: { tsconfigPath: "tsconfig.client-review.json" },
+      }
+    : {}),
   poweredByHeader: false,
   images: {
     // Dynamic /media must retain per-request publication checks and no-store responses.

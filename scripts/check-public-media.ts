@@ -16,13 +16,20 @@ async function main() {
   );
   const blocked = await auditPublicMedia("public", registry);
   if (process.argv.includes("--built"))
-    blocked.push(...(await auditPublicMedia(".next/static", registry)));
+    blocked.push(
+      ...(await auditPublicMedia(
+        process.argv.includes("--client-review")
+          ? ".next-client-review/static"
+          : ".next/static",
+        registry,
+      )),
+    );
   if (blocked.length)
     throw new Error(
       `${blocked.length} blocked media file(s) found in public/. Remove through a reviewed, separate action before building.`,
     );
   console.log(
-    `Public media audit passed: ${registry.assets.length} registered assets checked; no blocked copies found${process.argv.includes("--built") ? " in public/ or .next/static/" : " in public/"}.`,
+    `Public media audit passed: ${registry.assets.length} registered assets checked; no blocked copies found${process.argv.includes("--built") ? ` in public/ or ${process.argv.includes("--client-review") ? ".next-client-review" : ".next"}/static/` : " in public/"}.`,
   );
 }
 main().catch(() => {

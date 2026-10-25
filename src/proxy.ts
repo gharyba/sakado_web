@@ -3,11 +3,24 @@ import { stagingEnabled } from "./lib/staging-policy";
 import { demoEnabled } from "./lib/content-policy";
 import { presentationHeaders } from "./lib/official-presentation-policy";
 import {
+  reviewAuthorized,
+  reviewHeaders,
+  reviewPathAllowed,
+} from "./lib/client-review-policy";
+import {
   clientDemoEnabled,
   clientDemoHeaders,
   clientDemoRequestAllowed,
 } from "./lib/client-demo-policy";
 export function proxy(request: NextRequest) {
+  if (process.env.CLIENT_REVIEW === "true") {
+    if (
+      !reviewAuthorized(request.headers) ||
+      !reviewPathAllowed(request.nextUrl.pathname, request.method)
+    )
+      return new NextResponse(null, { status: 404, headers: reviewHeaders });
+    return NextResponse.next({ headers: reviewHeaders });
+  }
   if (clientDemoEnabled()) {
     if (!clientDemoRequestAllowed(request.headers))
       return new NextResponse(null, {

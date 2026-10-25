@@ -62,6 +62,7 @@ function HeroPicture({ media }: { media: HeroMedia }) {
           media.src.startsWith("/media/") ||
           media.src.startsWith("/dev/client-media/") ||
           media.src.startsWith("/dev/presentation-media/") ||
+          media.src.startsWith("/_client-review/media/") ||
           media.src.endsWith(".svg")
         }
         className={styles.image}

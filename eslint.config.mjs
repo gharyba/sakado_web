@@ -6,6 +6,7 @@ export default defineConfig([
   ...nextTs,
   globalIgnores([
     ".next/**",
+    ".next-client-review/**",
     ".local/**",
     "uploads/**",
     "SAKADO-MEDIA/**",
