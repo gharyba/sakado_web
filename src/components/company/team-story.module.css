@@ -1,0 +1,235 @@
+.section {
+  position: relative;
+  isolation: isolate;
+  padding-block: clamp(4.5rem, 8vw, 9rem);
+  scroll-margin-top: calc(var(--s-navigation-height) + 1rem);
+  color: var(--ink);
+  background: transparent;
+  overflow: clip;
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 4% -10%;
+  background:
+    radial-gradient(ellipse at 17% 42%, rgb(28 58 44 / 18%), transparent 48%),
+    radial-gradient(ellipse at 86% 64%, rgb(201 166 117 / 7%), transparent 43%);
+  pointer-events: none;
+}
+
+.inner {
+  position: relative;
+}
+
+.intro {
+  max-width: 55rem;
+  margin-bottom: clamp(2.75rem, 6vw, 5.5rem);
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  color: var(--amber);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.intro h2 {
+  max-width: 12ch;
+  margin: 0;
+  font-family: var(--s-font-display);
+  font-size: clamp(2.55rem, 6.3vw, 6.4rem);
+  font-weight: 400;
+  line-height: 1.03;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.intro > p:last-child {
+  max-width: 62ch;
+  margin: 1.6rem 0 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  line-height: 1.7;
+}
+
+.people {
+  display: grid;
+  grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr);
+  align-items: start;
+  gap: clamp(1.5rem, 5vw, 6rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.person {
+  min-width: 0;
+}
+
+.person:nth-child(2) {
+  margin-top: clamp(3.5rem, 12vw, 11rem);
+}
+
+.frame {
+  position: relative;
+  aspect-ratio: 4 / 4.8;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: clamp(0.6rem, 1.4vw, 1.25rem);
+  background: linear-gradient(145deg, #163126, #0b1714 72%);
+}
+
+.person:nth-child(2) .frame {
+  aspect-ratio: 4 / 4.5;
+}
+
+.camera {
+  width: 100%;
+  height: 100%;
+}
+
+.camera img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fallback {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background:
+    radial-gradient(circle at 52% 32%, rgb(201 166 117 / 13%), transparent 43%),
+    linear-gradient(145deg, rgb(28 58 44 / 50%), rgb(11 23 20 / 90%));
+  color: #f2efe6;
+}
+
+.fallback > span {
+  display: grid;
+  width: clamp(7rem, 18vw, 11rem);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid rgb(242 239 230 / 32%);
+  border-radius: 50%;
+  font: clamp(2.5rem, 6vw, 4.5rem) / 1 var(--s-font-display);
+  letter-spacing: -0.06em;
+}
+
+.fallback small {
+  color: #d8dfd9;
+  font-size: 0.9rem;
+}
+
+.frameIndex {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1rem;
+  color: #f2efe6;
+  font-family: var(--s-font-display);
+  font-size: clamp(1.4rem, 2vw, 2rem);
+  text-shadow: 0 1px 8px #07110f;
+}
+
+.caption {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+  padding-top: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.rule {
+  height: 1px;
+  margin-top: 0.8rem;
+  background: var(--amber);
+}
+
+.caption h3 {
+  margin: 0;
+  font-family: var(--s-font-display);
+  font-size: clamp(1.8rem, 3vw, 3.2rem);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+}
+
+.caption p {
+  margin: 0.65rem 0 0;
+  color: var(--amber);
+  font-size: clamp(0.88rem, 1.2vw, 1rem);
+  letter-spacing: 0.04em;
+}
+
+.closing {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin: clamp(4rem, 9vw, 8rem) 0 0;
+  color: var(--muted);
+  font-family: var(--s-font-display);
+  font-size: clamp(1.1rem, 1.7vw, 1.4rem);
+  font-style: italic;
+}
+
+.closing::before {
+  content: "";
+  display: block;
+  width: clamp(2.5rem, 8vw, 7rem);
+  height: 1px;
+  background: var(--amber);
+}
+
+@media (max-width: 900px) {
+  .people {
+    gap: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .person:nth-child(2) {
+    margin-top: 4rem;
+  }
+
+  .caption {
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 650px) {
+  .people {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(3rem, 11vw, 5rem);
+  }
+
+  .person:nth-child(2) {
+    margin-top: 0;
+  }
+
+  .frame,
+  .person:nth-child(2) .frame {
+    aspect-ratio: 4 / 4.6;
+  }
+
+  .caption {
+    grid-template-columns: 2rem minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame,
+  .camera,
+  .caption h3,
+  .caption p {
+    transform: none !important;
+    clip-path: none !important;
+    opacity: 1 !important;
+  }
+}

@@ -160,12 +160,15 @@ export function ParallaxHero({
   description,
   media,
   privatePreview = false,
+  privateEmblem = null,
 }: {
   title: string;
   description: string;
   media: HeroMedia;
   privatePreview?: boolean;
+  privateEmblem?: { src: string; width: number; height: number } | null;
 }) {
+  const emblem = media.privatePresentation ? privateEmblem : null;
   return (
     <section
       className={`${styles.hero}${privatePreview ? ` ${styles.privatePreview}` : ""}${media.privatePresentation ? ` ${styles.presentation}` : ""}`}
@@ -211,6 +214,43 @@ export function ParallaxHero({
               description={description}
               privatePreview={privatePreview}
             />
+            {emblem && (
+              <div
+                className={styles.emblemSlot}
+                style={{ aspectRatio: `${emblem.width} / ${emblem.height}` }}
+                data-hero-emblem-slot
+                aria-hidden="true"
+              >
+                <div
+                  className={styles.emblem}
+                  style={{ aspectRatio: `${emblem.width} / ${emblem.height}` }}
+                  data-hero-emblem
+                >
+                  <span className={styles.coin} data-hero-coin>
+                    <span className={styles.coinFront} data-hero-coin-front>
+                      <Image
+                        unoptimized
+                        src={emblem.src}
+                        alt=""
+                        width={emblem.width}
+                        height={emblem.height}
+                        draggable={false}
+                      />
+                    </span>
+                    <span className={styles.coinBack} data-hero-coin-back>
+                      <Image
+                        unoptimized
+                        src={emblem.src}
+                        alt=""
+                        width={emblem.width}
+                        height={emblem.height}
+                        draggable={false}
+                      />
+                    </span>
+                  </span>
+                </div>
+              </div>
+            )}
             {privatePreview && media.src && (
               <a
                 href={media.src}

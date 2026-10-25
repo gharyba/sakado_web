@@ -1,0 +1,155 @@
+.form {
+  position: relative;
+  min-width: 0;
+}
+.form fieldset {
+  display: grid;
+  gap: 1.45rem;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  min-width: 0;
+}
+.form :global(.form-row) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.4rem;
+}
+.form label {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 400;
+}
+.form label > :global(.muted) {
+  font-size: 0.85rem;
+}
+form.form[data-contact-form] :is(input, textarea, select) {
+  display: block;
+  flex-basis: 100%;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  border: 1px solid #728c7d;
+  border-radius: 0.3rem;
+  padding: 0.95rem 1rem;
+  min-height: 3.25rem;
+  background: rgb(22 49 38 / 67%);
+  color: #f2efe6;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  transition:
+    border-color 160ms,
+    background-color 160ms;
+}
+form.form[data-contact-form] textarea {
+  min-height: 12rem;
+  resize: vertical;
+}
+form.form[data-contact-form] select option {
+  background: #10201b;
+  color: #f2efe6;
+}
+form.form[data-contact-form] :is(input, textarea, select):focus-visible {
+  outline: 2px solid #c9a675;
+  outline-offset: 3px;
+  border-color: #c9a675;
+  background: #163126;
+}
+form.form[data-contact-form] [aria-invalid="true"] {
+  border-color: #f1b6a4;
+}
+.form small {
+  flex-basis: 100%;
+  margin: 0;
+  color: #ffd0bf;
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+.form small:empty {
+  display: none;
+}
+.form :global(.form-privacy) {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.75;
+}
+.form :global(.form-privacy) a {
+  color: var(--ink);
+  text-underline-offset: 0.2em;
+}
+.form button[type="submit"] {
+  justify-self: start;
+  min-height: 3.25rem;
+  padding: 0.85rem 1.5rem;
+  border: 1px solid #c9a675;
+  background: #c9a675;
+  color: #07110f;
+  border-radius: 0.3rem;
+  font-size: 1rem;
+  transition:
+    background-color 160ms,
+    border-color 160ms;
+}
+.form button[type="submit"]:hover {
+  background: #e2c79f;
+  color: #07110f;
+}
+.form button[type="submit"]:focus-visible {
+  outline: 2px solid #f2efe6;
+  outline-offset: 4px;
+}
+.form fieldset:disabled {
+  opacity: 0.8;
+}
+.form button:disabled {
+  cursor: wait;
+}
+.feedback {
+  padding: 1rem 0;
+  color: #ffd0bf;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+div.success[data-contact-success] {
+  padding: 2rem;
+  border: 1px solid #728c7d;
+  border-radius: 0.4rem;
+  background: rgb(22 49 38 / 65%);
+  color: #f2efe6;
+}
+.success h2 {
+  font-family: var(--s-font-display);
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  font-weight: 400;
+}
+.success p {
+  margin-block: 1.3rem;
+  line-height: 1.75;
+}
+.honeypot {
+  left: 0;
+  top: 0;
+  clip-path: inset(50%);
+}
+@media (max-width: 1023px) {
+  .form :global(.form-row) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 699px) {
+  .form button[type="submit"] {
+    width: 100%;
+    white-space: normal;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .form * {
+    transition: none !important;
+  }
+}

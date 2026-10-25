@@ -24,14 +24,13 @@ if ($operation -eq 'protect') {
     if ($rule.IdentityReference.Value -notin $allowed -or $rule.AccessControlType -ne [Security.AccessControl.AccessControlType]::Allow) { throw 'Unexpected explicit access' }
   }
   $private = New-Object Security.AccessControl.DirectorySecurity
-  $private.SetOwner($owner)
   $private.SetAccessRuleProtection($true, $false)
   foreach ($principal in $allowed) {
     $identity = New-Object Security.Principal.SecurityIdentifier($principal)
     $rule = New-Object Security.AccessControl.FileSystemAccessRule($identity, 'FullControl', 'ContainerInherit,ObjectInherit', 'None', 'Allow')
     $private.AddAccessRule($rule)
   }
-  # Persist only the owner/DACL modified above; never request audit/SACL privileges.
+  # Persist only the DACL. Ownership was checked above and is checked again below.
   [IO.Directory]::SetAccessControl($target, $private)
   $acl = Get-Acl -LiteralPath $target
 } elseif ($operation -ne 'verify') { throw 'Unknown ACL operation' }

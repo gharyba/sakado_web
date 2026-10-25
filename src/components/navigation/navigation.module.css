@@ -1,4 +1,5 @@
 .header {
+  container: site-navigation / inline-size;
   --navigation-ink: var(--s-color-ink);
   --navigation-focus: var(--s-color-focus);
   position: sticky;
@@ -301,5 +302,17 @@
   }
   .mobile {
     display: none;
+  }
+}
+/* Enlarged text can exhaust the desktop grid before the viewport breakpoint. */
+@container site-navigation (max-width: 67rem) {
+  .inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .desktop {
+    display: none;
+  }
+  .mobile {
+    display: flex;
   }
 }

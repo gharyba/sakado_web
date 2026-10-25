@@ -8,6 +8,7 @@ import { presentationAuthorized } from "./official-presentation-policy";
 import { safeRead, digest } from "../../scripts/presentation-files.mjs";
 import { companyTeam } from "@/data/confirmed/company";
 import type { GalleryPhoto } from "./types";
+import { privatePartnerAssetAllowed } from "./partner-preview-policy";
 
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const reference = z
@@ -22,7 +23,9 @@ const assetSchema = z
     key: hash,
     slot: z
       .string()
-      .regex(/^(team-[0-4]|logo|hero-s(?:08|16)|gallery-(?:[0-9]|1[01]))$/),
+      .regex(
+        /^(team-[0-4]|logo|hero-s(?:08|16)|gallery-(?:[0-9]|1[01])|partner-[0-5])$/,
+      ),
     label: z.string().max(200),
     alt: z.string().max(300),
     width: z.number().int().positive().max(2400),
@@ -47,6 +50,8 @@ async function roots() {
   };
 }
 async function verifiedBytes(asset: Asset) {
+  if (asset.slot.startsWith("partner-") && !privatePartnerAssetAllowed(asset))
+    throw Error("Private partner scope refused");
   if (
     !["client", "originals"].includes(asset.source.root) ||
     !["preview", "library"].includes(asset.derivative.root) ||
@@ -144,6 +149,11 @@ export const getOfficialPresentation = cache(async () => {
         };
       });
     return {
+      partners: eligible
+        .filter((a) => /^partner-[0-5]$/.test(a.slot))
+        .filter((a, i, all) => all.findIndex((b) => b.slot === a.slot) === i)
+        .sort((a, b) => Number(a.slot.slice(8)) - Number(b.slot.slice(8)))
+        .map((a) => ({ id: a.slot, label: a.label, ...dto(a) })),
       portraits,
       logo: logo ? dto(logo) : null,
       hero: hero.length

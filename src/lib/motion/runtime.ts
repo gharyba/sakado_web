@@ -4,6 +4,9 @@ import { cinematicReveal, cinematicStory } from "./cinematic";
 import { cinematicTravel, cinematicScale } from "./cinematic-policy";
 import { cinematicHero } from "./hero";
 import { cinematicCompanyStory } from "./company-story";
+import { cinematicTeamStory } from "./team-story";
+import { cinematicFinalJourney } from "./final-journey";
+import { cinematicPartners } from "./partners";
 import { ambientBackground } from "./ambient";
 import {
   canPin,
@@ -87,11 +90,21 @@ export function mountScene(root: HTMLElement): () => void {
             if (cleanup) cinematicCleanups.push(cleanup);
           }
           if (root.hasAttribute("data-hero-cinematic")) {
-            cinematicHero(root, tier, rememberStyles);
+            const cleanup = cinematicHero(root, tier, rememberStyles);
+            if (cleanup) cinematicCleanups.push(cleanup);
           }
           if (root.hasAttribute("data-company-story")) {
             const cleanup = cinematicCompanyStory(root, tier, rememberStyles);
             if (cleanup) cinematicCleanups.push(cleanup);
+          }
+          if (root.hasAttribute("data-team-story")) {
+            cinematicTeamStory(root, tier, rememberStyles);
+          }
+          if (root.hasAttribute("data-final-journey")) {
+            cinematicFinalJourney(root, tier, rememberStyles);
+          }
+          if (root.hasAttribute("data-partners-story")) {
+            cinematicPartners(root, tier, rememberStyles);
           }
           // Homepage headings keep visible server text until their own viewport entry.
           for (const heading of root.querySelectorAll<HTMLElement>(

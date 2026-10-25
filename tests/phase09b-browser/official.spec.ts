@@ -5,6 +5,61 @@ import {
   companyTeam,
 } from "../../src/data/confirmed/company";
 
+test("official homepage and About retain two public-safe team fallbacks", async ({
+  page,
+  browser,
+}, info) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  for (const route of ["/", "/about"]) {
+    const response = await page.goto(route);
+    expect(response?.status()).toBe(200);
+    const team = page.locator("#equipe");
+    await expect(team.locator("article")).toHaveCount(2);
+    await expect(team.locator("h3")).toHaveText([
+      "Ben Beya Mohamed",
+      "Bouzrara Manel",
+    ]);
+    await expect(team.locator("article p")).toHaveText([
+      "Fondateur",
+      "Gérante",
+    ]);
+    await expect(team.locator("img")).toHaveCount(0);
+    await expect(team.getByText("Portrait à venir")).toHaveCount(2);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    await fs.mkdir(".local/redesign05-review", { recursive: true });
+    await team.screenshot({
+      path: `.local/redesign05-review/public-${info.project.name}-${route === "/" ? "home" : "about"}.png`,
+    });
+  }
+  const nojs = await browser.newContext({
+    javaScriptEnabled: false,
+    viewport: { width: 375, height: 812 },
+  });
+  try {
+    const staticPage = await nojs.newPage();
+    await staticPage.goto(`${info.project.use.baseURL}/about`);
+    await expect(staticPage.locator("#equipe h3")).toHaveText([
+      "Ben Beya Mohamed",
+      "Bouzrara Manel",
+    ]);
+    await expect(staticPage.locator("#equipe img")).toHaveCount(0);
+  } finally {
+    await nojs.close();
+  }
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await page.locator("#equipe").screenshot({
+    path: `.local/redesign05-review/public-${info.project.name}-desktop-section.png`,
+    animations: "disabled",
+    style: "[data-navigation], .skip-link { visibility: hidden !important; }",
+  });
+});
+
 for (const viewport of [
   { width: 1440, height: 900 },
   { width: 768, height: 1024 },

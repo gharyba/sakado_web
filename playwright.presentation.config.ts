@@ -17,6 +17,7 @@ if (
 export default defineConfig({
   testDir: "./tests/presentation-browser",
   globalSetup: "./tests/phase09b-browser/verify-local.ts",
+  globalTeardown: "./tests/presentation-browser/cleanup-code.ts",
   workers: 1,
   fullyParallel: false,
   timeout: 60000,
@@ -26,13 +27,20 @@ export default defineConfig({
     baseURL: "http://127.0.0.1:3134",
     channel: "chrome",
     headless: true,
-    trace: "off",
+    trace: "retain-on-failure",
     screenshot: "off",
   },
   projects: [
     {
       name: "official-private-development",
-      testMatch: ["presentation.spec.ts", "story.spec.ts"],
+      testMatch: [
+        "presentation.spec.ts",
+        "story.spec.ts",
+        "team.spec.ts",
+        "partners-072.spec.ts",
+        "floating-logo.spec.ts",
+        "coin-flip.spec.ts",
+      ],
     },
     {
       name: "official-production-denial",
