@@ -53,7 +53,7 @@ function environment() {
     CLIENT_REVIEW_CODE_HASH: reviewHash("synthetic-code"),
     CLIENT_REVIEW_AUDIENCE_HASH: reviewAudience(config()),
     CLIENT_REVIEW_STARTED: String(Date.now()),
-    DATABASE_URL: "postgresql://synthetic:unused@127.0.0.1:55432/sakado",
+    DATABASE_URL: "postgresql://synthetic:test-fixture@127.0.0.1:55432/sakado",
     AUTH_SECRET: randomBytes(48).toString("hex"),
   };
 }

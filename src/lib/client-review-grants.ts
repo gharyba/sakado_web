@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { reviewHash } from "./client-review-policy";
+import { reviewOrigin } from "./client-review-environment.mjs";
 
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const email = z
@@ -32,15 +33,32 @@ export const reviewConfigSchema = z
     expiresAt: z.iso.datetime(),
     revoked: z.boolean(),
     grants: z.array(reviewGrantSchema).max(40),
+    transport: z
+      .object({
+        provider: z.literal("ngrok"),
+        origin: z
+          .string()
+          .refine(
+            (value) =>
+              reviewOrigin(value) === value &&
+              value.endsWith(".ngrok-free.dev"),
+          ),
+        policySha256: hash,
+      })
+      .strict()
+      .optional(),
   })
   .strict();
 export type ReviewConfig = z.infer<typeof reviewConfigSchema>;
 export function reviewAudience(config: ReviewConfig) {
+  const emails = [...config.allowedEmails]
+    .map((value) => value.toLowerCase())
+    .sort()
+    .join("\n");
   return reviewHash(
-    [...config.allowedEmails]
-      .map((value) => value.toLowerCase())
-      .sort()
-      .join("\n"),
+    config.transport
+      ? JSON.stringify({ emails, transport: config.transport })
+      : emails,
   );
 }
 export function reviewConfigValid(

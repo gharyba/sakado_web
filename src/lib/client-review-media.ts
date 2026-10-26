@@ -7,9 +7,10 @@ import {
   assetRemotelyGranted,
 } from "./client-review-grants";
 import { catalog, verifiedBytes } from "./presentation-assets";
+import { assertNgrokPolicy } from "./client-review-ngrok";
 
 export async function readReviewConfig() {
-  return reviewConfigSchema.parse(
+  const config = reviewConfigSchema.parse(
     JSON.parse(
       (
         await safeRead(
@@ -20,6 +21,18 @@ export async function readReviewConfig() {
       ).toString(),
     ),
   );
+  if (config.transport)
+    assertNgrokPolicy(
+      config,
+      (
+        await safeRead(
+          path.resolve(".local/client-review"),
+          "ngrok-traffic-policy.json",
+          100_000,
+        )
+      ).toString(),
+    );
+  return config;
 }
 export async function remoteReviewAssets(headers: Pick<Headers, "get">) {
   if (!reviewAuthorized(headers)) return [];

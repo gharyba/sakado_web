@@ -1,5 +1,7 @@
 # Secure remote client review through Cloudflare
 
+Provider update (2026-10-25): the active client-review configuration is now pinned to the assigned ngrok Free domain with Google OAuth. Use [SECURE_CLIENT_PREVIEW_NGROK](SECURE_CLIENT_PREVIEW_NGROK.md) for current startup, tests and shutdown. This Cloudflare document remains the historical implementation/validation record; it does not grant remote media permission.
+
 Date: 2026-10-25. Branch: `feat/cinematic-redesign-08`. Starting checkpoint: `30b58a4`. Changes remain uncommitted.
 
 ## Outcome and authorization boundary

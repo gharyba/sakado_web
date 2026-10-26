@@ -35,7 +35,7 @@ async function main() {
       : null;
   if (process.versions.node.split(".")[0] !== "24" || !origin)
     throw Error(
-      "A precise HTTPS Quick Tunnel origin and Node 24 are required.",
+      "A precise supported HTTPS review origin and Node 24 are required.",
     );
   stage = "mode checks";
   if (
@@ -96,6 +96,12 @@ async function main() {
   await securePresentationDirectory(directory);
   stage = "review configuration";
   const config = await readReviewConfig();
+  if (
+    config.transport
+      ? origin !== config.transport.origin
+      : origin.endsWith(".ngrok-free.dev")
+  )
+    throw Error("Review origin is not the configured exact origin");
   if (!reviewConfigValid(config, reviewAudience(config)))
     throw Error("Client review configuration unavailable");
   const lock = path.join(directory, "run.lock");
@@ -145,6 +151,8 @@ async function main() {
       CLIENT_DEMO_DIRECTORY: "",
       CLIENT_REVIEW_DATABASE_VERIFIED: "true",
       CLIENT_REVIEW_ORIGIN: origin,
+      CLIENT_REVIEW_PROVIDER: config.transport?.provider ?? "cloudflare",
+      CLIENT_REVIEW_BOUND_ORIGIN: config.transport?.origin ?? origin,
       CLIENT_REVIEW_STARTED: String(Date.now()),
       CLIENT_REVIEW_SECRET: randomBytes(48).toString("hex"),
       CLIENT_REVIEW_CODE_HASH: reviewHash(code),

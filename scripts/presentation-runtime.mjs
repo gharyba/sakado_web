@@ -96,7 +96,11 @@ export const securePresentationDirectory = (directory) =>
 export const verifyPresentationDirectory = (directory) =>
   checkDirectory(directory, "verify");
 export async function writePresentationRuntime(directory, name, content) {
-  if (!["catalog.json", "access-code.txt"].includes(name))
+  if (
+    !["catalog.json", "access-code.txt", "ngrok-traffic-policy.json"].includes(
+      name,
+    )
+  )
     throw Error("Unexpected runtime file");
   await verifyPresentationDirectory(directory);
   const destination = path.join(directory, name);

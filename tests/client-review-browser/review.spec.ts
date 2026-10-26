@@ -2,18 +2,16 @@ import { test, expect, type Page } from "@playwright/test";
 import { readFileSync, mkdirSync } from "node:fs";
 import { request as httpRequest } from "node:http";
 
-const origin = "https://review-validation.trycloudflare.com";
-// Intercept the synthetic HTTPS test origin; no DNS, tunnel or Internet exposure.
+const origin =
+  process.env.CLIENT_REVIEW_TEST_ORIGIN ??
+  "https://review-validation.trycloudflare.com";
+// The runner maps this HTTPS host to its exclusive loopback TLS proxy.
+// Refuse foreign resources; authentication redirects never leave loopback here.
 async function transport(page: Page) {
-  await page.context().route(origin + "/**", async (route) => {
-    const url = new URL(route.request().url());
-    const allHeaders = await route.request().allHeaders();
-    const response = await route.fetch({
-      url: "http://127.0.0.1:3144" + url.pathname + url.search,
-      headers: { ...allHeaders, host: new URL(origin).host },
-      maxRedirects: 0,
-    });
-    await route.fulfill({ response });
+  await page.context().route("**/*", async (route) => {
+    if (new URL(route.request().url()).origin !== origin)
+      await route.abort("blockedbyclient");
+    else await route.continue();
   });
 }
 async function enter(page: Page) {
@@ -60,6 +58,10 @@ test("outer identity headers cannot replace application login or exact origin va
   for (const headers of [
     { "Cf-Access-Authenticated-User-Email": "synthetic@example.test" },
     { "Cf-Access-Jwt-Assertion": "forged", "x-sakado-review-proof": "forged" },
+    {
+      "Ngrok-Auth-User-Email": "synthetic@example.test",
+      "Ngrok-Auth-User-Id": "forged",
+    },
   ]) {
     expect(
       (await direct("/_client-review/media/" + "a".repeat(64), headers)).status,

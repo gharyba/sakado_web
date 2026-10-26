@@ -13,7 +13,9 @@ export function reviewOrigin(value) {
   try {
     const url = new URL(value ?? "");
     return url.protocol === "https:" &&
-      /^[a-z0-9]+(?:-[a-z0-9]+)*\.trycloudflare\.com$/.test(url.hostname) &&
+      /^[a-z0-9]+(?:-[a-z0-9]+)*\.(?:trycloudflare\.com|ngrok-free\.dev)$/.test(
+        url.hostname,
+      ) &&
       !url.port &&
       !url.username &&
       !url.password &&
@@ -41,6 +43,11 @@ export function clientReviewEnabled(env = process.env, now = Date.now()) {
       env.STAGING_MODE === "false" &&
       env.CLIENT_REVIEW_DATABASE_VERIFIED === "true" &&
       Boolean(reviewOrigin(env.CLIENT_REVIEW_ORIGIN)) &&
+      (env.CLIENT_REVIEW_ORIGIN?.endsWith(".ngrok-free.dev")
+        ? env.CLIENT_REVIEW_PROVIDER === "ngrok" &&
+          env.CLIENT_REVIEW_BOUND_ORIGIN === env.CLIENT_REVIEW_ORIGIN
+        : !env.CLIENT_REVIEW_PROVIDER ||
+          env.CLIENT_REVIEW_PROVIDER === "cloudflare") &&
       env.SITE_URL === env.CLIENT_REVIEW_ORIGIN &&
       env.ADMIN_URL === env.CLIENT_REVIEW_ORIGIN &&
       env.TRUST_PROXY === "false" &&

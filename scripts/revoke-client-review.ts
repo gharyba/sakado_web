@@ -15,12 +15,12 @@ async function main() {
     JSON.stringify({ ...config, revoked: true }, null, 2),
   );
   console.log(
-    "Client review revoked. Requests now fail closed; a running preview will shut down on its next configuration check. Stop the owned Cloudflare tunnel too.",
+    "Client review revoked. Requests now fail closed; a running preview will shut down on its next configuration check. Stop the owned tunnel too.",
   );
 }
 main().catch(() => {
   console.error(
-    "Client review revocation could not be verified; stop its owned preview and Cloudflare processes. No settings printed.",
+    "Client review revocation could not be verified; stop its owned preview and tunnel processes. No settings printed.",
   );
   process.exitCode = 1;
 });
