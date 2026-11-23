@@ -1,5 +1,6 @@
 import { gsap } from "gsap";
 import type { MotionTier } from "./policy";
+import { createMediaContext } from "./media-context";
 
 /** One photographic plane per chapter; all effects belong to the parent scene context. */
 export function cinematicCompanyStory(
@@ -49,7 +50,7 @@ export function cinematicCompanyStory(
     if (originalLayout === null) root.removeAttribute("data-story-layout");
     else root.setAttribute("data-story-layout", originalLayout);
   };
-  const media = gsap.matchMedia();
+  const media = createMediaContext();
   media.add({ tall: "(min-height: 800px)", all: "all" }, (match) => {
     const frameHeight = Math.min(innerHeight * 0.52, 560);
     const travel = list.getBoundingClientRect().height - frameHeight;

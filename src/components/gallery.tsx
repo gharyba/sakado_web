@@ -5,7 +5,28 @@ import type { GalleryPhoto } from "@/lib/types";
 import { Icon } from "./icon";
 import { useMotionPreference } from "./motion/preference";
 import { Motion } from "./motion/motion";
+import { FloatingMemories } from "./floating-memories";
 export function Gallery({
+  photos,
+  cinematic = false,
+  revealPreview = false,
+}: {
+  photos: GalleryPhoto[];
+  cinematic?: boolean;
+  revealPreview?: boolean;
+}) {
+  // The legacy demo illustrations retain their established Phase 04 readiness checks.
+  if (cinematic && !photos.some((photo) => photo.demo))
+    return <FloatingMemories photos={photos} compact={revealPreview} />;
+  return (
+    <LegacyGallery
+      photos={photos}
+      cinematic={cinematic}
+      revealPreview={revealPreview}
+    />
+  );
+}
+function LegacyGallery({
   photos,
   cinematic = false,
   revealPreview = false,

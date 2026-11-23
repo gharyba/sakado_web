@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { MotionScene } from "@/components/motion/scene";
 import { Motion } from "@/components/motion/motion";
-import { MotionSurface } from "@/components/motion/surface";
 import { company, companyTeam } from "@/data/confirmed/company";
 import { HomeWords } from "@/components/home/home-words";
 // Retain the established shared CSS geometry while moving server presentation out of the private adapter.
 import styles from "../client-demo/client-preview.module.css";
+import teamStyles from "./team-story.module.css";
 
 export type CompanyPortrait = {
   src: string;
@@ -97,74 +97,63 @@ export function CompanyTeam({
   portraits?: readonly (CompanyPortrait | undefined)[];
 }) {
   return (
-    <section className={`${styles.section} ${styles.teamSection}`} id="equipe">
-      <MotionScene cinematic className="container">
-        <Motion
-          effect="reveal"
-          choreography="copy"
-          distance={6}
-          initialOpacity={0.85}
-        >
-          <CompanyHeading eyebrow="LES VISAGES DE SAKADO" title="Notre équipe">
-            Une équipe réunie par la même envie : créer des expériences
-            authentiques et faire vivre la Tunisie autrement.
-          </CompanyHeading>
-        </Motion>
-        <MotionSurface className={styles.team}>
-          {companyTeam.map(({ name, role, initials }, index) => {
-            const photo = portraits[index];
-            return (
-              <article
-                key={name}
-                className={styles.member}
-                data-cinematic-sequence
-              >
-                <Motion
-                  effect="image"
-                  choreography="portrait"
-                  delay={(index % 3) * 0.06}
-                  distance={6}
-                  initialOpacity={0.8}
-                  className={styles.portrait}
-                >
-                  {photo ? (
-                    <Image
-                      unoptimized
-                      src={photo.src}
-                      alt={photo.alt}
-                      width={photo.width}
-                      height={photo.height}
-                      sizes="(max-width: 699px) 85vw, (max-width: 1199px) 40vw, 20vw"
-                    />
-                  ) : (
-                    <div className={styles.portraitPlaceholder}>
-                      <span aria-hidden="true">{initials}</span>
-                      <small>Photo à venir</small>
+    <section
+      className={teamStyles.section}
+      id="equipe"
+      aria-labelledby="team-heading"
+    >
+      <MotionScene cinematic data-team-story className={teamStyles.scene}>
+        <div className={`container ${teamStyles.inner}`}>
+          <header className={teamStyles.intro}>
+            <p className={teamStyles.eyebrow}>LES VISAGES DE SAKADO</p>
+            <h2 id="team-heading">Les visages derrière l’aventure.</h2>
+            <p>{company.about}</p>
+          </header>
+          <ol className={teamStyles.people} aria-label="L’équipe permanente">
+            {companyTeam.map(({ name, role, initials }, index) => {
+              const photo = portraits[index];
+              return (
+                <li key={name} className={teamStyles.person}>
+                  <article data-team-member>
+                    <div className={teamStyles.frame} data-team-frame>
+                      <div className={teamStyles.camera} data-team-camera>
+                        {photo ? (
+                          <Image
+                            unoptimized
+                            src={photo.src}
+                            alt={photo.alt}
+                            width={photo.width}
+                            height={photo.height}
+                            sizes="(max-width: 699px) 92vw, (max-width: 1099px) 44vw, 39vw"
+                          />
+                        ) : (
+                          <div className={teamStyles.fallback}>
+                            <span aria-hidden="true">{initials}</span>
+                            <small>Portrait à venir</small>
+                          </div>
+                        )}
+                      </div>
+                      <span
+                        className={teamStyles.frameIndex}
+                        aria-hidden="true"
+                      >
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
                     </div>
-                  )}
-                </Motion>
-                <Motion
-                  effect="reveal"
-                  choreography="copy"
-                  delay={0.16}
-                  distance={3}
-                  initialOpacity={0.85}
-                >
-                  <h3>{name}</h3>
-                </Motion>
-                <Motion
-                  effect="reveal"
-                  choreography="copy"
-                  delay={0.22}
-                  distance={2}
-                  initialOpacity={0.9}
-                >
-                  <p>{role}</p>
-                </Motion>
-              </article>
-            );
-          })}
-        </MotionSurface>
+                    <div className={teamStyles.caption}>
+                      <span className={teamStyles.rule} aria-hidden="true" />
+                      <div>
+                        <h3 data-team-name>{name}</h3>
+                        <p data-team-role>{role}</p>
+                      </div>
+                    </div>
+                  </article>
+                </li>
+              );
+            })}
+          </ol>
+          <p className={teamStyles.closing}>{company.philosophy}</p>
+        </div>
       </MotionScene>
     </section>
   );

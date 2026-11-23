@@ -9,7 +9,6 @@ export function PresentationGallery({
   photos: GalleryPhoto[];
   revealPreview?: boolean;
 }) {
-  if (!photos.length) return null;
   return (
     <aside
       className={styles.root}

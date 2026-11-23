@@ -70,12 +70,13 @@ const serverSnapshot = (): Status => "pending";
 export function useMotionPreference() {
   return useSyncExternalStore(subscribe, snapshot, serverSnapshot);
 }
-export function MotionToggle() {
+export function MotionToggle({ label }: { label?: string } = {}) {
   const status = useMotionPreference();
   return (
     <div className="s-stack">
       <Button
         variant="secondary"
+        aria-label={label}
         aria-pressed={status === "off"}
         disabled={
           status === "pending" || status === "reduced" || status === "save-data"

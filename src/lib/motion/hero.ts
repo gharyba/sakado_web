@@ -80,4 +80,75 @@ export function cinematicHero(
     { opacity: 0.45, duration: 0.3 },
     0.7,
   );
+
+  const emblemSlot = root.querySelector<HTMLElement>("[data-hero-emblem-slot]");
+  const emblem = root.querySelector<HTMLElement>("[data-hero-emblem]");
+  const coin = root.querySelector<HTMLElement>("[data-hero-coin]");
+  if (emblemSlot && emblem && coin) {
+    const originalStyles = [emblem, coin].map((element) => ({
+      element,
+      style: element.getAttribute("style"),
+    }));
+    remember(emblem);
+    remember(coin);
+    const start = () => {
+      const slot = emblemSlot.getBoundingClientRect();
+      const heroTop = root.getBoundingClientRect().top + scrollY;
+      return { x: slot.left, y: slot.top + scrollY - heroTop };
+    };
+    const scale = () =>
+      Math.min(
+        0.34,
+        (tablet ? 44 : 54) / emblemSlot.getBoundingClientRect().width,
+      );
+    gsap.set(emblem, {
+      position: "fixed",
+      left: 0,
+      top: 0,
+      right: "auto",
+      bottom: "auto",
+      x: start().x,
+      y: start().y,
+      scale: 1,
+      transformOrigin: "top left",
+    });
+    timeline.fromTo(
+      emblem,
+      { x: () => start().x, y: () => start().y, scale: 1 },
+      {
+        x: () =>
+          innerWidth - emblemSlot.getBoundingClientRect().width * scale() - 24,
+        y: () =>
+          innerHeight -
+          emblemSlot.getBoundingClientRect().height * scale() -
+          24,
+        scale,
+        duration: 1,
+      },
+      0,
+    );
+    timeline.fromTo(
+      coin,
+      { rotationY: 0 },
+      { rotationY: 360, duration: 0.55 },
+      0,
+    );
+    return () => {
+      timeline.kill();
+      gsap.killTweensOf([emblem, coin]);
+      // GSAP reverts inline transforms after matchMedia's cleanup callback.
+      // Restore both decorative targets once that synchronous revert completes.
+      queueMicrotask(() => {
+        if (
+          !emblem.isConnected ||
+          getComputedStyle(emblem).position === "fixed"
+        )
+          return;
+        for (const { element, style } of originalStyles) {
+          if (style === null) element.removeAttribute("style");
+          else element.setAttribute("style", style);
+        }
+      });
+    };
+  }
 }

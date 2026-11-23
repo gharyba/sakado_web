@@ -59,10 +59,7 @@ test("hero boundary changes the stable sticky navbar without scroll handlers or 
       window.scrollTo(0, el.getBoundingClientRect().bottom + window.scrollY),
     );
   await expect(header(page)).toHaveAttribute("data-state", "surface");
-  await expect(header(page)).toHaveCSS(
-    "background-color",
-    "rgb(245, 244, 240)",
-  );
+  await expect(header(page)).toHaveCSS("background-color", "rgb(11, 23, 20)");
   expect(
     await header(page).evaluate((el) => el.getBoundingClientRect().height),
   ).toBe(initialHeight);
@@ -84,16 +81,15 @@ test("hero boundary changes the stable sticky navbar without scroll handlers or 
     )
     .toBe("1");
   expect(contrast.color).toContain("0.72");
-  const scripts = await page.evaluate(() =>
-    performance
-      .getEntriesByType("resource")
-      .map((r) => new URL(r.name).pathname)
-      .filter((n) => n.startsWith("/_next/static/") && n.endsWith(".js")),
-  );
-  for (const script of scripts) {
-    expect(
-      readFileSync(`.next/${script.replace("/_next/", "")}`, "utf8"),
-    ).not.toContain("ScrollTrigger");
+  // Later homepage scenes legitimately load GSAP. The navigation itself remains
+  // observer-driven and owns neither a scroll listener nor a GSAP timeline.
+  for (const source of [
+    "src/components/navigation/navigation-shell.tsx",
+    "src/components/mobile-navigation.tsx",
+  ]) {
+    const navigation = readFileSync(source, "utf8");
+    expect(navigation).not.toMatch(/(?:from|import\()\s*["']gsap/);
+    expect(navigation).not.toMatch(/addEventListener\(\s*["']scroll["']/);
   }
   // Worst-case white photograph underneath the weakest (72%) veil stop.
   const luminance = (rgb: number[]) =>

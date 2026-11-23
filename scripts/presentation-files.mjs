@@ -54,9 +54,7 @@ export async function preparePresentationCatalog() {
     "Jad Tagougui",
     "Ayoub Hamza",
   ];
-  for (const item of index.assets.filter((a) =>
-    /^(team-[0-4]|logo|hero|gallery-(?:[0-9]|1[01]))$/.test(a.slot),
-  )) {
+  async function addVerifiedItem(item, partner = false) {
     if (
       item.slot.startsWith("team-") &&
       item.label !== names[Number(item.slot.slice(5))]
@@ -65,6 +63,8 @@ export async function preparePresentationCatalog() {
     const sourceHash = item.variants[0].key.split("-")[0];
     const source = inventory.find((s) => s.sha256 === sourceHash);
     if (!source) throw Error("Private source missing");
+    if (partner && !/^partners\/[^/\\\0]+\.png$/i.test(source.source))
+      throw Error("Private partner source scope refused");
     const original = await safeRead(
       ".local/client-demo",
       source.source,
@@ -72,6 +72,13 @@ export async function preparePresentationCatalog() {
     );
     if (digest(original) !== sourceHash) throw Error("Private source changed");
     for (const variant of item.variants) {
+      if (
+        partner &&
+        (!/^[a-f0-9]{64}-480$/.test(variant.key) ||
+          variant.width > 480 ||
+          variant.height > 480)
+      )
+        throw Error("Private partner derivative refused");
       const relative = variant.key + ".webp";
       const bytes = await safeRead(".local/client-preview", relative);
       if (bytes.length !== variant.bytes)
@@ -95,6 +102,21 @@ export async function preparePresentationCatalog() {
         source: { root: "client", relative: source.source, sha256: sourceHash },
         derivative: { root: "preview", relative, sha256: digest(bytes) },
       });
+    }
+  }
+  for (const item of index.assets.filter((a) =>
+    /^(team-[0-4]|logo|hero|gallery-(?:[0-9]|1[01]))$/.test(a.slot),
+  ))
+    await addVerifiedItem(item);
+  for (const item of index.assets.filter((a) =>
+    /^partner-[0-5]$/.test(a.slot),
+  )) {
+    try {
+      await addVerifiedItem(item, true);
+    } catch {
+      console.warn(
+        "A private partner slot is unavailable; its logo is omitted.",
+      );
     }
   }
   // Existing recorded derivatives only; never generate, copy or substitute originals.

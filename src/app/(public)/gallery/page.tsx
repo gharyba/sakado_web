@@ -37,12 +37,12 @@ export default async function GalleryPage({
     <div className="container page-section">
       <PageIntro
         eyebrow="LES INSTANTS QUI RESTENT"
-        title="Le grand air, en images."
+        title="Nos aventures en images."
       >
         <p>
           {settings.demo
             ? "Illustrations temporaires. Les photographies autorisées de Sakado remplaceront ces aperçus."
-            : "Découvrez les photographies partagées par Sakado."}
+            : "Des instants vécus, des souvenirs à partager."}
         </p>
       </PageIntro>
       <nav className="gallery-filters" aria-label="Source de la galerie">
@@ -92,9 +92,10 @@ export default async function GalleryPage({
           <div className="s-gallery-controls">
             <MotionToggle />
           </div>
-          <Gallery photos={photos} cinematic />
-          {presentation && (
+          {presentation ? (
             <PresentationGallery photos={presentation.gallery} />
+          ) : (
+            <Gallery photos={photos} cinematic />
           )}
         </>
       )}

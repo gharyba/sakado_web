@@ -70,7 +70,11 @@ export default async function PublicLayout({
         footerText={s.footerText}
       />
       {presentation && (
-        <p className="container notice" data-official-presentation>
+        <p
+          className="container notice"
+          data-official-presentation
+          style={{ marginBlockEnd: 0 }}
+        >
           Revue privée locale du site officiel · PostgreSQL actif · images non
           autorisées à la publication.{" "}
           <a href="/dev/presentation">Accès à la présentation</a>

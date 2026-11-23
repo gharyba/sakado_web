@@ -20,18 +20,22 @@
 }
 .sapphire {
   background:
-    radial-gradient(ellipse at 12% 28%, rgb(42 100 164 / 46%), transparent 62%),
-    radial-gradient(ellipse at 88% 76%, rgb(49 69 139 / 34%), transparent 60%);
+    radial-gradient(ellipse at 12% 28%, rgb(28 58 44 / 46%), transparent 62%),
+    radial-gradient(ellipse at 88% 76%, rgb(22 49 38 / 34%), transparent 60%);
 }
 .indigo {
   background:
-    radial-gradient(ellipse at 78% 35%, rgb(88 68 146 / 40%), transparent 62%),
-    radial-gradient(ellipse at 15% 80%, rgb(43 75 127 / 36%), transparent 58%);
+    radial-gradient(ellipse at 78% 35%, rgb(49 89 68 / 40%), transparent 62%),
+    radial-gradient(ellipse at 15% 80%, rgb(28 58 44 / 36%), transparent 58%);
 }
 .dusk {
   background:
-    radial-gradient(ellipse at 22% 65%, rgb(151 109 58 / 24%), transparent 60%),
-    radial-gradient(ellipse at 88% 22%, rgb(67 72 142 / 36%), transparent 64%);
+    radial-gradient(
+      ellipse at 22% 65%,
+      rgb(201 166 117 / 24%),
+      transparent 60%
+    ),
+    radial-gradient(ellipse at 88% 22%, rgb(28 58 44 / 36%), transparent 64%);
 }
 .halo,
 .spark {
@@ -46,8 +50,8 @@
   width: min(38rem, 85vw);
   background: radial-gradient(
     circle,
-    rgb(90 129 216 / 12%),
-    rgb(73 89 170 / 6%) 38%,
+    rgb(49 89 68 / 12%),
+    rgb(28 58 44 / 6%) 38%,
     transparent 72%
   );
 }

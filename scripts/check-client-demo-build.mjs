@@ -29,9 +29,12 @@ async function visit(directory) {
       await inspect(filename);
   }
 }
-await visit(".next/server");
-for (const name of await fs.readdir(".next"))
-  if (name.endsWith(".nft.json")) await inspect(path.join(".next", name));
+const artifact = process.argv.includes("--client-review")
+  ? ".next-client-review"
+  : ".next";
+await visit(path.join(artifact, "server"));
+for (const name of await fs.readdir(artifact))
+  if (name.endsWith(".nft.json")) await inspect(path.join(artifact, name));
 if (!count) throw new Error("No production deployment traces found.");
 console.log(
   `Private demo build gate passed: ${count} deployment traces contain no private workspace files.`,

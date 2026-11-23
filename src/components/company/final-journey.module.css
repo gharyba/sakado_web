@@ -1,0 +1,385 @@
+.page {
+  --journey-ivory: #f2efe6;
+  --journey-sage: #b2beb4;
+  --journey-gold: #c9a675;
+  position: relative;
+  padding-top: clamp(3rem, 6vw, 6.5rem);
+  padding-bottom: clamp(3.5rem, 7vw, 7rem);
+}
+
+/* Contact alone carries this uninterrupted forest canvas through its footer. */
+:global(.s-company-site):has(.page) {
+  --s-theme-night: #07110f;
+  --s-theme-pine: #0b1714;
+  --s-theme-moss: #10201b;
+  --s-theme-shadow: #163126;
+  --s-theme-surface: rgb(22 49 38 / 65%);
+  --paper: #f2efe6;
+  --ink: #f2efe6;
+  --muted: #b2beb4;
+  --amber: #c9a675;
+  --line: rgb(178 190 180 / 24%);
+  --s-color-surface: #10201b;
+  --s-color-canvas: #07110f;
+  --s-color-focus: #c9a675;
+  --s-color-ink: #f2efe6;
+  --s-color-muted: #b2beb4;
+  --s-color-border: #728c7d;
+  --s-navigation-veil-rgb: 7 17 15;
+  --s-navigation-accent: #c9a675;
+  --s-navigation-action-ink: #07110f;
+  background-color: #07110f;
+  background-image:
+    radial-gradient(ellipse at 82% 18%, rgb(28 58 44 / 62%), transparent 47%),
+    radial-gradient(ellipse at 16% 62%, rgb(22 49 38 / 52%), transparent 55%),
+    linear-gradient(180deg, #07110f, #10201b 48%, #0b1714);
+}
+
+.intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  align-items: center;
+  gap: clamp(1.5rem, 3.5vw, 4rem);
+}
+.introCopy {
+  position: relative;
+  z-index: 1;
+  padding-block: 2rem;
+}
+.eyebrow {
+  margin: 0 0 1.5rem;
+  color: var(--amber);
+  font-size: 0.76rem;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+}
+.intro h1 {
+  margin: 0 -12% 0 0;
+  max-width: 14ch;
+  color: var(--ink);
+  font-family: var(--s-font-display);
+  font-size: clamp(3rem, 6.4vw, 6.6rem);
+  line-height: 1.06;
+  font-weight: 400;
+  letter-spacing: -0.045em;
+}
+.wordMask {
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: top;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.wordMask > span {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.lead {
+  max-width: 35ch;
+  margin: 1.8rem 0;
+  color: var(--muted);
+  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+  line-height: 1.75;
+}
+.introLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  min-height: 2.75rem;
+  padding-block: 0.5rem;
+  border-bottom: 1px solid var(--amber);
+  color: var(--ink);
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+.introLink:focus-visible,
+.information a:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 5px;
+}
+.frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border: 1px solid rgb(201 166 117 / 28%);
+  border-radius: 0.5rem 3rem 0.5rem 0.5rem;
+  overflow: hidden;
+  background: #10201b;
+}
+.camera {
+  position: absolute;
+  inset: 0;
+}
+.camera img {
+  object-fit: cover;
+}
+.frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgb(7 17 15 / 4%) 45%,
+    rgb(7 17 15 / 67%)
+  );
+}
+.imageNote {
+  position: absolute;
+  z-index: 1;
+  left: 1.5rem;
+  bottom: 1.5rem;
+  right: 1rem;
+  color: #f2efe6;
+  letter-spacing: 0.15em;
+  font-size: 0.67rem;
+}
+.atmosphere {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at 70% 30%, #315944, transparent 62%),
+    linear-gradient(150deg, #163126, #07110f);
+}
+.atmosphere::before {
+  content: "";
+  position: absolute;
+  width: 78%;
+  aspect-ratio: 1;
+  border: 1px solid rgb(201 166 117 / 32%);
+  border-radius: 50%;
+}
+.atmosphere > span {
+  color: rgb(242 239 230 / 80%);
+  font-family: var(--s-font-display);
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+.handoff {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin: clamp(3rem, 6vw, 6rem) 0 0;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.83rem;
+}
+.handoff span {
+  color: var(--amber);
+  font-variant-numeric: tabular-nums;
+}
+.preference {
+  margin-top: 1.5rem;
+  max-width: 29rem;
+}
+.contactLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.85fr);
+  gap: clamp(2.5rem, 6vw, 7rem);
+  padding-top: clamp(2.5rem, 5vw, 5rem);
+  align-items: start;
+  scroll-margin-top: calc(var(--s-navigation-height) + 1.5rem);
+}
+.formHeader {
+  margin-bottom: 2rem;
+}
+.formHeader h2,
+.information h2 {
+  margin: 0 0 0.9rem;
+  font-family: var(--s-font-display);
+  font-size: clamp(2rem, 3vw, 3.2rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+}
+.formHeader p,
+.information p {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+.information {
+  min-width: 0;
+  padding-top: 0.2rem;
+}
+.information > svg {
+  margin-bottom: 1.5rem;
+  color: var(--amber);
+}
+.information dl {
+  margin: 2rem 0 0;
+}
+.information dl > div {
+  padding: 1.2rem 0;
+  border-top: 1px solid var(--line);
+}
+.information dt {
+  margin-bottom: 0.7rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.information dd {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.information a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 2.75rem;
+  color: var(--ink);
+  text-underline-offset: 0.3em;
+}
+.information a:hover {
+  color: var(--amber);
+}
+.reservationNote {
+  margin: 2rem 0 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+.information .reservationNote {
+  font-size: 0.85rem;
+}
+
+.closing {
+  position: relative;
+  isolation: isolate;
+  padding-block: clamp(4rem, 8vw, 8rem) clamp(3rem, 6vw, 6rem);
+  overflow: clip;
+}
+.closing::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 35% 55%,
+    rgb(28 58 44 / 55%),
+    transparent 72%
+  );
+}
+.closingInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.55fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: center;
+}
+.closingCopy {
+  position: relative;
+  z-index: 1;
+}
+.closing .closingTitle {
+  max-width: 17ch;
+  margin: 0;
+  font-family: var(--s-font-display);
+  font-size: clamp(2.6rem, 5.8vw, 6rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1.08;
+}
+.closingText {
+  max-width: 42ch;
+  margin: 1.5rem 0 1.8rem;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+.closingActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  align-items: center;
+}
+.closingActions > a {
+  min-height: 3rem;
+}
+.closing .frame {
+  aspect-ratio: 5 / 4;
+  border-radius: 0.5rem;
+}
+.closing .atmosphere > span {
+  font-size: clamp(2.5rem, 4vw, 4rem);
+}
+
+@media (max-width: 1023px) {
+  .intro {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 1.5rem;
+  }
+  .intro h1 {
+    font-size: clamp(3rem, 7.1vw, 5rem);
+  }
+  .contactLayout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr);
+    gap: 2.5rem;
+  }
+  .closingInner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.6fr);
+    gap: 2rem;
+  }
+}
+@media (max-width: 699px) {
+  .page {
+    padding-top: 2rem;
+  }
+  .intro,
+  .contactLayout,
+  .closingInner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .intro {
+    gap: 1rem;
+  }
+  .introCopy {
+    padding-block: 1rem;
+  }
+  .intro h1 {
+    margin-right: 0;
+    font-size: clamp(2.8rem, 11.5vw, 4.7rem);
+    max-width: 14ch;
+  }
+  .frame {
+    aspect-ratio: 5 / 4;
+    border-radius: 0.5rem 2rem 0.5rem 0.5rem;
+  }
+  .lead {
+    margin-block: 1.3rem;
+  }
+  .handoff {
+    align-items: baseline;
+    gap: 1rem;
+    line-height: 1.6;
+  }
+  .information {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+  .closing .frame {
+    max-width: 32rem;
+    aspect-ratio: 16 / 9;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wordMask > span,
+  .camera,
+  .frame {
+    transform: none !important;
+    clip-path: none !important;
+    opacity: 1 !important;
+  }
+}

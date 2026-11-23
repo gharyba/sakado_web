@@ -1,0 +1,54 @@
+.signature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 1.25rem 1.8rem;
+  color: var(--ink, #f2efe6);
+}
+.caption {
+  color: var(--muted, #b2beb4);
+  font-size: 0.63rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.mark {
+  display: block;
+  width: min(16rem, 100%);
+  height: auto;
+  margin-top: 0.2rem;
+  overflow: visible;
+}
+.link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border-radius: 0.25rem;
+  color: inherit;
+}
+.link:focus-visible {
+  outline: 2px solid var(--amber, #c9a675);
+  outline-offset: 0.25rem;
+}
+.ring {
+  opacity: 0.64;
+}
+.figure {
+  color: var(--amber, #c9a675);
+  opacity: 0.9;
+}
+.flourish {
+  color: var(--amber, #c9a675);
+  opacity: 0.72;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  :global([data-motion-state="ready"]) .signature .flourish {
+    transition: opacity 180ms ease;
+  }
+  :global([data-motion-state="ready"]) .signature:hover .flourish {
+    opacity: 1;
+  }
+}

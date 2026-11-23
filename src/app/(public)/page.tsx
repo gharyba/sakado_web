@@ -13,6 +13,7 @@ import { Gallery } from "@/components/gallery";
 import { InstagramMediaMarquee } from "@/components/instagram-media-marquee";
 import { getInstagramMedia } from "@/lib/instagram-content";
 import { ContactCTA } from "@/components/contact-cta";
+import { PartnersSection } from "@/components/company/partners-section";
 import { Icon } from "@/components/icon";
 import { ParallaxHero } from "@/components/home/parallax-hero";
 import { resolveHeroMedia } from "@/lib/hero";
@@ -61,6 +62,7 @@ export default async function Home() {
       <ParallaxHero
         title={settings.heroTitle}
         description={settings.tagline}
+        privateEmblem={presentation?.logo ?? null}
         media={
           presentation?.hero ??
           resolveHeroMedia(settings.heroImage, process.env.NODE_ENV)
@@ -138,16 +140,16 @@ export default async function Home() {
           <SectionHeading
             animated
             eyebrow="DES INSTANTS QUI RESTENT"
-            title="L’aventure se vit. Et se partage."
+            title="Nos aventures en images."
             description={
               settings.demo
                 ? "Illustrations de démonstration en attendant les photographies autorisées de Sakado."
-                : "Les images des aventures Sakado."
+                : "Des instants vécus, des souvenirs à partager."
             }
             href="/gallery"
             linkText="Ouvrir la galerie"
           />
-          {settings.galleryPreview && (
+          {settings.galleryPreview && !presentation && (
             <Gallery photos={photos.slice(0, 6)} cinematic revealPreview />
           )}
           {presentation && (
@@ -157,6 +159,10 @@ export default async function Home() {
             />
           )}
         </section>
+        <PartnersSection
+          privatePartners={presentation?.partners}
+          privateReview={Boolean(presentation)}
+        />
         {why.length > 0 && (
           <section className="why-section">
             <div className="container">
@@ -224,6 +230,12 @@ export default async function Home() {
           whatsappNumber={settings.whatsappNumber}
           title={settings.contactCtaTitle}
           text={settings.contactCtaText}
+          photo={
+            presentation?.gallery[0] ??
+            (settings.heroImage
+              ? { src: settings.heroImage, alt: `${settings.name} — plein air` }
+              : undefined)
+          }
         />
       </MotionScene>
     </>

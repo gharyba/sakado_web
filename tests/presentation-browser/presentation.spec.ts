@@ -138,15 +138,15 @@ for (const [name, width, height] of [
     await expect(page.locator("#equipe article")).toHaveCount(2);
     await expect(page.locator("#equipe img")).toHaveCount(2);
     await page.goto("/gallery");
-    await expect(
-      page.locator("[data-official-presentation-gallery] .gallery-photo"),
-    ).toHaveCount(12);
-    await expect(
-      page.locator("[data-official-presentation-gallery] .gallery-grid"),
-    ).toHaveAttribute("data-cinematic-motion", "on");
-    for (const photo of await page
-      .locator("[data-official-presentation-gallery] .gallery-photo")
-      .all()) {
+    const gallery = page.locator(
+      "[data-official-presentation-gallery] [data-floating-memories]",
+    );
+    await expect(gallery).toHaveAttribute("data-count", "12");
+    await expect(gallery).toHaveAttribute("data-cinematic-motion", "on");
+    await expect(gallery.locator("details ol a")).toHaveCount(12);
+    const viewed = new Set<string>();
+    for (let index = 0; index < 12; index++) {
+      const photo = gallery.locator("[data-orbit-panel][data-active=true]");
       await photo.scrollIntoViewIfNeeded();
       await expect
         .poll(() =>
@@ -157,12 +157,23 @@ for (const [name, width, height] of [
             ),
         )
         .toBe(true);
+      viewed.add((await photo.getAttribute("data-photo-id"))!);
+      await gallery
+        .getByRole("button", { name: "Photo suivante", exact: true })
+        .click();
+      await expect(gallery).toHaveAttribute("data-rotating", "false");
     }
+    expect(viewed.size).toBe(12);
+    await expect(gallery.locator("[data-photo-counter]")).toContainText(
+      "01 / 12",
+    );
     await page.locator("[data-official-presentation-gallery]").screenshot({
       path: resolve(`.local/official-presentation-audit/${name}-gallery.png`),
     });
     await page
-      .locator("[data-official-presentation-gallery] .gallery-photo")
+      .locator(
+        "[data-official-presentation-gallery] [data-orbit-panel][data-active=true]",
+      )
       .first()
       .focus();
     await page.keyboard.press("Enter");
@@ -222,11 +233,17 @@ test("reduced motion, native mobile navigation and no-JS presentation stay usabl
     viewport: { width: 375, height: 812 },
   });
   const nojs = await context.newPage();
+  await nojs.goto(origin + "/");
+  await expect(nojs.locator("[data-hero-emblem] img").first()).toBeVisible();
+  await expect(nojs.locator("[data-hero-emblem]")).toHaveCSS(
+    "position",
+    "absolute",
+  );
   await nojs.goto(origin + "/about");
   await expect(nojs.locator("#equipe article")).toHaveCount(2);
   await expect(nojs.locator("#equipe img")).toHaveCount(2);
   await expect(
-    nojs.getByRole("heading", { name: "Notre équipe" }),
+    nojs.getByRole("heading", { name: "Les visages derrière l’aventure." }),
   ).toBeVisible();
   await context.close();
 });

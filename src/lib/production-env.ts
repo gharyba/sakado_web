@@ -1,6 +1,13 @@
 type Environment = Record<string, string | undefined>;
+import { clientReviewEnabled } from "./client-review-environment.mjs";
 /** Checks configuration, not legal clearance, storage durability or connectivity. Never returns values. */
 export function productionEnvironmentIssues(env: Environment): string[] {
+  if (
+    env.CLIENT_REVIEW &&
+    env.CLIENT_REVIEW !== "false" &&
+    !clientReviewEnabled(env)
+  )
+    return ["Remote client review configuration is invalid."];
   if (env.NODE_ENV === "production" && env.OFFICIAL_PRESENTATION === "true")
     return ["Local official presentation is forbidden in production."];
   if (env.NODE_ENV !== "production" || env.DEMO_MODE === "true") return [];
