@@ -27,7 +27,7 @@ const config: NextConfig = {
       "./docs/media/media-04-publication-readiness.json",
     ],
   },
-  experimental: { authInterrupts: true },
+  experimental: { authInterrupts: true, agentUpgrade: "security" },
   async headers() {
     return [
       {
