@@ -68,7 +68,10 @@
     "zod": "^4.6.6"
   },
   "overrides": {
-    "deepmerge-ts": "8.0.2"
+    "deepmerge-ts": "8.0.2",
+    "@prisma/config": {
+      "effect": "3.22.1"
+    }
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
